@@ -1,0 +1,2720 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Página que usa TODAS las etiquetas HTML y propiedades CSS" />
+  <meta name="author" content="Claude" />
+  <meta name="keywords" content="HTML, CSS, etiquetas, referencia" />
+  <meta name="robots" content="index, follow" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="theme-color" content="#1a1208" />
+  <meta property="og:title" content="Referencia HTML & CSS completa" />
+  <meta property="og:type" content="website" />
+  <title>Todas las Etiquetas HTML &amp; Propiedades CSS</title>
+  <base href="#" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=JetBrains+Mono:wght@400;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ═══════════════════════════════════════
+       CSS CUSTOM PROPERTIES (variables)
+    ═══════════════════════════════════════ */
+    :root {
+      --ink: #1a1208;
+      --paper: #faf7f0;
+      --cream: #f0ead6;
+      --amber: #c8860a;
+      --amber-lt: #f5d98b;
+      --amber-dk: #7a5000;
+      --teal: #1a6b5a;
+      --teal-lt: #d0ede7;
+      --coral: #b84433;
+      --coral-lt: #f5e0dc;
+      --blue: #1e4f8c;
+      --blue-lt: #dce9f9;
+      --purple: #5a3d9e;
+      --purple-lt: #e8e2f8;
+      --green: #2d6a2d;
+      --green-lt: #d6f0d6;
+      --red: #a32d2d;
+      --red-lt: #fce8e8;
+      --gray: #888;
+      --border: #d4c9a8;
+      --mono: 'JetBrains Mono', monospace;
+      --display: 'Syne', sans-serif;
+      --serif: 'Lora', Georgia, serif;
+
+      /* ── todas las propiedades de fuente ── */
+      --fs-xs: 0.75rem;
+      --fs-sm: 0.875rem;
+      --fs-base: 1rem;
+      --fs-lg: 1.125rem;
+      --fs-xl: 1.5rem;
+      --fs-2xl: 2rem;
+      --fs-3xl: 3rem;
+
+      /* ── espaciado ── */
+      --sp-1: 0.25rem;
+      --sp-2: 0.5rem;
+      --sp-3: 0.75rem;
+      --sp-4: 1rem;
+      --sp-6: 1.5rem;
+      --sp-8: 2rem;
+      --sp-12: 3rem;
+      --sp-16: 4rem;
+
+      /* ── radios ── */
+      --r-sm: 4px;
+      --r-md: 8px;
+      --r-lg: 12px;
+      --r-xl: 20px;
+      --r-full: 9999px;
+
+      /* ── sombras ── */
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
+      --shadow-md: 0 4px 12px rgba(0,0,0,.10);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,.14);
+
+      /* ── transiciones ── */
+      --t-fast: 0.15s ease;
+      --t-base: 0.25s ease;
+      --t-slow: 0.4s ease;
+
+      /* ── z-index ── */
+      --z-nav: 100;
+      --z-modal: 200;
+      --z-tooltip: 300;
+    }
+
+    /* ── @font-face (demo) ── */
+    @font-face {
+      font-family: 'DemoFace';
+      src: local('Georgia'), local('Times New Roman');
+      font-display: swap;
+    }
+
+    /* ── @layer ── */
+    @layer base, components, utilities;
+
+    @layer base {
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html { scroll-behavior: smooth; font-size: 16px; tab-size: 2; }
+      body {
+        font-family: var(--serif);
+        background-color: var(--paper);
+        color: var(--ink);
+        line-height: 1.75;
+        min-height: 100dvh;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+      }
+    }
+
+    @layer components {
+      .card {
+        background: #fff;
+        border: 1.5px solid var(--border);
+        border-radius: var(--r-lg);
+        padding: var(--sp-4) var(--sp-6);
+        box-shadow: var(--shadow-sm);
+        transition: transform var(--t-base), box-shadow var(--t-base);
+      }
+      .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    }
+
+    @layer utilities {
+      .mt-4  { margin-top: var(--sp-4); }
+      .mb-4  { margin-bottom: var(--sp-4); }
+      .flex  { display: flex; }
+      .grid  { display: grid; }
+      .hidden { display: none; }
+      .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    }
+
+    /* ── @media ── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+    @media (prefers-color-scheme: dark) {
+      /* soportado pero usamos tema propio */
+    }
+    @media print {
+      nav, .no-print { display: none !important; }
+      body { font-size: 12pt; }
+    }
+    @media (min-width: 768px) { .site-wrapper { padding: 0 var(--sp-8); } }
+    @media (max-width: 600px) {
+      .tag-grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .tag-grid-3 { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 380px) {
+      .tag-grid-4, .tag-grid-3 { grid-template-columns: 1fr; }
+    }
+    @media (orientation: landscape) { /* aplicado automáticamente */ }
+    @media (hover: hover) { .card:hover { transform: translateY(-2px); } }
+
+    /* ── @keyframes (todas las variantes) ── */
+    @keyframes spin    { to   { transform: rotate(360deg); } }
+    @keyframes bounce  { 0%,100%  { transform: translateY(0);   } 50% { transform: translateY(-14px); } }
+    @keyframes pulse   { 0%,100%  { opacity: 1; transform: scale(1); } 50% { opacity: .5; transform: scale(.95); } }
+    @keyframes slide-in { from { transform: translateX(-40px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes fade-in  { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes wave     { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(1.8); } }
+    @keyframes float    { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-8px) rotate(2deg); } }
+    @keyframes shake    { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+    @keyframes gradient-shift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    @keyframes counter  { from { counter-reset: n 0; } to { counter-reset: n 100; } }
+
+    /* ── @counter-style ── */
+    @counter-style thumbs {
+      system: cyclic;
+      symbols: "👍" "✔" "★";
+      suffix: " ";
+    }
+
+    /* ── @supports ── */
+    @supports (display: grid) { .supports-note { display: block; } }
+    @supports not (display: subgrid) { .subgrid-note { color: var(--gray); } }
+
+    /* ── @page ── */
+    @page { margin: 2cm; }
+    @page :first { margin-top: 3cm; }
+
+    /* ── :root ya definido ── */
+
+    /* ══════════════════════════════════
+       LAYOUT GENERAL
+    ══════════════════════════════════ */
+    .site-wrapper { max-width: 1140px; margin: 0 auto; padding: 0 var(--sp-6); }
+
+    /* ══════════════════════════════════
+       HEADER
+    ══════════════════════════════════ */
+    header.site-header {
+      background: var(--ink);
+      color: var(--paper);
+      padding: var(--sp-16) var(--sp-8) var(--sp-12);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    header.site-header::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: repeating-linear-gradient(-45deg, transparent, transparent 24px, rgba(200,134,10,.07) 24px, rgba(200,134,10,.07) 25px);
+      z-index: -1;
+    }
+    header.site-header h1 {
+      font-family: var(--display);
+      font-size: clamp(2rem, 6vw, 4.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+    header.site-header h1 span { color: var(--amber-lt); }
+    header.site-header p.tagline {
+      font-style: italic;
+      color: rgba(250,247,240,.65);
+      margin-top: var(--sp-3);
+      font-size: var(--fs-lg);
+    }
+
+    /* ══════════════════════════════════
+       NAV
+    ══════════════════════════════════ */
+    nav.site-nav {
+      background: var(--cream);
+      border-bottom: 2px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: var(--z-nav);
+    }
+    nav.site-nav ul {
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 1140px;
+      margin: 0 auto;
+    }
+    nav.site-nav ul li a {
+      display: block;
+      padding: .7rem 1rem;
+      text-decoration: none;
+      font-family: var(--display);
+      font-size: .75rem;
+      font-weight: 700;
+      color: var(--amber-dk);
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      border-right: 1px solid var(--border);
+      transition: background var(--t-fast), color var(--t-fast);
+    }
+    nav.site-nav ul li a:hover,
+    nav.site-nav ul li a:focus-visible { background: var(--amber); color: var(--ink); outline: none; }
+
+    /* ══════════════════════════════════
+       SKIP LINK
+    ══════════════════════════════════ */
+    .skip-link {
+      position: absolute; top: -40px; left: 0;
+      background: var(--amber); color: var(--ink);
+      padding: 8px 16px; border-radius: 0 0 8px 0;
+      font-family: var(--display); font-weight: 700;
+      transition: top var(--t-fast); z-index: 999;
+    }
+    .skip-link:focus { top: 0; }
+
+    /* ══════════════════════════════════
+       SECCIONES
+    ══════════════════════════════════ */
+    .section { margin-bottom: var(--sp-16); scroll-margin-top: 56px; }
+
+    .section-title {
+      font-family: var(--display);
+      font-weight: 800;
+      font-size: var(--fs-xl);
+      color: var(--ink);
+      border-left: 5px solid var(--amber);
+      padding-left: var(--sp-4);
+      margin-bottom: var(--sp-6);
+    }
+    .section-title .pill {
+      font-size: .68rem;
+      background: var(--amber);
+      color: var(--ink);
+      padding: 2px 8px;
+      border-radius: var(--r-full);
+      vertical-align: middle;
+      font-family: var(--mono);
+      margin-left: 8px;
+    }
+
+    .subsection-title {
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--amber-dk);
+      margin: var(--sp-6) 0 var(--sp-3);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-2);
+    }
+    .subsection-title::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ══════════════════════════════════
+       GRIDS DE TARJETAS
+    ══════════════════════════════════ */
+    .tag-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: .875rem; }
+    .tag-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: .875rem; }
+
+    .tag-card {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: .875rem 1rem;
+      transition: transform var(--t-base), box-shadow var(--t-base);
+    }
+    .tag-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .tag-name {
+      font-family: var(--mono);
+      font-size: .88rem;
+      font-weight: 600;
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: var(--r-sm);
+      margin-bottom: .35rem;
+      color: var(--blue);
+      background: var(--blue-lt);
+    }
+    .tag-desc { font-size: .82rem; color: #5a4e38; line-height: 1.5; }
+
+    /* colores por categoría */
+    .c-doc    .tag-name { color: var(--amber-dk); background: var(--amber-lt); }
+    .c-text   .tag-name { color: var(--teal);     background: var(--teal-lt);  }
+    .c-media  .tag-name { color: var(--coral);    background: var(--coral-lt); }
+    .c-form   .tag-name { color: var(--purple);   background: var(--purple-lt);}
+    .c-table  .tag-name { color: #5c4a00;         background: #fef3c7;         }
+    .c-sem    .tag-name { color: var(--blue);     background: var(--blue-lt);  }
+    .c-int    .tag-name { color: var(--green);    background: var(--green-lt); }
+    .c-css    .tag-name { color: var(--red);      background: var(--red-lt);   }
+
+    /* ══════════════════════════════════
+       BLOQUES DEMO
+    ══════════════════════════════════ */
+    .demo-block {
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-lg);
+      overflow: hidden;
+      margin-bottom: var(--sp-4);
+    }
+    .demo-label {
+      background: var(--cream);
+      border-bottom: 1px solid var(--border);
+      padding: .4rem var(--sp-4);
+      font-family: var(--mono);
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--amber-dk);
+      letter-spacing: .05em;
+    }
+    .demo-render { padding: var(--sp-4) var(--sp-6); }
+    .demo-code {
+      background: #12100a;
+      color: #faf7f0;
+      padding: var(--sp-4) var(--sp-6);
+      font-family: var(--mono);
+      font-size: .78rem;
+      line-height: 1.7;
+      overflow-x: auto;
+      border-top: 1px solid #333;
+      white-space: pre;
+    }
+    .kw  { color: #f5d98b; }
+    .at  { color: #86d4b8; }
+    .vl  { color: #f4a36a; }
+    .cm  { color: #666; font-style: italic; }
+    .sel { color: #c792ea; }
+
+    /* ══════════════════════════════════
+       TABLA CSS
+    ══════════════════════════════════ */
+    .css-table { width: 100%; border-collapse: collapse; font-size: .83rem; }
+    .css-table thead { background: var(--ink); color: var(--paper); }
+    .css-table th { padding: .55rem var(--sp-4); text-align: left; font-family: var(--display); font-weight: 700; font-size: .75rem; letter-spacing: .04em; }
+    .css-table td { padding: .5rem var(--sp-4); border-bottom: 1px solid var(--border); vertical-align: top; }
+    .css-table tr:last-child td { border-bottom: none; }
+    .css-table tr:nth-child(even) td { background: var(--cream); }
+    .css-table .prop { font-family: var(--mono); color: var(--blue); font-weight: 600; }
+    .css-table .val  { font-family: var(--mono); color: var(--coral); font-size: .76rem; }
+    .css-table caption { caption-side: top; text-align: left; font-family: var(--display); font-weight: 700; font-size: .9rem; padding: .5rem 0; color: var(--amber-dk); }
+
+    /* ══════════════════════════════════
+       FORMULARIO
+    ══════════════════════════════════ */
+    .demo-form { display: flex; flex-direction: column; gap: var(--sp-4); }
+    .fld { display: flex; flex-direction: column; gap: .3rem; }
+    .fld label { font-family: var(--display); font-size: .82rem; font-weight: 700; letter-spacing: .03em; }
+    .fld input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]),
+    .fld select,
+    .fld textarea {
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      padding: .45rem .75rem;
+      font-family: var(--serif);
+      font-size: .9rem;
+      background: var(--paper);
+      color: var(--ink);
+      transition: border-color var(--t-fast), box-shadow var(--t-fast);
+      width: 100%;
+    }
+    .fld input:focus, .fld select:focus, .fld textarea:focus {
+      outline: none;
+      border-color: var(--amber);
+      box-shadow: 0 0 0 3px rgba(200,134,10,.18);
+    }
+    .fld input[type=range] { accent-color: var(--amber); }
+    .fld input[type=color] { height: 38px; padding: 2px; cursor: pointer; border-radius: var(--r-md); }
+    .fld input[type=file] { font-family: var(--mono); font-size: .82rem; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: .45rem;
+      padding: .5rem 1.2rem;
+      border-radius: var(--r-md);
+      font-family: var(--display); font-weight: 700; font-size: .85rem;
+      letter-spacing: .04em; cursor: pointer; border: none;
+      transition: opacity var(--t-fast), transform var(--t-fast);
+    }
+    .btn:hover { opacity: .88; }
+    .btn:active { transform: scale(.97); }
+    .btn:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+    .btn-primary   { background: var(--amber);  color: var(--ink); }
+    .btn-secondary { background: transparent; border: 2px solid var(--amber); color: var(--amber-dk); }
+    .btn-danger    { background: var(--coral);   color: #fff; }
+    .btn-ghost     { background: transparent; border: 1.5px solid var(--border); color: var(--ink); }
+
+    /* ══════════════════════════════════
+       ANIMACIONES DEMO
+    ══════════════════════════════════ */
+    .anim-box {
+      display: inline-block; width: 48px; height: 48px;
+      border-radius: var(--r-md); margin: 0 10px; vertical-align: middle;
+    }
+    .a-spin    { background: var(--amber);  animation: spin 1.5s linear infinite; }
+    .a-bounce  { background: var(--teal);   animation: bounce 1s ease-in-out infinite; }
+    .a-pulse   { background: var(--coral);  animation: pulse 1.5s ease-in-out infinite; }
+    .a-slide   { background: var(--purple); animation: slide-in 1s ease forwards; }
+    .a-float   { background: var(--blue);   animation: float 3s ease-in-out infinite; }
+    .a-wave    { width: 8px; height: 40px; border-radius: 4px; background: var(--amber); animation: wave .8s ease-in-out infinite; display:inline-block; margin: 0 3px; vertical-align: middle; }
+    .a-wave:nth-child(2) { animation-delay: .15s; }
+    .a-wave:nth-child(3) { animation-delay: .30s; }
+    .a-wave:nth-child(4) { animation-delay: .45s; }
+    .a-gradient {
+      width: 160px; height: 48px; border-radius: var(--r-md); display: inline-block; vertical-align: middle;
+      background: linear-gradient(270deg, var(--amber), var(--coral), var(--purple), var(--teal));
+      background-size: 400% 400%;
+      animation: gradient-shift 4s ease infinite;
+    }
+
+    /* ══════════════════════════════════
+       CSS SELECTORS DEMO
+    ══════════════════════════════════ */
+    .sel-demo { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap: .6rem; }
+    .sel-demo > div {
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      padding: .5rem .75rem;
+      font-family: var(--mono);
+      font-size: .75rem;
+    }
+    /* :first-child */
+    .sel-demo > div:first-child { background: var(--amber-lt); border-color: var(--amber); }
+    /* :last-child */
+    .sel-demo > div:last-child { background: var(--teal-lt); border-color: var(--teal); }
+    /* :nth-child(3) */
+    .sel-demo > div:nth-child(3) { background: var(--coral-lt); border-color: var(--coral); }
+    /* :nth-child(even) */
+    .sel-demo > div:nth-child(even) { border-style: dashed; }
+    /* :not */
+    .sel-demo > div:not(:first-child):not(:last-child) { opacity: .85; }
+    /* attribute */
+    .sel-demo > div[data-type="special"] { background: var(--purple-lt); border-color: var(--purple); }
+    /* ::before */
+    .sel-demo > div::before { content: "▸ "; color: var(--amber); }
+
+    /* ══════════════════════════════════
+       FLEXBOX DEMO
+    ══════════════════════════════════ */
+    .flex-demo { display: flex; gap: 6px; flex-wrap: wrap; }
+    .flex-demo span {
+      background: var(--amber); color: var(--ink);
+      padding: 5px 12px; border-radius: var(--r-full);
+      font-family: var(--mono); font-size: .75rem; font-weight: 600;
+    }
+
+    /* ══════════════════════════════════
+       GRID DEMO
+    ══════════════════════════════════ */
+    .grid-demo {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto auto;
+      gap: 6px;
+    }
+    .grid-demo div {
+      background: var(--blue-lt); border: 1.5px solid var(--border);
+      border-radius: var(--r-md); padding: .5rem;
+      text-align: center; font-family: var(--mono); font-size: .72rem; color: var(--blue); font-weight: 600;
+    }
+    .gspan2 { grid-column: span 2; background: var(--teal-lt) !important; color: var(--teal) !important; }
+    .gspan3 { grid-column: 1 / -1; background: var(--purple-lt) !important; color: var(--purple) !important; }
+    .g-area-demo {
+      display: grid;
+      grid-template-areas: "hd hd" "sd mn" "ft ft";
+      grid-template-columns: 1fr 2fr;
+      gap: 6px;
+      margin-top: .5rem;
+    }
+    .g-area-demo div { border-radius: var(--r-md); padding: .4rem; text-align: center; font-family: var(--mono); font-size: .7rem; font-weight: 600; }
+    .ga-hd { grid-area: hd; background: var(--amber-lt);  color: var(--amber-dk); }
+    .ga-sd { grid-area: sd; background: var(--coral-lt);  color: var(--coral); }
+    .ga-mn { grid-area: mn; background: var(--blue-lt);   color: var(--blue); }
+    .ga-ft { grid-area: ft; background: var(--teal-lt);   color: var(--teal); }
+
+    /* ══════════════════════════════════
+       POSICIONAMIENTO DEMO
+    ══════════════════════════════════ */
+    .pos-demo {
+      position: relative;
+      background: var(--cream);
+      border: 1.5px dashed var(--border);
+      border-radius: var(--r-md);
+      height: 120px;
+      margin-bottom: .5rem;
+    }
+    .pos-static   { position: static;   background: var(--amber-lt); }
+    .pos-relative { position: relative; top: 10px; left: 10px; background: var(--teal-lt); }
+    .pos-absolute { position: absolute; bottom: 8px; right: 8px; background: var(--coral-lt); }
+    .pos-sticky-demo { position: sticky; top: 0; background: var(--purple-lt); z-index: 1; }
+    .pos-box {
+      display: inline-block; padding: 4px 10px; border-radius: var(--r-sm);
+      font-family: var(--mono); font-size: .72rem; font-weight: 600;
+      border: 1px solid rgba(0,0,0,.12);
+    }
+
+    /* ══════════════════════════════════
+       TRANSFORM DEMO
+    ══════════════════════════════════ */
+    .transform-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: var(--sp-4);
+    }
+    .t-box {
+      width: 90px; height: 90px; margin: auto;
+      border-radius: var(--r-md);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono); font-size: .68rem; font-weight: 600;
+      color: #fff; transition: transform .4s ease;
+    }
+    .t-box:hover { transform: none !important; }
+    .t-translate  { background: var(--amber); transform: translate(8px, -8px); }
+    .t-scale      { background: var(--teal);  transform: scale(1.15); }
+    .t-rotate     { background: var(--coral); transform: rotate(15deg); }
+    .t-skew       { background: var(--blue);  transform: skew(10deg, 5deg); }
+    .t-matrix     { background: var(--purple); transform: matrix(1,.2,-.2,1,0,0); }
+    .t-perspective { background: var(--green); transform: perspective(300px) rotateY(20deg); }
+    .t-3d         { background: var(--red);   transform: rotateX(25deg) rotateY(15deg); }
+
+    /* ══════════════════════════════════
+       MEDIA SECTION
+    ══════════════════════════════════ */
+    .media-ph {
+      background: var(--cream);
+      border: 2px dashed var(--border);
+      border-radius: var(--r-md);
+      display: flex; align-items: center; justify-content: center;
+      padding: var(--sp-6);
+      font-family: var(--mono);
+      font-size: .82rem;
+      color: var(--gray);
+      text-align: center;
+      min-height: 100px;
+    }
+
+    /* ══════════════════════════════════
+       DETALLES / DIALOG
+    ══════════════════════════════════ */
+    details.dts {
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      overflow: hidden;
+      margin-bottom: .5rem;
+    }
+    details.dts > summary {
+      padding: .65rem var(--sp-4);
+      cursor: pointer;
+      font-family: var(--display);
+      font-weight: 700;
+      font-size: .9rem;
+      background: var(--cream);
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      user-select: none;
+    }
+    details.dts > summary::before { content: "▶"; font-size: .65rem; transition: transform var(--t-fast); }
+    details.dts[open] > summary::before { transform: rotate(90deg); }
+    details.dts .body { padding: var(--sp-4) var(--sp-6); font-size: .9rem; }
+
+    /* ══════════════════════════════════
+       TOOLTIP
+    ══════════════════════════════════ */
+    .tip-wrap { position: relative; display: inline-block; }
+    .tip-wrap .tip {
+      visibility: hidden; opacity: 0;
+      background: var(--ink); color: var(--paper);
+      font-family: var(--mono); font-size: .72rem;
+      border-radius: var(--r-sm); padding: 4px 10px;
+      position: absolute; bottom: 130%; left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      transition: opacity var(--t-fast);
+      pointer-events: none;
+      z-index: var(--z-tooltip);
+    }
+    .tip-wrap:hover .tip { visibility: visible; opacity: 1; }
+
+    /* ══════════════════════════════════
+       COLORES CSS
+    ══════════════════════════════════ */
+    .color-row { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin-bottom: .5rem; }
+    .swatch {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1.5px solid rgba(0,0,0,.12);
+      display: inline-block;
+    }
+    .color-label { font-family: var(--mono); font-size: .72rem; color: var(--gray); }
+
+    /* ══════════════════════════════════
+       PSEUDO-CLASES & ELEMENTOS DEMO
+    ══════════════════════════════════ */
+    .pseudo-list { list-style: none; padding: 0; }
+    .pseudo-list li {
+      padding: .35rem .75rem;
+      font-family: var(--mono); font-size: .8rem;
+      border-bottom: 1px solid var(--border);
+      transition: background var(--t-fast);
+      counter-increment: pseudo-count;
+    }
+    .pseudo-list li::before { content: counter(pseudo-count) ". "; color: var(--amber); font-weight: 700; }
+    .pseudo-list li:first-child  { color: var(--teal); font-weight: 700; }
+    .pseudo-list li:last-child   { color: var(--coral); font-weight: 700; border-bottom: none; }
+    .pseudo-list li:nth-child(2) { background: var(--amber-lt); }
+    .pseudo-list li:nth-child(3n){ background: var(--blue-lt); }
+    .pseudo-list li:hover        { background: var(--teal-lt); }
+    .pseudo-list { counter-reset: pseudo-count; }
+
+    .link-pseudo a         { color: var(--blue); font-family: var(--mono); font-size: .85rem; }
+    .link-pseudo a:hover   { color: var(--coral); text-decoration: underline wavy; }
+    .link-pseudo a:visited { color: var(--purple); }
+    .link-pseudo a:active  { color: var(--amber-dk); }
+    .link-pseudo a:focus-visible { outline: 2px solid var(--amber); border-radius: 2px; }
+
+    .input-pseudo input { border: 1.5px solid var(--border); border-radius: var(--r-md); padding: .4rem .75rem; font-family: var(--serif); font-size: .9rem; }
+    .input-pseudo input:focus   { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(200,134,10,.18); outline: none; }
+    .input-pseudo input:valid   { border-color: var(--green); }
+    .input-pseudo input:invalid { border-color: var(--red); }
+    .input-pseudo input:placeholder-shown { background: var(--cream); }
+    .input-pseudo input:read-only { opacity: .65; cursor: not-allowed; }
+    .input-pseudo input:disabled { opacity: .4; cursor: not-allowed; }
+    .input-pseudo input:checked  { accent-color: var(--amber); }
+    .input-pseudo input:required { border-style: dashed; }
+
+    /* ::before ::after ::first-line ::first-letter ::selection ::placeholder ::marker */
+    .pseudo-elements p::first-letter {
+      float: left; font-size: 3em; line-height: .85;
+      font-family: var(--display); font-weight: 800;
+      color: var(--amber); margin-right: .12em; padding-top: .05em;
+    }
+    .pseudo-elements p::first-line  { font-variant: small-caps; color: var(--teal); }
+    .pseudo-elements p::selection   { background: var(--amber-lt); color: var(--ink); }
+    .pseudo-elements li::marker     { color: var(--amber); font-weight: 700; }
+    .pseudo-elements input::placeholder { color: var(--gray); font-style: italic; }
+    .pseudo-before::before { content: "❝ "; color: var(--amber); font-size: 1.2em; }
+    .pseudo-after::after   { content: " ❞"; color: var(--amber); font-size: 1.2em; }
+    .pseudo-bg::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, var(--amber-lt), transparent);
+      border-radius: inherit;
+      z-index: -1;
+    }
+
+    /* ══════════════════════════════════
+       INLINE-LEVEL DEMO
+    ══════════════════════════════════ */
+    abbr  { border-bottom: 1px dashed var(--amber); cursor: help; text-decoration: none; }
+    mark  { background: var(--amber-lt); color: var(--ink); padding: 0 3px; border-radius: 2px; }
+    kbd   { background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: .8rem; padding: 2px 6px; border-radius: 4px; }
+    samp  { background: var(--teal-lt); color: var(--teal); font-family: var(--mono); font-size: .82rem; padding: 1px 5px; border-radius: 3px; }
+    var   { font-style: italic; color: var(--purple); font-family: var(--mono); }
+    code  { background: var(--blue-lt); color: var(--blue); font-family: var(--mono); font-size: .82rem; padding: 1px 5px; border-radius: 3px; }
+    ins   { background: var(--green-lt); color: var(--green); text-decoration: none; padding: 0 3px; border-radius: 2px; }
+    del   { background: var(--red-lt); color: var(--red); }
+
+    /* ══════════════════════════════════
+       TIPOGRAFÍA DEMO COMPLETA
+    ══════════════════════════════════ */
+    .typo-demo h1 { font-size: clamp(1.8rem,4vw,3rem); font-family: var(--display); font-weight: 800; }
+    .typo-demo h2 { font-size: 2rem; font-family: var(--display); font-weight: 700; }
+    .typo-demo h3 { font-size: 1.5rem; font-family: var(--display); font-weight: 700; }
+    .typo-demo h4 { font-size: 1.2rem; font-family: var(--display); font-weight: 700; }
+    .typo-demo h5 { font-size: 1rem;   font-family: var(--display); font-weight: 700; }
+    .typo-demo h6 { font-size: .85rem; font-family: var(--display); font-weight: 700; color: var(--gray); }
+
+    /* ══════════════════════════════════
+       TABLA DEMO
+    ══════════════════════════════════ */
+    .tbl { width: 100%; border-collapse: collapse; font-size: .88rem; }
+    .tbl th, .tbl td { border: 1.5px solid var(--border); padding: .5rem .875rem; text-align: left; }
+    .tbl thead tr { background: var(--amber); }
+    .tbl thead th { color: var(--ink); font-family: var(--display); font-weight: 700; }
+    .tbl tbody tr:hover { background: var(--cream); }
+    .tbl tfoot td { background: var(--cream); font-style: italic; font-weight: 600; }
+    .tbl caption { caption-side: top; text-align: left; font-family: var(--display); font-weight: 700; font-size: 1rem; padding-bottom: .5rem; }
+
+    /* ══════════════════════════════════
+       BLOCKQUOTE / PRE
+    ══════════════════════════════════ */
+    blockquote.bq {
+      border-left: 4px solid var(--amber);
+      background: var(--cream);
+      padding: var(--sp-4) var(--sp-6);
+      font-style: italic;
+      color: #5a4e38;
+      border-radius: 0 var(--r-md) var(--r-md) 0;
+    }
+    blockquote.bq cite { display: block; font-style: normal; font-size: .82rem; margin-top: .5rem; color: var(--amber-dk); font-family: var(--mono); }
+
+    pre.code-block {
+      background: #12100a; color: #faf7f0;
+      padding: var(--sp-4) var(--sp-6);
+      border-radius: var(--r-md);
+      font-family: var(--mono); font-size: .82rem;
+      overflow-x: auto; tab-size: 2;
+    }
+
+    /* ══════════════════════════════════
+       CUSTOM LIST STYLES
+    ══════════════════════════════════ */
+    ul.styled-ul { padding-left: 1.5rem; list-style-type: disc; }
+    ul.styled-ul li { margin-bottom: .25rem; }
+    ol.styled-ol { padding-left: 1.5rem; list-style-type: decimal; }
+    ol.alpha { list-style-type: lower-alpha; }
+    ol.roman { list-style-type: upper-roman; }
+    ol.custom-ctr { list-style-type: thumbs; }
+
+    dl.styled-dl dt { font-weight: 700; font-family: var(--display); color: var(--amber-dk); }
+    dl.styled-dl dd { padding-left: 1.2rem; color: #5a4e38; font-size: .9rem; margin-bottom: .5rem; }
+
+    /* ══════════════════════════════════
+       PROGRESS / METER
+    ══════════════════════════════════ */
+    progress { width: 100%; height: 18px; border-radius: 9px; accent-color: var(--teal); display: block; margin-bottom: .5rem; }
+    meter    { width: 100%; height: 18px; display: block; margin-bottom: .5rem; }
+
+    /* ══════════════════════════════════
+       SCROLL SNAP
+    ══════════════════════════════════ */
+    .snap-container {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      gap: var(--sp-4);
+      padding: var(--sp-4) var(--sp-2);
+      scrollbar-width: thin;
+      scrollbar-color: var(--amber) var(--cream);
+    }
+    .snap-container::-webkit-scrollbar { height: 6px; }
+    .snap-container::-webkit-scrollbar-track { background: var(--cream); border-radius: 3px; }
+    .snap-container::-webkit-scrollbar-thumb { background: var(--amber); border-radius: 3px; }
+    .snap-item {
+      scroll-snap-align: start;
+      flex: 0 0 220px;
+      background: #fff;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: var(--sp-4);
+      font-family: var(--display);
+      font-size: .9rem;
+      font-weight: 700;
+      text-align: center;
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ══════════════════════════════════
+       ASPECT-RATIO / OBJECT-FIT
+    ══════════════════════════════════ */
+    .aspect-demo {
+      aspect-ratio: 16 / 9;
+      background: var(--cream);
+      border: 2px dashed var(--border);
+      border-radius: var(--r-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: .8rem;
+      color: var(--gray);
+      max-width: 360px;
+    }
+
+    /* ══════════════════════════════════
+       WRITING MODE / TEXT ORIENTATION
+    ══════════════════════════════════ */
+    .writing-mode-demo {
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      height: 120px;
+      background: var(--amber-lt);
+      border-radius: var(--r-md);
+      padding: var(--sp-4);
+      font-family: var(--display);
+      font-weight: 700;
+      color: var(--amber-dk);
+      display: inline-block;
+    }
+
+    /* ══════════════════════════════════
+       COLUMNAS CSS
+    ══════════════════════════════════ */
+    .columns-demo {
+      column-count: 2;
+      column-gap: var(--sp-6);
+      column-rule: 1.5px solid var(--border);
+      font-size: .9rem;
+      line-height: 1.7;
+    }
+    .columns-demo .col-span { column-span: all; font-family: var(--display); font-weight: 700; color: var(--amber-dk); margin-bottom: .5rem; }
+
+    /* ══════════════════════════════════
+       CLIP-PATH
+    ══════════════════════════════════ */
+    .clip-grid { display: flex; gap: var(--sp-4); flex-wrap: wrap; align-items: center; }
+    .clip-box { width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: .65rem; color: #fff; font-weight: 600; }
+    .clip-circle  { background: var(--amber);  clip-path: circle(50%); }
+    .clip-tri     { background: var(--teal);   clip-path: polygon(50% 0%, 0% 100%, 100% 100%); }
+    .clip-hex     { background: var(--coral);  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%); }
+    .clip-star    { background: var(--blue);   clip-path: polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%); }
+    .clip-inset   { background: var(--purple); clip-path: inset(10% 20% 10% 20% round 12px); }
+
+    /* ══════════════════════════════════
+       GRADIENTES Y BLEND
+    ══════════════════════════════════ */
+    .gradient-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); gap: .5rem; }
+    .grad-box {
+      height: 60px; border-radius: var(--r-md);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--mono); font-size: .65rem; color: #fff; font-weight: 600;
+      text-shadow: 0 1px 2px rgba(0,0,0,.4);
+    }
+    .g-linear   { background: linear-gradient(135deg, var(--amber), var(--coral)); }
+    .g-radial   { background: radial-gradient(circle at 30% 50%, var(--teal), var(--blue)); }
+    .g-conic    { background: conic-gradient(from 0deg, var(--amber), var(--coral), var(--purple), var(--teal), var(--amber)); }
+    .g-repeat   { background: repeating-linear-gradient(45deg, var(--amber-lt) 0, var(--amber-lt) 8px, #fff 8px, #fff 16px); }
+    .g-mesh     { background: radial-gradient(at 40% 20%, var(--amber-lt) 0, transparent 50%), radial-gradient(at 80% 0%, var(--teal-lt) 0, transparent 50%), radial-gradient(at 0% 50%, var(--coral-lt) 0, transparent 50%); }
+
+    /* ══════════════════════════════════
+       FILTER DEMO
+    ══════════════════════════════════ */
+    .filter-grid { display: flex; gap: var(--sp-3); flex-wrap: wrap; }
+    .filter-box {
+      width: 90px; height: 60px; border-radius: var(--r-md);
+      background: linear-gradient(135deg, var(--amber), var(--teal), var(--coral));
+      display: flex; align-items: flex-end; padding: 4px 6px;
+      font-family: var(--mono); font-size: .62rem; color: #fff; font-weight: 600;
+    }
+    .f-blur      { filter: blur(4px); }
+    .f-bright    { filter: brightness(1.5); }
+    .f-contrast  { filter: contrast(2); }
+    .f-gray      { filter: grayscale(1); }
+    .f-hue       { filter: hue-rotate(90deg); }
+    .f-invert    { filter: invert(1); }
+    .f-saturate  { filter: saturate(3); }
+    .f-sepia     { filter: sepia(1); }
+    .f-drop      { filter: drop-shadow(4px 4px 6px rgba(0,0,0,.5)); }
+
+    /* ══════════════════════════════════
+       VARIABLES CSS DEMO
+    ══════════════════════════════════ */
+    .var-demo {
+      --local-color: #1a6b5a;
+      --local-size: 1.1rem;
+      padding: var(--sp-4);
+      background: var(--cream);
+      border-radius: var(--r-md);
+      border-left: 4px solid var(--local-color);
+    }
+    .var-demo p { color: var(--local-color); font-size: var(--local-size); font-family: var(--mono); }
+
+    /* ══════════════════════════════════
+       FOOTER
+    ══════════════════════════════════ */
+    footer.site-footer {
+      background: var(--ink);
+      color: rgba(250,247,240,.65);
+      padding: var(--sp-8) var(--sp-8) var(--sp-6);
+      margin-top: var(--sp-16);
+    }
+    footer.site-footer .inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--sp-8);
+    }
+    footer.site-footer h3 { font-family: var(--display); color: var(--amber-lt); font-size: .9rem; margin-bottom: var(--sp-3); }
+    footer.site-footer ul { list-style: none; }
+    footer.site-footer ul li { margin-bottom: .25rem; font-family: var(--mono); font-size: .78rem; }
+    footer.site-footer a { color: var(--amber-lt); text-decoration: none; }
+    footer.site-footer a:hover { text-decoration: underline; }
+    footer.site-footer .copy {
+      max-width: 1140px; margin: var(--sp-8) auto 0;
+      border-top: 1px solid rgba(255,255,255,.1);
+      padding-top: var(--sp-4);
+      text-align: center;
+      font-family: var(--mono); font-size: .75rem;
+    }
+    footer.site-footer address { font-style: normal; font-size: .8rem; }
+
+    /* ══════════════════════════════════
+       MISC: CHIPS, HR, SEPARADORES
+    ══════════════════════════════════ */
+    .chip { display: inline-block; padding: 2px 9px; border-radius: var(--r-full); font-family: var(--mono); font-size: .72rem; font-weight: 600; }
+    .ch-a { background: var(--amber-lt);  color: var(--amber-dk); }
+    .ch-t { background: var(--teal-lt);   color: var(--teal); }
+    .ch-c { background: var(--coral-lt);  color: var(--coral); }
+    .ch-b { background: var(--blue-lt);   color: var(--blue); }
+    .ch-p { background: var(--purple-lt); color: var(--purple); }
+    .ch-g { background: var(--green-lt);  color: var(--green); }
+
+    hr.fancy {
+      border: none;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--amber), transparent);
+      margin: var(--sp-12) 0;
+    }
+
+    /* ══════════════════════════════════
+       RESPONSIVE IMAGES
+    ══════════════════════════════════ */
+    img { max-width: 100%; height: auto; display: block; }
+
+    /* ══════════════════════════════════
+       ACCESIBILIDAD
+    ══════════════════════════════════ */
+    :focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+    [aria-hidden="true"] { pointer-events: none; }
+
+    /* ══════════════════════════════════
+       MISC: object-fit, overscroll, etc.
+    ══════════════════════════════════ */
+    .of-cover  { object-fit: cover; }
+    .of-contain { object-fit: contain; }
+    .overscroll { overscroll-behavior: contain; }
+    .contain-layout { contain: layout; }
+
+    /* resize demo */
+    .resize-demo {
+      resize: both;
+      overflow: auto;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      padding: var(--sp-4);
+      min-width: 200px;
+      min-height: 80px;
+      max-width: 100%;
+      background: var(--cream);
+      font-family: var(--mono);
+      font-size: .82rem;
+      color: var(--gray);
+    }
+
+    /* appearance */
+    .appearance-none-demo { appearance: none; -webkit-appearance: none; border: 2px solid var(--amber); border-radius: var(--r-md); padding: .4rem; background: var(--cream); color: var(--ink); font-family: var(--serif); }
+
+    /* user-select */
+    .no-select  { user-select: none;   background: var(--red-lt);    border-radius: var(--r-sm); padding: 2px 6px; font-family: var(--mono); font-size: .8rem; }
+    .all-select { user-select: all;    background: var(--green-lt);  border-radius: var(--r-sm); padding: 2px 6px; font-family: var(--mono); font-size: .8rem; }
+    .txt-select { user-select: text;   background: var(--blue-lt);   border-radius: var(--r-sm); padding: 2px 6px; font-family: var(--mono); font-size: .8rem; }
+
+    /* cursor demo */
+    .cursor-grid { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .cur { font-family: var(--mono); font-size: .72rem; padding: 5px 10px; border-radius: var(--r-sm); background: var(--cream); border: 1px solid var(--border); }
+    .cur-default  { cursor: default; }
+    .cur-pointer  { cursor: pointer; }
+    .cur-text     { cursor: text; }
+    .cur-move     { cursor: move; }
+    .cur-grab     { cursor: grab; }
+    .cur-crosshair{ cursor: crosshair; }
+    .cur-not-allowed { cursor: not-allowed; }
+    .cur-wait     { cursor: wait; }
+    .cur-zoom-in  { cursor: zoom-in; }
+    .cur-zoom-out { cursor: zoom-out; }
+    .cur-help     { cursor: help; }
+    .cur-copy     { cursor: copy; }
+    .cur-ns-resize { cursor: ns-resize; }
+    .cur-ew-resize { cursor: ew-resize; }
+    .cur-none      { cursor: none; }
+
+    /* scroll-behavior / overflow */
+    .overflow-demo {
+      overflow: auto;
+      max-height: 80px;
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      padding: var(--sp-3);
+      font-family: var(--mono);
+      font-size: .8rem;
+      line-height: 1.6;
+      scrollbar-width: thin;
+      scrollbar-color: var(--amber) var(--cream);
+    }
+
+    /* isolation / mix-blend-mode */
+    .blend-demo {
+      position: relative;
+      width: 120px;
+      height: 80px;
+      background: var(--amber-lt);
+      border-radius: var(--r-md);
+      isolation: isolate;
+      display: inline-block;
+    }
+    .blend-layer {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: var(--coral);
+      mix-blend-mode: multiply;
+      opacity: .8;
+      top: 0; left: 20px;
+    }
+
+    /* caret-color */
+    .caret-demo { border: 1.5px solid var(--border); border-radius: var(--r-md); padding: .4rem .75rem; font-family: var(--serif); caret-color: var(--coral); width: 200px; }
+
+    /* accent-color */
+    .accent-demo { accent-color: var(--teal); }
+
+    /* text-overflow */
+    .ellipsis {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 200px;
+      background: var(--cream);
+      padding: 2px 6px;
+      border-radius: var(--r-sm);
+      font-family: var(--mono);
+      font-size: .8rem;
+    }
+
+    /* word-break / overflow-wrap */
+    .word-break {
+      word-break: break-all;
+      overflow-wrap: break-word;
+      hyphens: auto;
+      background: var(--blue-lt);
+      padding: var(--sp-3);
+      border-radius: var(--r-md);
+      font-family: var(--mono);
+      font-size: .8rem;
+      max-width: 180px;
+    }
+
+    /* list-style */
+    ul.ls-square  { list-style-type: square; padding-left: 1.5rem; }
+    ul.ls-circle  { list-style-type: circle; padding-left: 1.5rem; }
+    ul.ls-none    { list-style-type: none; }
+    ul.ls-image   { list-style-image: none; /* no external img */ padding-left: 1.5rem; }
+
+    /* border styles */
+    .border-styles { display: flex; flex-direction: column; gap: .5rem; }
+    .bs { padding: 4px 10px; font-family: var(--mono); font-size: .75rem; border-radius: 3px; border: 3px; border-color: var(--amber); }
+    .bs-solid  { border-style: solid; }
+    .bs-dashed { border-style: dashed; }
+    .bs-dotted { border-style: dotted; }
+    .bs-double { border-style: double; border-width: 4px; }
+    .bs-groove { border-style: groove; border-width: 4px; }
+    .bs-ridge  { border-style: ridge;  border-width: 4px; }
+    .bs-inset  { border-style: inset;  border-width: 4px; }
+    .bs-outset { border-style: outset; border-width: 4px; }
+
+    /* outline styles */
+    .outline-demo { padding: 4px 12px; font-family: var(--mono); font-size: .8rem; border-radius: var(--r-sm); border: none; background: var(--cream); display: inline-block; }
+    .ol-solid  { outline: 2px solid var(--amber); outline-offset: 2px; }
+    .ol-dashed { outline: 2px dashed var(--teal); outline-offset: 4px; }
+    .ol-dotted { outline: 2px dotted var(--coral); outline-offset: 2px; }
+
+    /* text-shadow */
+    .ts-demo { font-family: var(--display); font-size: 1.6rem; font-weight: 800; }
+    .ts-1 { text-shadow: 2px 2px 0 var(--amber); }
+    .ts-2 { text-shadow: 0 0 8px var(--teal), 0 0 20px var(--teal); }
+    .ts-3 { text-shadow: 3px 3px 0 var(--coral), -1px -1px 0 var(--blue); }
+
+    /* backdrop-filter */
+    .backdrop-wrap {
+      position: relative;
+      background: linear-gradient(135deg, var(--amber), var(--coral), var(--teal));
+      border-radius: var(--r-lg);
+      padding: var(--sp-4);
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .backdrop-box {
+      backdrop-filter: blur(6px) saturate(1.5);
+      -webkit-backdrop-filter: blur(6px) saturate(1.5);
+      background: rgba(255,255,255,.25);
+      border-radius: var(--r-md);
+      padding: var(--sp-3) var(--sp-6);
+      font-family: var(--display);
+      font-weight: 700;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,.4);
+    }
+
+    /* subgrid */
+    .subgrid-parent {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: .5rem;
+    }
+    .subgrid-child {
+      grid-column: span 3;
+      display: grid;
+      grid-template-columns: subgrid;
+      gap: .5rem;
+    }
+    .subgrid-child > div {
+      background: var(--purple-lt);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      padding: .4rem;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: .72rem;
+      color: var(--purple);
+    }
+
+    /* container query */
+    @container sidebar (min-width: 200px) {
+      .cq-item { background: var(--teal-lt); }
+    }
+    .cq-wrap { container-type: inline-size; container-name: sidebar; }
+    .cq-item { background: var(--amber-lt); border-radius: var(--r-md); padding: var(--sp-3); font-family: var(--mono); font-size: .8rem; color: var(--teal); transition: background var(--t-base); }
+
+    /* has() :is() :where() :not() */
+    .has-demo:has(input:checked) { background: var(--green-lt); border-color: var(--green); }
+    .has-demo { border: 1.5px solid var(--border); border-radius: var(--r-md); padding: var(--sp-3); transition: background var(--t-base), border-color var(--t-base); }
+
+    :is(h1, h2, h3, h4, h5, h6) .hl { color: var(--amber); }
+    :where(.tag-card, .card) { transition: transform var(--t-base), box-shadow var(--t-base); }
+
+    /* ══════════════════════════════════
+       FLEX-ROW
+    ══════════════════════════════════ */
+    .flex-row { display: flex; gap: var(--sp-4); flex-wrap: wrap; align-items: center; }
+  </style>
+</head>
+
+<body>
+
+  <!-- SKIP LINK -->
+  <a href="#main-content" class="skip-link">Saltar al contenido</a>
+
+  <!-- ╔══════════════════════════════════╗
+       ║            HEADER               ║
+       ╚══════════════════════════════════╝ -->
+  <header class="site-header" role="banner">
+    <hgroup>
+      <h1>HTML <span>&amp;</span> CSS</h1>
+      <p class="tagline">Todas las etiquetas y propiedades en una sola página</p>
+    </hgroup>
+  </header>
+
+  <!-- ╔══════════════════════════════════╗
+       ║              NAV                ║
+       ╚══════════════════════════════════╝ -->
+  <nav class="site-nav" aria-label="Navegación principal">
+    <ul>
+      <li><a href="#sec-doc">Documento</a></li>
+      <li><a href="#sec-texto">Texto</a></li>
+      <li><a href="#sec-listas">Listas</a></li>
+      <li><a href="#sec-tablas">Tablas</a></li>
+      <li><a href="#sec-forms">Formularios</a></li>
+      <li><a href="#sec-media">Multimedia</a></li>
+      <li><a href="#sec-semantica">Semántica</a></li>
+      <li><a href="#sec-interactivo">Interactivo</a></li>
+      <li><a href="#sec-css-props">CSS Props</a></li>
+      <li><a href="#sec-selectores">Selectores</a></li>
+      <li><a href="#sec-layout">Layout</a></li>
+      <li><a href="#sec-visual">Visual</a></li>
+      <li><a href="#sec-anim">Animaciones</a></li>
+    </ul>
+  </nav>
+
+  <!-- ╔══════════════════════════════════╗
+       ║             MAIN                ║
+       ╚══════════════════════════════════╝ -->
+  <main id="main-content">
+    <div class="site-wrapper">
+
+      <!-- ─────────────────────────────────
+           1. ESTRUCTURA DEL DOCUMENTO
+      ───────────────────────────────── -->
+      <section class="section" id="sec-doc">
+        <h2 class="section-title">1. Estructura del Documento <span class="pill">base</span></h2>
+
+        <div class="tag-grid-4">
+          <article class="tag-card c-doc"><span class="tag-name">&lt;!DOCTYPE html&gt;</span><p class="tag-desc">Declara la versión del documento HTML al navegador.</p></article>
+          <article class="tag-card c-doc"><span class="tag-name">&lt;html&gt;</span><p class="tag-desc">Elemento raíz. Atributos: lang, dir.</p></article>
+          <article class="tag-card c-doc"><span class="tag-name">&lt;head&gt;</span><p class="tag-desc">Metadatos del documento. No visible directamente.</p></article>
+          <article class="tag-card c-doc"><span class="tag-name">&lt;title&gt;</span><p class="tag-desc">Título de la pestaña del navegador.</p></article>
+          <article class="tag-card c-doc"><span class="tag-name">&lt;meta&gt;</span><p class="tag-desc">charset, viewport, description, author, robots, og:*.</p></article>
+          <article class="tag-card c-doc"><span class="tag-name">&lt;link&gt;</span><p class="tag-desc">Hoja de estilos externa, iconos, preconnect, preload.</p></article>
+          <article class="tag-card c-doc"><span class="tag-name">&lt;style&gt;</span><p class="tag-desc">CSS incrustado en el documento HTML.</p></article>
+          <article class="tag-card c-doc"><span class="tag-name">&lt;script&gt;</span><p class="tag-desc">JS embebido o externo (src). async, defer, type=module.</p></article>
+          <article class="tag-card c-doc"><span class="tag-name">&lt;base&gt;</span><p class="tag-desc">URL base para todos los enlaces relativos.</p></article>
+          <article class="tag-card c-doc"><span class="tag-name">&lt;noscript&gt;</span><p class="tag-desc">Alternativa si JavaScript está deshabilitado.</p></article>
+          <article class="tag-card c-doc"><span class="tag-name">&lt;template&gt;</span><p class="tag-desc">Fragmento HTML inerte que JS puede clonar e insertar.</p></article>
+          <article class="tag-card c-doc"><span class="tag-name">&lt;body&gt;</span><p class="tag-desc">Contenido visible de la página.</p></article>
+        </div>
+      </section>
+
+      <hr class="fancy" />
+
+      <!-- ─────────────────────────────────
+           2. TEXTO
+      ───────────────────────────────── -->
+      <section class="section" id="sec-texto">
+        <h2 class="section-title">2. Etiquetas de Texto <span class="pill">typography</span></h2>
+
+        <!-- 2.1 Encabezados -->
+        <p class="subsection-title">Encabezados</p>
+        <div class="demo-block">
+          <div class="demo-label">h1 → h6</div>
+          <div class="demo-render typo-demo">
+            <h1>h1 — Encabezado principal</h1>
+            <h2>h2 — Sección principal</h2>
+            <h3>h3 — Subsección</h3>
+            <h4>h4 — Grupo de contenido</h4>
+            <h5>h5 — Detalle</h5>
+            <h6>h6 — Nota menor</h6>
+          </div>
+        </div>
+
+        <!-- 2.2 Párrafo y línea -->
+        <p class="subsection-title">Párrafo, saltos y reglas</p>
+        <div class="demo-block">
+          <div class="demo-label">p · br · hr · wbr</div>
+          <div class="demo-render">
+            <p>Párrafo <code>&lt;p&gt;</code> con texto de ejemplo. Aquí hay un<br />salto de línea con <code>&lt;br&gt;</code>.</p>
+            <p style="margin-top:.5rem;">Esta<wbr>Palabra<wbr>Muy<wbr>Larga<wbr>PuedeRomperse con <code>&lt;wbr&gt;</code>.</p>
+            <hr style="border:none;border-top:1.5px dashed var(--border);margin:.75rem 0;" />
+            <p style="font-size:.85rem;color:var(--gray);">Después de <code>&lt;hr&gt;</code>.</p>
+          </div>
+        </div>
+
+        <!-- 2.3 Formato en línea -->
+        <p class="subsection-title">Formato en línea</p>
+        <div class="demo-block">
+          <div class="demo-label">strong · em · b · i · u · s · small · sub · sup · mark · del · ins · abbr · cite · q · dfn · time · data · bdi · bdo · ruby · rt · rp · kbd · samp · var · code · wbr · span</div>
+          <div class="demo-render" style="line-height:2.6;font-size:.95rem;">
+            <strong>Negrita semántica</strong> &bull;
+            <em>Énfasis/cursiva</em> &bull;
+            <b>Bold visual</b> &bull;
+            <i>Cursiva visual</i> &bull;
+            <u>Subrayado</u> &bull;
+            <s>Tachado</s> &bull;
+            <small>Pequeño</small> &bull;
+            texto normal<sup>sup</sup> &bull;
+            texto<sub>sub</sub> &bull;
+            <mark>Resaltado</mark> &bull;
+            <del>Eliminado</del> &bull;
+            <ins>Insertado</ins> &bull;
+            <abbr title="HyperText Markup Language">HTML</abbr> &bull;
+            <cite>Obra citada</cite> &bull;
+            <q>Cita corta en línea</q> &bull;
+            <dfn>Término definido</dfn> &bull;
+            <time datetime="2024-01-01">1 ene 2024</time> &bull;
+            <data value="42">cuarenta y dos</data> &bull;
+            <bdi dir="rtl">نص عربي</bdi> &bull;
+            <bdo dir="rtl">Texto RTL</bdo> &bull;
+            <ruby>漢<rp>(</rp><rt>kan</rt><rp>)</rp></ruby> &bull;
+            <kbd>Ctrl</kbd>+<kbd>C</kbd> &bull;
+            <samp>output</samp> &bull;
+            <var>variable</var> &bull;
+            <code>código</code> &bull;
+            <span style="color:var(--coral);font-family:var(--display);font-weight:700;">span estilado</span>
+          </div>
+        </div>
+
+        <!-- 2.4 Blockquote / pre / address -->
+        <p class="subsection-title">Citas, código y dirección</p>
+        <div class="demo-block">
+          <div class="demo-label">blockquote · pre · code · address</div>
+          <div class="demo-render" style="display:flex;flex-direction:column;gap:1rem;">
+            <blockquote class="bq">
+              "La simplicidad es la máxima sofisticación."
+              <cite>— Leonardo da Vinci</cite>
+            </blockquote>
+            <pre class="code-block"><span class="kw">function</span> <span class="at">saluda</span>(<span class="vl">nombre</span>) {
+  <span class="kw">return</span> `Hola, ${<span class="vl">nombre</span>}!`;
+}
+<span class="cm">// imprime en consola</span>
+console.<span class="at">log</span>(<span class="at">saluda</span>(<span class="vl">"mundo"</span>));</pre>
+            <address>
+              <strong>Contacto:</strong> Calle Ejemplo 42, Palmira —
+              <a href="mailto:info@ejemplo.com" style="color:var(--amber-dk);">info@ejemplo.com</a>
+            </address>
+          </div>
+        </div>
+
+        <!-- 2.5 Drop cap + pseudo-elements tipografía -->
+        <p class="subsection-title">::first-letter · ::first-line · ::selection</p>
+        <div class="demo-block">
+          <div class="demo-label">Pseudo-elementos tipográficos</div>
+          <div class="demo-render pseudo-elements">
+            <p>Esta demostración muestra cómo los pseudo-elementos de CSS afectan la tipografía. La primera letra se convierte en una letra capital decorativa gracias a <code>::first-letter</code>. La primera línea tiene versalitas gracias a <code>::first-line</code>. Selecciona este texto para ver <code>::selection</code> en acción con fondo ámbar.</p>
+            <ul style="margin-top:.75rem;padding-left:1.5rem;">
+              <li>Elemento de lista con <code>::marker</code> en ámbar</li>
+              <li>Otro elemento de lista</li>
+            </ul>
+            <p style="margin-top:.75rem;">
+              <input placeholder="Placeholder estilado con ::placeholder" style="border:1.5px solid var(--border);border-radius:var(--r-md);padding:.35rem .75rem;font-family:var(--serif);font-size:.9rem;width:100%;max-width:360px;" />
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <hr class="fancy" />
+
+      <!-- ─────────────────────────────────
+           3. LISTAS
+      ───────────────────────────────── -->
+      <section class="section" id="sec-listas">
+        <h2 class="section-title">3. Listas <span class="pill">lists</span></h2>
+        <div class="tag-grid-3" style="margin-bottom:1rem;">
+          <div class="demo-block" style="margin:0;">
+            <div class="demo-label">&lt;ul&gt; · disc</div>
+            <div class="demo-render">
+              <ul class="styled-ul">
+                <li>HTML</li><li>CSS</li><li>JavaScript</li>
+              </ul>
+            </div>
+          </div>
+          <div class="demo-block" style="margin:0;">
+            <div class="demo-label">&lt;ul&gt; · square / circle</div>
+            <div class="demo-render">
+              <ul class="ls-square"><li>square</li><li>tipo cuadrado</li></ul>
+              <ul class="ls-circle" style="margin-top:.5rem;"><li>circle</li><li>tipo círculo</li></ul>
+            </div>
+          </div>
+          <div class="demo-block" style="margin:0;">
+            <div class="demo-label">&lt;ol&gt; · decimal / alpha / roman</div>
+            <div class="demo-render">
+              <ol class="styled-ol"><li>Diseñar</li><li>Codificar</li><li>Publicar</li></ol>
+              <ol class="alpha" style="margin-top:.5rem;padding-left:1.5rem;"><li>alpha</li><li>beta</li></ol>
+              <ol class="roman" style="margin-top:.5rem;padding-left:1.5rem;"><li>I</li><li>II</li><li>III</li></ol>
+            </div>
+          </div>
+          <div class="demo-block" style="margin:0;">
+            <div class="demo-label">&lt;dl&gt; · &lt;dt&gt; · &lt;dd&gt;</div>
+            <div class="demo-render">
+              <dl class="styled-dl">
+                <dt>HTML</dt><dd>Estructura del documento</dd>
+                <dt>CSS</dt><dd>Presentación y estilos</dd>
+                <dt>JS</dt><dd>Comportamiento dinámico</dd>
+              </dl>
+            </div>
+          </div>
+          <div class="demo-block" style="margin:0;">
+            <div class="demo-label">&lt;menu&gt; · lista de comandos</div>
+            <div class="demo-render">
+              <menu style="list-style:none;display:flex;gap:6px;padding:0;">
+                <li><button class="btn btn-primary" style="font-size:.75rem;padding:4px 12px;">Cortar</button></li>
+                <li><button class="btn btn-secondary" style="font-size:.75rem;padding:4px 12px;">Copiar</button></li>
+                <li><button class="btn btn-ghost" style="font-size:.75rem;padding:4px 12px;">Pegar</button></li>
+              </menu>
+            </div>
+          </div>
+          <div class="demo-block" style="margin:0;">
+            <div class="demo-label">@counter-style thumbs</div>
+            <div class="demo-render">
+              <ol class="custom-ctr" style="padding-left:1.8rem;">
+                <li>Primero</li><li>Segundo</li><li>Tercero</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="fancy" />
+
+      <!-- ─────────────────────────────────
+           4. TABLAS
+      ───────────────────────────────── -->
+      <section class="section" id="sec-tablas">
+        <h2 class="section-title">4. Tablas <span class="pill">tables</span></h2>
+        <div class="tag-grid-4" style="margin-bottom:1.5rem;">
+          <article class="tag-card c-table"><span class="tag-name">&lt;table&gt;</span><p class="tag-desc">Contenedor raíz de la tabla.</p></article>
+          <article class="tag-card c-table"><span class="tag-name">&lt;caption&gt;</span><p class="tag-desc">Título descriptivo de la tabla.</p></article>
+          <article class="tag-card c-table"><span class="tag-name">&lt;colgroup&gt; + &lt;col&gt;</span><p class="tag-desc">Agrupación y estilos de columnas.</p></article>
+          <article class="tag-card c-table"><span class="tag-name">&lt;thead&gt; / &lt;tbody&gt; / &lt;tfoot&gt;</span><p class="tag-desc">Secciones de cabecera, cuerpo y pie.</p></article>
+          <article class="tag-card c-table"><span class="tag-name">&lt;tr&gt;</span><p class="tag-desc">Fila de tabla.</p></article>
+          <article class="tag-card c-table"><span class="tag-name">&lt;th&gt;</span><p class="tag-desc">Celda de cabecera. Atributos: scope, colspan, rowspan.</p></article>
+          <article class="tag-card c-table"><span class="tag-name">&lt;td&gt;</span><p class="tag-desc">Celda de datos. Atributos: colspan, rowspan.</p></article>
+        </div>
+        <div class="demo-block">
+          <div class="demo-label">Tabla completa con caption · colgroup · thead · tbody · tfoot · colspan · rowspan</div>
+          <div class="demo-render" style="overflow-x:auto;">
+            <table class="tbl">
+              <caption>Lenguajes de la Web 2024</caption>
+              <colgroup>
+                <col style="width:25%;" />
+                <col style="width:35%;" />
+                <col style="width:25%;" />
+                <col style="width:15%;" />
+              </colgroup>
+              <thead>
+                <tr>
+                  <th scope="col">Lenguaje</th>
+                  <th scope="col">Función</th>
+                  <th scope="col">Versión</th>
+                  <th scope="col">Año</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>HTML</td>
+                  <td>Estructura y semántica</td>
+                  <td>Living Standard</td>
+                  <td>1991</td>
+                </tr>
+                <tr>
+                  <td>CSS</td>
+                  <td>Presentación y diseño</td>
+                  <td>CSS3 / Módulos</td>
+                  <td>1996</td>
+                </tr>
+                <tr>
+                  <td>JavaScript</td>
+                  <td>Comportamiento dinámico</td>
+                  <td>ES2024</td>
+                  <td>1995</td>
+                </tr>
+                <tr>
+                  <td colspan="2">WebAssembly (WASM)</td>
+                  <td>Rendimiento nativo</td>
+                  <td>2019</td>
+                </tr>
+                <tr>
+                  <td rowspan="2">Web Components</td>
+                  <td>Custom Elements</td>
+                  <td>v1</td>
+                  <td>2018</td>
+                </tr>
+                <tr>
+                  <td>Shadow DOM</td>
+                  <td>v1</td>
+                  <td>2018</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="4">Fuente: MDN Web Docs · W3C · ECMA International</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <hr class="fancy" />
+
+      <!-- ─────────────────────────────────
+           5. FORMULARIOS
+      ───────────────────────────────── -->
+      <section class="section" id="sec-forms">
+        <h2 class="section-title">5. Formularios — todos los inputs <span class="pill">forms</span></h2>
+        <div class="demo-block">
+          <div class="demo-label">form · fieldset · legend · label · input(todos los tipos) · select · optgroup · option · textarea · button · datalist · output · meter · progress</div>
+          <div class="demo-render">
+            <form class="demo-form" novalidate autocomplete="on" onsubmit="return false;" method="post" enctype="multipart/form-data">
+
+              <fieldset style="border:1.5px solid var(--border);border-radius:var(--r-lg);padding:1rem;">
+                <legend style="font-family:var(--display);font-weight:700;padding:0 8px;color:var(--amber-dk);">Información personal</legend>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+                  <div class="fld"><label for="f-nombre">Nombre</label><input type="text" id="f-nombre" name="nombre" placeholder="Ana García" autocomplete="given-name" required /></div>
+                  <div class="fld"><label for="f-apellido">Apellido</label><input type="text" id="f-apellido" name="apellido" placeholder="García" autocomplete="family-name" /></div>
+                  <div class="fld"><label for="f-email">Email</label><input type="email" id="f-email" name="email" placeholder="ana@ejemplo.com" autocomplete="email" /></div>
+                  <div class="fld"><label for="f-tel">Teléfono</label><input type="tel" id="f-tel" name="tel" placeholder="+57 300 000 0000" autocomplete="tel" /></div>
+                  <div class="fld"><label for="f-fecha">Fecha nacimiento</label><input type="date" id="f-fecha" name="fecha" /></div>
+                  <div class="fld"><label for="f-edad">Edad</label><input type="number" id="f-edad" name="edad" min="0" max="120" step="1" value="25" /></div>
+                </div>
+              </fieldset>
+
+              <fieldset style="border:1.5px solid var(--border);border-radius:var(--r-lg);padding:1rem;">
+                <legend style="font-family:var(--display);font-weight:700;padding:0 8px;color:var(--teal);">Todos los tipos de input</legend>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+                  <div class="fld"><label for="f-pass">password</label><input type="password" id="f-pass" name="pass" placeholder="••••••••" /></div>
+                  <div class="fld"><label for="f-url">url</label><input type="url" id="f-url" name="url" placeholder="https://..." /></div>
+                  <div class="fld"><label for="f-search">search</label><input type="search" id="f-search" name="search" placeholder="Buscar..." /></div>
+                  <div class="fld"><label for="f-time">time</label><input type="time" id="f-time" name="time" /></div>
+                  <div class="fld"><label for="f-month">month</label><input type="month" id="f-month" name="month" /></div>
+                  <div class="fld"><label for="f-week">week</label><input type="week" id="f-week" name="week" /></div>
+                  <div class="fld"><label for="f-datetime">datetime-local</label><input type="datetime-local" id="f-datetime" name="datetime" /></div>
+                  <div class="fld"><label for="f-file">file</label><input type="file" id="f-file" name="file" accept=".pdf,.jpg,.png" multiple /></div>
+                  <div class="fld"><label for="f-color">color</label><input type="color" id="f-color" name="color" value="#c8860a" /></div>
+                  <div class="fld">
+                    <label for="f-range">range: <output id="f-range-out">50</output></label>
+                    <input type="range" id="f-range" name="range" min="0" max="100" value="50" oninput="document.getElementById('f-range-out').value=this.value" />
+                  </div>
+                  <div class="fld" style="flex-direction:row;align-items:center;gap:.5rem;"><label for="f-chk">checkbox</label><input type="checkbox" id="f-chk" name="check" checked /></div>
+                  <div class="fld" style="flex-direction:row;align-items:center;gap:.5rem;"><label for="f-chk2">checkbox 2</label><input type="checkbox" id="f-chk2" name="check2" /></div>
+                </div>
+                <!-- radio -->
+                <div class="fld" style="margin-top:.75rem;">
+                  <label>Radio buttons</label>
+                  <div class="flex-row" style="gap:var(--sp-4);">
+                    <label style="font-weight:400;display:flex;align-items:center;gap:5px;font-family:var(--serif);font-size:.9rem;"><input type="radio" name="rol" value="fe" checked /> Frontend</label>
+                    <label style="font-weight:400;display:flex;align-items:center;gap:5px;font-family:var(--serif);font-size:.9rem;"><input type="radio" name="rol" value="be" /> Backend</label>
+                    <label style="font-weight:400;display:flex;align-items:center;gap:5px;font-family:var(--serif);font-size:.9rem;"><input type="radio" name="rol" value="fs" /> Fullstack</label>
+                  </div>
+                </div>
+                <!-- datalist -->
+                <div class="fld" style="margin-top:.75rem;">
+                  <label for="f-fw">Framework (datalist)</label>
+                  <input type="text" id="f-fw" name="fw" list="fw-list" placeholder="Elige o escribe..." />
+                  <datalist id="fw-list">
+                    <option value="React" /><option value="Vue" /><option value="Angular" /><option value="Svelte" /><option value="Astro" /><option value="SolidJS" />
+                  </datalist>
+                </div>
+                <!-- hidden -->
+                <input type="hidden" name="origen" value="referencia-html" />
+                <!-- image (submit) -->
+                <div class="fld" style="margin-top:.75rem;">
+                  <label>input type=image (submit con imagen)</label>
+                  <div class="media-ph" style="max-width:200px;font-size:.72rem;">&lt;input type="image" src="..." alt="Enviar"&gt;</div>
+                </div>
+              </fieldset>
+
+              <fieldset style="border:1.5px solid var(--border);border-radius:var(--r-lg);padding:1rem;">
+                <legend style="font-family:var(--display);font-weight:700;padding:0 8px;color:var(--blue);">Select, optgroup, textarea, output</legend>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+                  <div class="fld">
+                    <label for="f-pais">País (select + optgroup)</label>
+                    <select id="f-pais" name="pais">
+                      <optgroup label="América">
+                        <option value="co" selected>Colombia</option>
+                        <option value="mx">México</option>
+                        <option value="ar">Argentina</option>
+                      </optgroup>
+                      <optgroup label="Europa">
+                        <option value="es">España</option>
+                        <option value="fr">Francia</option>
+                      </optgroup>
+                    </select>
+                  </div>
+                  <div class="fld">
+                    <label for="f-multi">Select múltiple</label>
+                    <select id="f-multi" name="multi" multiple size="3">
+                      <option value="html" selected>HTML</option>
+                      <option value="css" selected>CSS</option>
+                      <option value="js">JavaScript</option>
+                      <option value="ts">TypeScript</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="fld" style="margin-top:.75rem;">
+                  <label for="f-bio">Textarea</label>
+                  <textarea id="f-bio" name="bio" rows="3" cols="40" placeholder="Cuéntanos sobre ti..." maxlength="300" spellcheck="true"></textarea>
+                </div>
+                <div class="fld" style="margin-top:.75rem;">
+                  <label>Cálculo con output</label>
+                  <div class="flex-row" style="gap:.5rem;align-items:center;">
+                    <input type="number" id="calc-a" value="10" style="width:70px;border:1.5px solid var(--border);border-radius:var(--r-md);padding:.3rem .5rem;font-family:var(--serif);" oninput="calcResult.value = +calcA.value + +calcB.value" />
+                    <span style="font-family:var(--display);font-weight:700;">+</span>
+                    <input type="number" id="calc-b" value="5" style="width:70px;border:1.5px solid var(--border);border-radius:var(--r-md);padding:.3rem .5rem;font-family:var(--serif);" oninput="calcResult.value = +calcA.value + +calcB.value" />
+                    <span style="font-family:var(--display);font-weight:700;">=</span>
+                    <output id="calc-result" name="result" for="calc-a calc-b" style="font-family:var(--mono);font-size:1.1rem;font-weight:700;color:var(--amber-dk);">15</output>
+                  </div>
+                </div>
+                <!-- meter y progress -->
+                <div style="margin-top:.75rem;">
+                  <label style="font-family:var(--display);font-size:.82rem;font-weight:700;">progress (tarea completada)</label>
+                  <progress value="68" max="100">68%</progress>
+                  <label style="font-family:var(--display);font-size:.82rem;font-weight:700;display:block;margin-top:.5rem;">meter (nivel de batería)</label>
+                  <meter value="0.72" min="0" max="1" low="0.25" high="0.75" optimum="0.9">72%</meter>
+                </div>
+              </fieldset>
+
+              <!-- Botones -->
+              <div class="flex-row" style="gap:.5rem;margin-top:.25rem;">
+                <button type="submit" class="btn btn-primary">Enviar</button>
+                <button type="reset" class="btn btn-secondary">Restablecer</button>
+                <button type="button" class="btn btn-danger">Acción</button>
+                <button type="button" class="btn btn-ghost" disabled>Deshabilitado</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <hr class="fancy" />
+
+      <!-- ─────────────────────────────────
+           6. MULTIMEDIA
+      ───────────────────────────────── -->
+      <section class="section" id="sec-media">
+        <h2 class="section-title">6. Multimedia <span class="pill">media</span></h2>
+        <div class="tag-grid-4" style="margin-bottom:1.5rem;">
+          <article class="tag-card c-media"><span class="tag-name">&lt;img&gt;</span><p class="tag-desc">src, alt, width, height, loading, srcset, sizes, decoding.</p></article>
+          <article class="tag-card c-media"><span class="tag-name">&lt;picture&gt;</span><p class="tag-desc">Imágenes responsivas con múltiples fuentes condicionales.</p></article>
+          <article class="tag-card c-media"><span class="tag-name">&lt;source&gt;</span><p class="tag-desc">Fuente alternativa para picture, audio o video.</p></article>
+          <article class="tag-card c-media"><span class="tag-name">&lt;figure&gt;</span><p class="tag-desc">Contenedor semántico para imágenes, diagramas, código.</p></article>
+          <article class="tag-card c-media"><span class="tag-name">&lt;figcaption&gt;</span><p class="tag-desc">Leyenda del elemento figure.</p></article>
+          <article class="tag-card c-media"><span class="tag-name">&lt;audio&gt;</span><p class="tag-desc">Reproductor de audio: controls, autoplay, loop, muted, src.</p></article>
+          <article class="tag-card c-media"><span class="tag-name">&lt;video&gt;</span><p class="tag-desc">Reproductor de vídeo: controls, width, height, poster, loop.</p></article>
+          <article class="tag-card c-media"><span class="tag-name">&lt;track&gt;</span><p class="tag-desc">Subtítulos/capítulos para audio/video en WebVTT.</p></article>
+          <article class="tag-card c-media"><span class="tag-name">&lt;canvas&gt;</span><p class="tag-desc">Área de dibujo 2D/3D manipulada con JavaScript.</p></article>
+          <article class="tag-card c-media"><span class="tag-name">&lt;svg&gt;</span><p class="tag-desc">Gráficos vectoriales escalables inline.</p></article>
+          <article class="tag-card c-media"><span class="tag-name">&lt;iframe&gt;</span><p class="tag-desc">Documento externo incrustado. Atributos: src, sandbox, loading.</p></article>
+          <article class="tag-card c-media"><span class="tag-name">&lt;embed&gt;</span><p class="tag-desc">Contenido externo (plugin). src, type, width, height.</p></article>
+          <article class="tag-card c-media"><span class="tag-name">&lt;object&gt; + &lt;param&gt;</span><p class="tag-desc">Objeto externo con parámetros y contenido alternativo.</p></article>
+          <article class="tag-card c-media"><span class="tag-name">&lt;map&gt; + &lt;area&gt;</span><p class="tag-desc">Zonas clicables sobre una imagen (image map).</p></article>
+        </div>
+
+        <div class="demo-block">
+          <div class="demo-label">SVG inline · figure · figcaption · canvas demo</div>
+          <div class="demo-render" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.5rem;align-items:start;">
+            <!-- SVG -->
+            <figure>
+              <svg width="160" height="100" viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Formas SVG de ejemplo">
+                <title>SVG inline de ejemplo</title>
+                <defs>
+                  <linearGradient id="svgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#c8860a;stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:#b84433;stop-opacity:1" />
+                  </linearGradient>
+                  <clipPath id="svgClip">
+                    <rect x="10" y="10" width="140" height="80" rx="10" />
+                  </clipPath>
+                </defs>
+                <rect x="10" y="10" width="140" height="80" rx="10" fill="url(#svgGrad)" />
+                <circle cx="55" cy="50" r="20" fill="rgba(255,255,255,.3)" />
+                <polygon points="110,30 130,60 90,60" fill="rgba(255,255,255,.4)" />
+                <text x="80" y="55" text-anchor="middle" fill="#fff" font-family="Syne,sans-serif" font-weight="700" font-size="13">SVG</text>
+                <path d="M20 70 Q80 90 140 70" stroke="#fff" stroke-width="2" fill="none" stroke-dasharray="4 3" />
+              </svg>
+              <figcaption>SVG con gradiente, formas y path</figcaption>
+            </figure>
+            <!-- Canvas -->
+            <figure>
+              <canvas id="demo-canvas" width="160" height="100" style="border-radius:var(--r-md);display:block;"></canvas>
+              <figcaption>Canvas 2D animado</figcaption>
+            </figure>
+            <!-- picture demo placeholder -->
+            <figure>
+              <div class="media-ph" style="min-height:80px;">
+                &lt;picture&gt;<br />
+                &lt;source srcset="img.webp" type="image/webp"&gt;<br />
+                &lt;img src="img.jpg" alt="..."&gt;<br />
+                &lt;/picture&gt;
+              </div>
+              <figcaption>picture + source</figcaption>
+            </figure>
+            <!-- audio placeholder -->
+            <figure>
+              <div class="media-ph" style="min-height:80px;">🎵 &lt;audio controls&gt;<br />&lt;source src="audio.mp3"&gt;<br />&lt;/audio&gt;</div>
+              <figcaption>audio + source</figcaption>
+            </figure>
+            <!-- video placeholder -->
+            <figure>
+              <div class="media-ph" style="min-height:80px;">🎬 &lt;video controls poster="..."&gt;<br />&lt;source src="vid.mp4"&gt;<br />&lt;track kind="subtitles"&gt;<br />&lt;/video&gt;</div>
+              <figcaption>video + source + track</figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <!-- aspect-ratio / object-fit -->
+        <p class="subsection-title">aspect-ratio · object-fit</p>
+        <div class="demo-block">
+          <div class="demo-label">CSS: aspect-ratio · object-fit</div>
+          <div class="demo-render" style="display:flex;gap:1rem;flex-wrap:wrap;">
+            <div>
+              <p style="font-family:var(--mono);font-size:.72rem;color:var(--gray);margin-bottom:.3rem;">aspect-ratio: 16/9</p>
+              <div class="aspect-demo">16 / 9</div>
+            </div>
+            <div>
+              <p style="font-family:var(--mono);font-size:.72rem;color:var(--gray);margin-bottom:.3rem;">aspect-ratio: 1/1</p>
+              <div style="aspect-ratio:1/1;width:80px;background:var(--teal-lt);border:2px dashed var(--border);border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;color:var(--teal);">1 / 1</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="fancy" />
+
+      <!-- ─────────────────────────────────
+           7. SEMÁNTICA HTML5
+      ───────────────────────────────── -->
+      <section class="section" id="sec-semantica">
+        <h2 class="section-title">7. Elementos Semánticos HTML5 <span class="pill">semantic</span></h2>
+        <div class="tag-grid-4">
+          <article class="tag-card c-sem"><span class="tag-name">&lt;header&gt;</span><p class="tag-desc">Cabecera de página o sección.</p></article>
+          <article class="tag-card c-sem"><span class="tag-name">&lt;nav&gt;</span><p class="tag-desc">Bloque de navegación principal.</p></article>
+          <article class="tag-card c-sem"><span class="tag-name">&lt;main&gt;</span><p class="tag-desc">Contenido principal único del documento.</p></article>
+          <article class="tag-card c-sem"><span class="tag-name">&lt;section&gt;</span><p class="tag-desc">Sección temática con encabezado propio.</p></article>
+          <article class="tag-card c-sem"><span class="tag-name">&lt;article&gt;</span><p class="tag-desc">Contenido independiente: post, noticia, widget.</p></article>
+          <article class="tag-card c-sem"><span class="tag-name">&lt;aside&gt;</span><p class="tag-desc">Contenido lateral relacionado: sidebar, anuncios.</p></article>
+          <article class="tag-card c-sem"><span class="tag-name">&lt;footer&gt;</span><p class="tag-desc">Pie de página o sección: copyright, contacto.</p></article>
+          <article class="tag-card c-sem"><span class="tag-name">&lt;hgroup&gt;</span><p class="tag-desc">Agrupa encabezado y subtítulo.</p></article>
+          <article class="tag-card c-sem"><span class="tag-name">&lt;search&gt;</span><p class="tag-desc">Región de búsqueda (HTML5.3+).</p></article>
+          <article class="tag-card c-sem"><span class="tag-name">&lt;address&gt;</span><p class="tag-desc">Información de contacto del autor.</p></article>
+          <article class="tag-card c-sem"><span class="tag-name">&lt;div&gt;</span><p class="tag-desc">Contenedor genérico block-level sin semántica.</p></article>
+          <article class="tag-card c-sem"><span class="tag-name">&lt;span&gt;</span><p class="tag-desc">Contenedor inline genérico sin semántica.</p></article>
+        </div>
+
+        <p class="subsection-title" style="margin-top:1.5rem;">Mapa visual de la página</p>
+        <div class="demo-block">
+          <div class="demo-label">Estructura semántica HTML5 completa</div>
+          <div class="demo-render">
+            <div style="border:2px solid var(--border);border-radius:var(--r-lg);overflow:hidden;font-family:var(--mono);font-size:.72rem;">
+              <div style="background:var(--ink);color:var(--amber-lt);padding:.4rem .75rem;text-align:center;font-weight:700;">&lt;header&gt;</div>
+              <div style="background:var(--cream);padding:.3rem .75rem;text-align:center;border-bottom:1px solid var(--border);color:var(--teal);font-weight:700;">&lt;nav&gt;</div>
+              <div style="display:grid;grid-template-columns:1fr 2fr 1fr;">
+                <div style="background:var(--coral-lt);padding:.6rem;border-right:1px solid var(--border);color:var(--coral);font-weight:700;">&lt;aside&gt;<br /><span style="font-weight:400;color:var(--gray);">sidebar</span></div>
+                <div style="background:#fff;padding:.6rem;border-right:1px solid var(--border);">
+                  <div style="color:var(--blue);font-weight:700;">&lt;main&gt;</div>
+                  <div style="background:var(--blue-lt);padding:.3rem .5rem;margin:.3rem 0;border-radius:var(--r-sm);color:var(--blue);">&lt;section&gt; → &lt;article&gt; × n</div>
+                  <div style="background:var(--purple-lt);padding:.3rem .5rem;border-radius:var(--r-sm);color:var(--purple);">&lt;section&gt; → &lt;figure&gt;</div>
+                </div>
+                <div style="background:var(--green-lt);padding:.6rem;color:var(--green);font-weight:700;">&lt;aside&gt;<br /><span style="font-weight:400;color:var(--gray);">widget</span></div>
+              </div>
+              <div style="background:var(--ink);color:rgba(250,247,240,.6);padding:.4rem .75rem;text-align:center;font-weight:700;">&lt;footer&gt;</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="fancy" />
+
+      <!-- ─────────────────────────────────
+           8. INTERACTIVO
+      ───────────────────────────────── -->
+      <section class="section" id="sec-interactivo">
+        <h2 class="section-title">8. Elementos Interactivos <span class="pill">interactive</span></h2>
+
+        <!-- details/summary -->
+        <p class="subsection-title">details · summary</p>
+        <details class="dts">
+          <summary>¿Qué es el modelo de caja en CSS?</summary>
+          <div class="body">Todo elemento es una caja rectangular: <strong>contenido + padding + border + margin</strong>. Con <code>box-sizing: border-box</code>, el padding y border se incluyen dentro del width declarado.</div>
+        </details>
+        <details class="dts">
+          <summary>¿Cuándo usar &lt;section&gt; vs &lt;div&gt;?</summary>
+          <div class="body">&lt;section&gt; implica una sección temática con encabezado propio, visible en el esquema del documento. &lt;div&gt; no tiene significado semántico y sirve solo para agrupación o aplicación de estilos.</div>
+        </details>
+
+        <!-- dialog -->
+        <p class="subsection-title" style="margin-top:1.5rem;">dialog (modal)</p>
+        <div class="demo-block">
+          <div class="demo-label">&lt;dialog&gt; semántico</div>
+          <div class="demo-render">
+            <div style="background:rgba(26,18,8,.35);border-radius:var(--r-lg);padding:var(--sp-8);display:flex;align-items:center;justify-content:center;min-height:160px;">
+              <div role="dialog" aria-modal="true" aria-labelledby="dlg-ttl" style="background:#fff;border:2px solid var(--amber);border-radius:var(--r-lg);padding:var(--sp-6);max-width:320px;box-shadow:var(--shadow-lg);">
+                <h3 id="dlg-ttl" style="font-family:var(--display);font-size:1.05rem;margin-bottom:.5rem;">Confirmar acción</h3>
+                <p style="font-size:.9rem;color:#5a4e38;margin-bottom:var(--sp-4);">¿Deseas guardar los cambios realizados?</p>
+                <div class="flex-row" style="gap:.5rem;">
+                  <button class="btn btn-primary" style="font-size:.82rem;padding:5px 14px;">Guardar</button>
+                  <button class="btn btn-secondary" style="font-size:.82rem;padding:5px 14px;">Cancelar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- :has() demo -->
+        <p class="subsection-title">:has() · :is() · :where() · :not()</p>
+        <div class="demo-block">
+          <div class="demo-label">:has(input:checked) cambia el fondo del contenedor</div>
+          <div class="demo-render">
+            <label class="has-demo" style="display:flex;align-items:center;gap:.75rem;cursor:pointer;">
+              <input type="checkbox" /> Marcar esta casilla para cambiar el fondo con <code>:has()</code>
+            </label>
+          </div>
+        </div>
+
+        <!-- tooltip -->
+        <p class="subsection-title">Tooltip CSS puro</p>
+        <div class="demo-block">
+          <div class="demo-label">position · visibility · opacity · transition</div>
+          <div class="demo-render flex-row">
+            <div class="tip-wrap">
+              <span style="border-bottom:2px dashed var(--amber);cursor:help;font-family:var(--display);font-weight:700;color:var(--amber-dk);">Hover aquí</span>
+              <span class="tip" role="tooltip">¡Tooltip CSS puro!</span>
+            </div>
+            <div class="tip-wrap">
+              <button class="btn btn-ghost" style="font-size:.82rem;padding:5px 12px;">Botón con tooltip</button>
+              <span class="tip" role="tooltip">Acción secundaria</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- scroll snap -->
+        <p class="subsection-title">scroll-snap</p>
+        <div class="demo-block">
+          <div class="demo-label">scroll-snap-type · scroll-snap-align · overflow-x: auto</div>
+          <div class="demo-render">
+            <div class="snap-container">
+              <div class="snap-item" style="background:var(--amber-lt);color:var(--amber-dk);">Tarjeta 1</div>
+              <div class="snap-item" style="background:var(--teal-lt);color:var(--teal);">Tarjeta 2</div>
+              <div class="snap-item" style="background:var(--coral-lt);color:var(--coral);">Tarjeta 3</div>
+              <div class="snap-item" style="background:var(--blue-lt);color:var(--blue);">Tarjeta 4</div>
+              <div class="snap-item" style="background:var(--purple-lt);color:var(--purple);">Tarjeta 5</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="fancy" />
+
+      <!-- ─────────────────────────────────
+           9. PROPIEDADES CSS
+      ───────────────────────────────── -->
+      <section class="section" id="sec-css-props">
+        <h2 class="section-title">9. Propiedades CSS <span class="pill">all props</span></h2>
+
+        <!-- Box Model -->
+        <p class="subsection-title">Modelo de Caja</p>
+        <div style="overflow-x:auto;margin-bottom:1.5rem;">
+          <table class="css-table">
+            <caption>Box Model</caption>
+            <thead><tr><th>Propiedad</th><th>Valores comunes</th><th>Descripción</th></tr></thead>
+            <tbody>
+              <tr><td class="prop">width / height</td><td class="val">px · % · vw · vh · auto · min-content · max-content · fit-content</td><td>Dimensiones del contenido</td></tr>
+              <tr><td class="prop">min/max-width · min/max-height</td><td class="val">px · % · none · fit-content · clamp()</td><td>Límites de dimensión</td></tr>
+              <tr><td class="prop">padding</td><td class="val">0 · 8px · 1rem 2rem · 4px 8px 12px 16px</td><td>Espacio interior (T R B L)</td></tr>
+              <tr><td class="prop">margin</td><td class="val">0 auto · 1rem · -8px · auto</td><td>Espacio exterior</td></tr>
+              <tr><td class="prop">border</td><td class="val">1px solid #ccc · 2px dashed red · none</td><td>Borde shorthand</td></tr>
+              <tr><td class="prop">border-width / style / color</td><td class="val">px · solid/dashed/dotted/double · #hex</td><td>Partes del borde</td></tr>
+              <tr><td class="prop">border-radius</td><td class="val">8px · 50% · 4px 8px 4px 8px / 2px</td><td>Esquinas redondeadas</td></tr>
+              <tr><td class="prop">box-sizing</td><td class="val">border-box · content-box</td><td>Cómo se calcula el ancho</td></tr>
+              <tr><td class="prop">outline</td><td class="val">2px solid blue · none</td><td>Contorno (no ocupa espacio)</td></tr>
+              <tr><td class="prop">outline-offset</td><td class="val">2px · -2px</td><td>Distancia del outline al borde</td></tr>
+              <tr><td class="prop">box-shadow</td><td class="val">0 4px 12px rgba(0,0,0,.1) · inset 0 1px 3px</td><td>Sombra exterior o interior</td></tr>
+              <tr><td class="prop">overflow</td><td class="val">visible · hidden · scroll · auto · clip</td><td>Contenido que desborda</td></tr>
+              <tr><td class="prop">overflow-x / overflow-y</td><td class="val">auto · hidden · scroll</td><td>Control por eje</td></tr>
+              <tr><td class="prop">overscroll-behavior</td><td class="val">auto · contain · none</td><td>Scroll encadenado</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tipografía -->
+        <p class="subsection-title">Tipografía</p>
+        <div style="overflow-x:auto;margin-bottom:1.5rem;">
+          <table class="css-table">
+            <caption>Typography</caption>
+            <thead><tr><th>Propiedad</th><th>Valores comunes</th><th>Descripción</th></tr></thead>
+            <tbody>
+              <tr><td class="prop">font-family</td><td class="val">'Roboto',sans-serif · monospace · serif</td><td>Tipografía</td></tr>
+              <tr><td class="prop">font-size</td><td class="val">16px · 1rem · 1.2em · clamp(1rem,2vw,2rem)</td><td>Tamaño</td></tr>
+              <tr><td class="prop">font-weight</td><td class="val">100–900 · bold · lighter</td><td>Grosor</td></tr>
+              <tr><td class="prop">font-style</td><td class="val">normal · italic · oblique</td><td>Estilo</td></tr>
+              <tr><td class="prop">font-variant</td><td class="val">normal · small-caps · all-small-caps</td><td>Variante de fuente</td></tr>
+              <tr><td class="prop">font-stretch</td><td class="val">normal · condensed · expanded</td><td>Anchura de la fuente</td></tr>
+              <tr><td class="prop">line-height</td><td class="val">1.5 · 1.75 · 24px · normal</td><td>Altura de línea</td></tr>
+              <tr><td class="prop">letter-spacing</td><td class="val">0 · 0.05em · -0.02em</td><td>Espacio entre caracteres</td></tr>
+              <tr><td class="prop">word-spacing</td><td class="val">normal · 4px · 0.1em</td><td>Espacio entre palabras</td></tr>
+              <tr><td class="prop">text-align</td><td class="val">left · center · right · justify · start · end</td><td>Alineación</td></tr>
+              <tr><td class="prop">text-align-last</td><td class="val">auto · left · right · center · justify</td><td>Alineación última línea</td></tr>
+              <tr><td class="prop">text-decoration</td><td class="val">none · underline · overline · line-through</td><td>Decoración</td></tr>
+              <tr><td class="prop">text-decoration-style</td><td class="val">solid · wavy · dashed · dotted · double</td><td>Estilo de decoración</td></tr>
+              <tr><td class="prop">text-decoration-color</td><td class="val">#hex · currentColor</td><td>Color de decoración</td></tr>
+              <tr><td class="prop">text-transform</td><td class="val">uppercase · lowercase · capitalize · none</td><td>Transformación de caja</td></tr>
+              <tr><td class="prop">text-indent</td><td class="val">1em · 30px · 0</td><td>Sangría primera línea</td></tr>
+              <tr><td class="prop">text-overflow</td><td class="val">clip · ellipsis</td><td>Texto desbordante</td></tr>
+              <tr><td class="prop">text-shadow</td><td class="val">2px 2px 4px rgba(0,0,0,.3)</td><td>Sombra en texto</td></tr>
+              <tr><td class="prop">white-space</td><td class="val">normal · nowrap · pre · pre-wrap · pre-line · break-spaces</td><td>Espacios en blanco</td></tr>
+              <tr><td class="prop">word-break</td><td class="val">normal · break-all · keep-all · break-word</td><td>Ruptura de palabras</td></tr>
+              <tr><td class="prop">overflow-wrap</td><td class="val">normal · break-word · anywhere</td><td>Ajuste de palabras largas</td></tr>
+              <tr><td class="prop">hyphens</td><td class="val">none · auto · manual</td><td>Separación silábica</td></tr>
+              <tr><td class="prop">vertical-align</td><td class="val">baseline · top · middle · bottom · sub · super</td><td>Alineación vertical inline</td></tr>
+              <tr><td class="prop">writing-mode</td><td class="val">horizontal-tb · vertical-rl · vertical-lr</td><td>Dirección de escritura</td></tr>
+              <tr><td class="prop">text-orientation</td><td class="val">mixed · upright · sideways</td><td>Orientación en modo vertical</td></tr>
+              <tr><td class="prop">direction</td><td class="val">ltr · rtl</td><td>Dirección base del texto</td></tr>
+              <tr><td class="prop">unicode-bidi</td><td class="val">normal · embed · bidi-override</td><td>Control bidireccional</td></tr>
+              <tr><td class="prop">tab-size</td><td class="val">4 · 2 · 8</td><td>Ancho del carácter tab</td></tr>
+              <tr><td class="prop">quotes</td><td class="val">"«" "»" "‹" "›" · none</td><td>Caracteres de comillas</td></tr>
+              <tr><td class="prop">font-display</td><td class="val">auto · block · swap · fallback · optional</td><td>Estrategia carga fuente (@font-face)</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Color y Fondo -->
+        <p class="subsection-title">Color y Fondo</p>
+        <div class="demo-block" style="margin-bottom:1rem;">
+          <div class="demo-label">Formatos de color CSS</div>
+          <div class="demo-render">
+            <div class="color-row">
+              <span class="swatch" style="background:#c8860a;"></span><span class="color-label">#hex</span>
+              <span class="swatch" style="background:rgb(200,134,10);"></span><span class="color-label">rgb()</span>
+              <span class="swatch" style="background:rgba(200,134,10,.5);"></span><span class="color-label">rgba()</span>
+              <span class="swatch" style="background:hsl(38,90%,41%);"></span><span class="color-label">hsl()</span>
+              <span class="swatch" style="background:hsla(38,90%,41%,.6);"></span><span class="color-label">hsla()</span>
+              <span class="swatch" style="background:oklch(62% 0.17 60);"></span><span class="color-label">oklch()</span>
+              <span class="swatch" style="background:color(display-p3 0.78 0.52 0.04);"></span><span class="color-label">color(display-p3)</span>
+              <span class="swatch" style="background:currentColor;color:var(--coral);"></span><span class="color-label">currentColor</span>
+              <span class="swatch" style="background:transparent;border:2px solid var(--border);"></span><span class="color-label">transparent</span>
+            </div>
+          </div>
+        </div>
+        <div style="overflow-x:auto;margin-bottom:1.5rem;">
+          <table class="css-table">
+            <caption>Background</caption>
+            <thead><tr><th>Propiedad</th><th>Valores comunes</th><th>Descripción</th></tr></thead>
+            <tbody>
+              <tr><td class="prop">color</td><td class="val">#hex · rgb() · hsl() · oklch() · currentColor</td><td>Color del texto</td></tr>
+              <tr><td class="prop">background-color</td><td class="val">transparent · #fff · rgba()</td><td>Color de fondo sólido</td></tr>
+              <tr><td class="prop">background-image</td><td class="val">url() · linear-gradient() · radial-gradient() · conic-gradient() · none</td><td>Imagen o gradiente de fondo</td></tr>
+              <tr><td class="prop">background-size</td><td class="val">cover · contain · 100% auto · px · %</td><td>Tamaño del fondo</td></tr>
+              <tr><td class="prop">background-position</td><td class="val">center · top right · 50% 50%</td><td>Posición del fondo</td></tr>
+              <tr><td class="prop">background-repeat</td><td class="val">no-repeat · repeat-x · repeat-y · round · space</td><td>Repetición del fondo</td></tr>
+              <tr><td class="prop">background-attachment</td><td class="val">scroll · fixed · local</td><td>Desplazamiento del fondo</td></tr>
+              <tr><td class="prop">background-origin</td><td class="val">border-box · padding-box · content-box</td><td>Origen del fondo</td></tr>
+              <tr><td class="prop">background-clip</td><td class="val">border-box · padding-box · content-box · text</td><td>Área de recorte del fondo</td></tr>
+              <tr><td class="prop">background-blend-mode</td><td class="val">normal · multiply · screen · overlay · darken · lighten · hard-light · soft-light</td><td>Mezcla de capas de fondo</td></tr>
+              <tr><td class="prop">opacity</td><td class="val">0 · 0.5 · 1</td><td>Transparencia del elemento completo</td></tr>
+              <tr><td class="prop">mix-blend-mode</td><td class="val">normal · multiply · screen · overlay · difference · exclusion</td><td>Mezcla con elementos debajo</td></tr>
+              <tr><td class="prop">isolation</td><td class="val">auto · isolate</td><td>Crea nuevo contexto de apilamiento</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <hr class="fancy" />
+
+      <!-- ─────────────────────────────────
+           10. SELECTORES CSS
+      ───────────────────────────────── -->
+      <section class="section" id="sec-selectores">
+        <h2 class="section-title">10. Selectores CSS <span class="pill">selectors</span></h2>
+
+        <div class="demo-block">
+          <div class="demo-label">Pseudo-clases: :first-child · :last-child · :nth-child · :nth-child(even) · :not · :hover · :focus · data-attribute</div>
+          <div class="demo-render">
+            <div class="sel-demo">
+              <div>:first-child → ámbar</div>
+              <div>:nth-child(even) → borde dashed</div>
+              <div>:nth-child(3) → coral</div>
+              <div data-type="special">data-type="special" → purple</div>
+              <div>normal (opacidad .85)</div>
+              <div>normal (opacidad .85)</div>
+              <div>:last-child → teal</div>
+            </div>
+            <p style="font-size:.75rem;font-family:var(--mono);color:var(--gray);margin-top:.75rem;">Todos tienen ::before con "▸"</p>
+          </div>
+        </div>
+
+        <div class="demo-block">
+          <div class="demo-label">:link · :hover · :visited · :active · :focus-visible · :focus-within · :target · :checked · :enabled · :disabled · :valid · :invalid · :placeholder-shown · :required · :optional · :read-only · :empty · :is() · :not() · :where()</div>
+          <div class="demo-render link-pseudo">
+            <div class="flex-row" style="gap:var(--sp-4);">
+              <div>
+                <p style="font-family:var(--mono);font-size:.72rem;color:var(--gray);margin-bottom:.4rem;">:link · :hover · :visited · :active · :focus-visible</p>
+                <a href="#">Enlace de ejemplo</a>
+              </div>
+              <div class="input-pseudo" style="display:flex;flex-direction:column;gap:.4rem;">
+                <p style="font-family:var(--mono);font-size:.72rem;color:var(--gray);">:valid · :invalid · :focus · :placeholder-shown · :required</p>
+                <input type="email" placeholder="email@ej.com (válido: con @)" required />
+                <input type="text" value="Solo lectura" readonly />
+                <input type="text" disabled placeholder="Deshabilitado" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="overflow-x:auto;margin-bottom:1.5rem;">
+          <table class="css-table">
+            <caption>Todos los selectores CSS</caption>
+            <thead><tr><th>Selector</th><th>Ejemplo</th><th>Descripción</th></tr></thead>
+            <tbody>
+              <tr><td class="prop">*</td><td class="val">* { box-sizing: border-box }</td><td>Universal — todos los elementos</td></tr>
+              <tr><td class="prop">elemento</td><td class="val">p { ... }</td><td>Tipo / etiqueta</td></tr>
+              <tr><td class="prop">.clase</td><td class="val">.card { ... }</td><td>Clase CSS</td></tr>
+              <tr><td class="prop">#id</td><td class="val">#hero { ... }</td><td>Identificador único</td></tr>
+              <tr><td class="prop">A B</td><td class="val">div p { ... }</td><td>Descendiente (cualquier nivel)</td></tr>
+              <tr><td class="prop">A > B</td><td class="val">ul > li { ... }</td><td>Hijo directo</td></tr>
+              <tr><td class="prop">A + B</td><td class="val">h2 + p { ... }</td><td>Hermano adyacente</td></tr>
+              <tr><td class="prop">A ~ B</td><td class="val">h2 ~ p { ... }</td><td>Hermano general siguiente</td></tr>
+              <tr><td class="prop">[attr]</td><td class="val">[data-id] { ... }</td><td>Tiene atributo</td></tr>
+              <tr><td class="prop">[attr=val]</td><td class="val">[type="email"] { ... }</td><td>Atributo = valor exacto</td></tr>
+              <tr><td class="prop">[attr^=val]</td><td class="val">[href^="https"] { ... }</td><td>Atributo empieza con</td></tr>
+              <tr><td class="prop">[attr$=val]</td><td class="val">[href$=".pdf"] { ... }</td><td>Atributo termina con</td></tr>
+              <tr><td class="prop">[attr*=val]</td><td class="val">[class*="btn"] { ... }</td><td>Atributo contiene</td></tr>
+              <tr><td class="prop">[attr~=val]</td><td class="val">[class~="card"] { ... }</td><td>Atributo contiene palabra</td></tr>
+              <tr><td class="prop">:root</td><td class="val">:root { --color: red }</td><td>Elemento raíz del documento</td></tr>
+              <tr><td class="prop">:first-child</td><td class="val">li:first-child { ... }</td><td>Primer hijo</td></tr>
+              <tr><td class="prop">:last-child</td><td class="val">li:last-child { ... }</td><td>Último hijo</td></tr>
+              <tr><td class="prop">:nth-child(n)</td><td class="val">tr:nth-child(2n+1) { ... }</td><td>N-ésimo hijo (fórmula an+b)</td></tr>
+              <tr><td class="prop">:nth-last-child(n)</td><td class="val">li:nth-last-child(2) { ... }</td><td>N-ésimo hijo desde el final</td></tr>
+              <tr><td class="prop">:first-of-type</td><td class="val">p:first-of-type { ... }</td><td>Primer elemento de su tipo</td></tr>
+              <tr><td class="prop">:last-of-type</td><td class="val">h2:last-of-type { ... }</td><td>Último elemento de su tipo</td></tr>
+              <tr><td class="prop">:nth-of-type(n)</td><td class="val">p:nth-of-type(2) { ... }</td><td>N-ésimo de su tipo</td></tr>
+              <tr><td class="prop">:only-child</td><td class="val">p:only-child { ... }</td><td>Es hijo único</td></tr>
+              <tr><td class="prop">:only-of-type</td><td class="val">h2:only-of-type { ... }</td><td>Es el único de su tipo</td></tr>
+              <tr><td class="prop">:empty</td><td class="val">div:empty { ... }</td><td>Sin hijos ni texto</td></tr>
+              <tr><td class="prop">:not(selector)</td><td class="val">li:not(.active) { ... }</td><td>No coincide con selector</td></tr>
+              <tr><td class="prop">:is(A,B,C)</td><td class="val">:is(h1,h2,h3) { ... }</td><td>Coincide con cualquiera (alta especificidad)</td></tr>
+              <tr><td class="prop">:where(A,B)</td><td class="val">:where(.card,.box) { ... }</td><td>Como :is() pero especificidad 0</td></tr>
+              <tr><td class="prop">:has(B)</td><td class="val">form:has(:invalid) { ... }</td><td>Contiene elemento descendiente</td></tr>
+              <tr><td class="prop">:hover</td><td class="val">a:hover { ... }</td><td>Cursor sobre el elemento</td></tr>
+              <tr><td class="prop">:focus</td><td class="val">input:focus { ... }</td><td>Elemento con foco</td></tr>
+              <tr><td class="prop">:focus-visible</td><td class="val">button:focus-visible { ... }</td><td>Foco visible (teclado)</td></tr>
+              <tr><td class="prop">:focus-within</td><td class="val">form:focus-within { ... }</td><td>Contiene elemento con foco</td></tr>
+              <tr><td class="prop">:active</td><td class="val">button:active { ... }</td><td>Siendo activado (clic)</td></tr>
+              <tr><td class="prop">:visited</td><td class="val">a:visited { ... }</td><td>Enlace ya visitado</td></tr>
+              <tr><td class="prop">:link</td><td class="val">a:link { ... }</td><td>Enlace no visitado</td></tr>
+              <tr><td class="prop">:target</td><td class="val">#seccion:target { ... }</td><td>El ID del hash actual en URL</td></tr>
+              <tr><td class="prop">:checked</td><td class="val">input:checked { ... }</td><td>Checkbox/radio seleccionado</td></tr>
+              <tr><td class="prop">:disabled / :enabled</td><td class="val">input:disabled { ... }</td><td>Estado del campo de formulario</td></tr>
+              <tr><td class="prop">:valid / :invalid</td><td class="val">input:valid { ... }</td><td>Validación del formulario</td></tr>
+              <tr><td class="prop">:required / :optional</td><td class="val">input:required { ... }</td><td>Campo requerido u opcional</td></tr>
+              <tr><td class="prop">:placeholder-shown</td><td class="val">input:placeholder-shown { ... }</td><td>Placeholder visible (campo vacío)</td></tr>
+              <tr><td class="prop">:read-only / :read-write</td><td class="val">input:read-only { ... }</td><td>Estado de edición del campo</td></tr>
+              <tr><td class="prop">:in-range / :out-of-range</td><td class="val">input:out-of-range { ... }</td><td>Valor dentro/fuera del rango</td></tr>
+              <tr><td class="prop">:default</td><td class="val">input:default { ... }</td><td>Valor predeterminado del formulario</td></tr>
+              <tr><td class="prop">:indeterminate</td><td class="val">input:indeterminate { ... }</td><td>Estado indeterminado</td></tr>
+              <tr><td class="prop">::before / ::after</td><td class="val">p::before { content: "»" }</td><td>Pseudo-elemento anterior/posterior</td></tr>
+              <tr><td class="prop">::first-letter</td><td class="val">p::first-letter { font-size: 3em }</td><td>Primera letra del elemento</td></tr>
+              <tr><td class="prop">::first-line</td><td class="val">p::first-line { font-variant: small-caps }</td><td>Primera línea del elemento</td></tr>
+              <tr><td class="prop">::selection</td><td class="val">::selection { background: yellow }</td><td>Texto seleccionado por el usuario</td></tr>
+              <tr><td class="prop">::placeholder</td><td class="val">input::placeholder { color: gray }</td><td>Texto de marcador de posición</td></tr>
+              <tr><td class="prop">::marker</td><td class="val">li::marker { color: red }</td><td>Marcador de lista</td></tr>
+              <tr><td class="prop">::backdrop</td><td class="val">dialog::backdrop { background: rgba(0,0,0,.5) }</td><td>Fondo de dialog/fullscreen</td></tr>
+              <tr><td class="prop">::file-selector-button</td><td class="val">input[type=file]::file-selector-button { ... }</td><td>Botón de input tipo file</td></tr>
+              <tr><td class="prop">::cue</td><td class="val">::cue { color: white }</td><td>Subtítulos de WebVTT</td></tr>
+              <tr><td class="prop">::slotted()</td><td class="val">::slotted(p) { ... }</td><td>Elementos en slots de Web Components</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Counter -->
+        <p class="subsection-title">counter-reset · counter-increment · content · @counter-style</p>
+        <div class="demo-block">
+          <div class="demo-label">Contadores CSS automáticos</div>
+          <div class="demo-render">
+            <ol class="pseudo-list" style="max-height:180px;overflow-y:auto;">
+              <li>:first-child → teal</li>
+              <li>:nth-child(2) → ámbar</li>
+              <li>:nth-child(3n) → azul</li>
+              <li>:hover → teal claro</li>
+              <li>elemento 5</li>
+              <li>:nth-child(3n) → azul</li>
+              <li>elemento 7</li>
+              <li>:last-child → coral</li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <hr class="fancy" />
+
+      <!-- ─────────────────────────────────
+           11. LAYOUT CSS
+      ───────────────────────────────── -->
+      <section class="section" id="sec-layout">
+        <h2 class="section-title">11. Layout CSS <span class="pill">layout</span></h2>
+
+        <!-- Display -->
+        <p class="subsection-title">display</p>
+        <div style="overflow-x:auto;margin-bottom:1.5rem;">
+          <table class="css-table">
+            <thead><tr><th>Valor</th><th>Descripción</th></tr></thead>
+            <tbody>
+              <tr><td class="prop">block</td><td>Ocupa todo el ancho disponible. Salta de línea antes y después.</td></tr>
+              <tr><td class="prop">inline</td><td>Ocupa solo el espacio del contenido. No respeta width/height.</td></tr>
+              <tr><td class="prop">inline-block</td><td>Como inline pero respeta width, height, margin vertical.</td></tr>
+              <tr><td class="prop">flex</td><td>Contenedor flexible unidimensional.</td></tr>
+              <tr><td class="prop">inline-flex</td><td>Como flex pero se comporta como inline hacia afuera.</td></tr>
+              <tr><td class="prop">grid</td><td>Contenedor de cuadrícula bidimensional.</td></tr>
+              <tr><td class="prop">inline-grid</td><td>Como grid pero inline hacia afuera.</td></tr>
+              <tr><td class="prop">none</td><td>Oculta el elemento y quita su espacio.</td></tr>
+              <tr><td class="prop">contents</td><td>El contenedor desaparece; solo actúan los hijos.</td></tr>
+              <tr><td class="prop">table / table-row / table-cell</td><td>Comportamiento de tabla HTML.</td></tr>
+              <tr><td class="prop">list-item</td><td>Comportamiento de ítem de lista (&lt;li&gt;).</td></tr>
+              <tr><td class="prop">flow-root</td><td>Crea nuevo Block Formatting Context sin float.</td></tr>
+              <tr><td class="prop">subgrid</td><td>Hereda las pistas de grid del padre.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Flexbox -->
+        <p class="subsection-title">Flexbox</p>
+        <div class="demo-block" style="margin-bottom:1rem;">
+          <div class="demo-label">display:flex — demo visual</div>
+          <div class="demo-render">
+            <div class="flex-demo">
+              <span>flex-start</span><span>center</span><span>flex-end</span><span>space-between</span><span>wrap</span><span>gap</span>
+            </div>
+          </div>
+        </div>
+        <div style="overflow-x:auto;margin-bottom:1.5rem;">
+          <table class="css-table">
+            <thead><tr><th>Propiedad</th><th>Valores</th><th>Aplica a</th></tr></thead>
+            <tbody>
+              <tr><td class="prop">flex-direction</td><td class="val">row · row-reverse · column · column-reverse</td><td>Contenedor</td></tr>
+              <tr><td class="prop">flex-wrap</td><td class="val">nowrap · wrap · wrap-reverse</td><td>Contenedor</td></tr>
+              <tr><td class="prop">flex-flow</td><td class="val">row wrap · column nowrap</td><td>Contenedor (shorthand)</td></tr>
+              <tr><td class="prop">justify-content</td><td class="val">flex-start · center · flex-end · space-between · space-around · space-evenly</td><td>Contenedor</td></tr>
+              <tr><td class="prop">align-items</td><td class="val">stretch · flex-start · center · flex-end · baseline</td><td>Contenedor</td></tr>
+              <tr><td class="prop">align-content</td><td class="val">stretch · flex-start · center · space-between · space-around</td><td>Contenedor (multilínea)</td></tr>
+              <tr><td class="prop">gap / row-gap / column-gap</td><td class="val">8px · 1rem · 16px 8px</td><td>Contenedor</td></tr>
+              <tr><td class="prop">flex-grow</td><td class="val">0 · 1 · 2</td><td>Hijo</td></tr>
+              <tr><td class="prop">flex-shrink</td><td class="val">1 · 0</td><td>Hijo</td></tr>
+              <tr><td class="prop">flex-basis</td><td class="val">auto · 200px · 30%</td><td>Hijo</td></tr>
+              <tr><td class="prop">flex</td><td class="val">1 · 0 1 auto · none · 1 1 200px</td><td>Hijo (shorthand)</td></tr>
+              <tr><td class="prop">order</td><td class="val">0 · -1 · 2</td><td>Hijo</td></tr>
+              <tr><td class="prop">align-self</td><td class="val">auto · flex-start · center · flex-end · stretch · baseline</td><td>Hijo</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Grid -->
+        <p class="subsection-title">Grid</p>
+        <div class="demo-block" style="margin-bottom:1rem;">
+          <div class="demo-label">grid-template-columns · grid-column:span · grid-area</div>
+          <div class="demo-render">
+            <div class="grid-demo">
+              <div>col 1</div><div class="gspan2">col 2 span 2</div>
+              <div class="gspan3">full width span 3</div>
+              <div>1</div><div>2</div><div>3</div>
+            </div>
+            <p style="font-family:var(--mono);font-size:.72rem;color:var(--gray);margin:var(--sp-3) 0 var(--sp-2);">grid-template-areas:</p>
+            <div class="g-area-demo">
+              <div class="ga-hd">header</div>
+              <div class="ga-sd">sidebar</div>
+              <div class="ga-mn">main</div>
+              <div class="ga-ft">footer</div>
+            </div>
+          </div>
+        </div>
+        <div style="overflow-x:auto;margin-bottom:1.5rem;">
+          <table class="css-table">
+            <thead><tr><th>Propiedad</th><th>Valores</th><th>Descripción</th></tr></thead>
+            <tbody>
+              <tr><td class="prop">grid-template-columns</td><td class="val">1fr 1fr · repeat(3,1fr) · 200px auto · minmax(100px,1fr)</td><td>Define columnas</td></tr>
+              <tr><td class="prop">grid-template-rows</td><td class="val">auto · 100px 1fr · minmax(80px,auto)</td><td>Define filas</td></tr>
+              <tr><td class="prop">grid-template-areas</td><td class="val">"header header" "sidebar main"</td><td>Áreas con nombre</td></tr>
+              <tr><td class="prop">grid-template</td><td class="val">shorthand de columns + rows + areas</td><td>Shorthand</td></tr>
+              <tr><td class="prop">grid-auto-columns</td><td class="val">100px · 1fr · minmax(50px,auto)</td><td>Tamaño columnas implícitas</td></tr>
+              <tr><td class="prop">grid-auto-rows</td><td class="val">auto · 60px · minmax(40px,auto)</td><td>Tamaño filas implícitas</td></tr>
+              <tr><td class="prop">grid-auto-flow</td><td class="val">row · column · dense · row dense</td><td>Dirección de auto-colocación</td></tr>
+              <tr><td class="prop">grid</td><td class="val">shorthand completo</td><td>Shorthand total</td></tr>
+              <tr><td class="prop">grid-column</td><td class="val">1 / 3 · span 2 · 1 / -1</td><td>Hijo: columnas que ocupa</td></tr>
+              <tr><td class="prop">grid-row</td><td class="val">1 / 3 · span 2</td><td>Hijo: filas que ocupa</td></tr>
+              <tr><td class="prop">grid-area</td><td class="val">header · 1/1/3/3</td><td>Hijo: área o shorthand row/col</td></tr>
+              <tr><td class="prop">place-items</td><td class="val">center · start / end</td><td>align-items + justify-items</td></tr>
+              <tr><td class="prop">place-content</td><td class="val">center · space-between</td><td>align-content + justify-content</td></tr>
+              <tr><td class="prop">place-self</td><td class="val">center · end</td><td>align-self + justify-self (hijo)</td></tr>
+              <tr><td class="prop">subgrid</td><td class="val">grid-template-columns: subgrid</td><td>Hereda pistas del grid padre</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Posicionamiento -->
+        <p class="subsection-title">Posicionamiento</p>
+        <div class="demo-block" style="margin-bottom:1rem;">
+          <div class="demo-label">position: static · relative · absolute · sticky</div>
+          <div class="demo-render">
+            <div class="pos-demo">
+              <div class="pos-box pos-static" style="margin:8px;">static (flujo normal)</div>
+              <div class="pos-box pos-relative">relative top:10 left:10</div>
+              <div class="pos-box pos-absolute">absolute bottom:8 right:8</div>
+            </div>
+          </div>
+        </div>
+        <div style="overflow-x:auto;margin-bottom:1.5rem;">
+          <table class="css-table">
+            <thead><tr><th>Propiedad</th><th>Valores</th><th>Descripción</th></tr></thead>
+            <tbody>
+              <tr><td class="prop">position</td><td class="val">static · relative · absolute · fixed · sticky</td><td>Modo de posicionamiento</td></tr>
+              <tr><td class="prop">top / right / bottom / left</td><td class="val">0 · px · % · auto</td><td>Desplazamiento desde el borde</td></tr>
+              <tr><td class="prop">inset</td><td class="val">0 · 8px · 10px 20px</td><td>Shorthand top+right+bottom+left</td></tr>
+              <tr><td class="prop">z-index</td><td class="val">auto · 0 · 10 · 999 · -1</td><td>Orden en el eje Z</td></tr>
+              <tr><td class="prop">float</td><td class="val">left · right · none</td><td>Flotación (legacy)</td></tr>
+              <tr><td class="prop">clear</td><td class="val">both · left · right · none · inline-start</td><td>Limpia flotantes</td></tr>
+              <tr><td class="prop">visibility</td><td class="val">visible · hidden · collapse</td><td>Visibilidad sin quitar espacio</td></tr>
+              <tr><td class="prop">display</td><td class="val">none (oculta y quita espacio)</td><td>vs visibility</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Columnas -->
+        <p class="subsection-title">Multi-columna</p>
+        <div class="demo-block" style="margin-bottom:1rem;">
+          <div class="demo-label">column-count · column-gap · column-rule · column-span</div>
+          <div class="demo-render">
+            <div class="columns-demo">
+              <p class="col-span">Título que ocupa todas las columnas (column-span: all)</p>
+              <p>Las columnas CSS permiten distribuir texto de forma fluida en múltiples columnas, como un periódico o revista. Se controla con <code>column-count</code>, <code>column-width</code> y <code>column-gap</code>.</p>
+              <p>La propiedad <code>column-rule</code> dibuja una línea divisoria entre columnas, similar a un borde pero sin ocupar espacio. Muy útil para contenidos largos como artículos o documentación.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Writing mode -->
+        <p class="subsection-title">writing-mode · text-orientation</p>
+        <div class="demo-block" style="margin-bottom:1rem;">
+          <div class="demo-label">writing-mode: vertical-rl · text-orientation: mixed</div>
+          <div class="demo-render flex-row">
+            <div class="writing-mode-demo">Texto vertical</div>
+            <div style="writing-mode:vertical-lr;text-orientation:mixed;height:120px;background:var(--teal-lt);border-radius:var(--r-md);padding:var(--sp-4);font-family:var(--display);font-weight:700;color:var(--teal);display:inline-block;">vertical-lr</div>
+          </div>
+        </div>
+
+        <!-- Container Queries -->
+        <p class="subsection-title">@container · container-type · container-name</p>
+        <div class="demo-block">
+          <div class="demo-label">Container Query: cambia estilo según ancho del contenedor</div>
+          <div class="demo-render">
+            <div class="cq-wrap">
+              <div class="cq-item">Este elemento cambia de fondo cuando el contenedor supera 200px (container-type: inline-size). Redimensiona la ventana para ver el efecto.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Subgrid -->
+        <p class="subsection-title">subgrid</p>
+        <div class="demo-block">
+          <div class="demo-label">grid-template-columns: subgrid — hereda pistas del padre</div>
+          <div class="demo-render">
+            <div class="subgrid-parent">
+              <div style="background:var(--amber-lt);border:1.5px solid var(--border);border-radius:var(--r-md);padding:.4rem;text-align:center;font-family:var(--mono);font-size:.72rem;color:var(--amber-dk);">Padre col 1</div>
+              <div style="background:var(--amber-lt);border:1.5px solid var(--border);border-radius:var(--r-md);padding:.4rem;text-align:center;font-family:var(--mono);font-size:.72rem;color:var(--amber-dk);">Padre col 2</div>
+              <div style="background:var(--amber-lt);border:1.5px solid var(--border);border-radius:var(--r-md);padding:.4rem;text-align:center;font-family:var(--mono);font-size:.72rem;color:var(--amber-dk);">Padre col 3</div>
+              <div class="subgrid-child">
+                <div>Hijo A (subgrid)</div>
+                <div>Hijo B</div>
+                <div>Hijo C</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="fancy" />
+
+      <!-- ─────────────────────────────────
+           12. EFECTOS VISUALES CSS
+      ───────────────────────────────── -->
+      <section class="section" id="sec-visual">
+        <h2 class="section-title">12. Efectos Visuales CSS <span class="pill">visual</span></h2>
+
+        <!-- Gradientes -->
+        <p class="subsection-title">Gradientes</p>
+        <div class="demo-block">
+          <div class="demo-label">linear-gradient · radial-gradient · conic-gradient · repeating-linear-gradient · mesh</div>
+          <div class="demo-render">
+            <div class="gradient-grid">
+              <div class="grad-box g-linear">linear-gradient</div>
+              <div class="grad-box g-radial">radial-gradient</div>
+              <div class="grad-box g-conic">conic-gradient</div>
+              <div class="grad-box g-repeat" style="color:var(--amber-dk);text-shadow:none;">repeating</div>
+              <div class="grad-box g-mesh" style="color:var(--ink);text-shadow:none;">mesh (radial×3)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filtros -->
+        <p class="subsection-title">filter</p>
+        <div class="demo-block">
+          <div class="demo-label">blur · brightness · contrast · grayscale · hue-rotate · invert · saturate · sepia · drop-shadow</div>
+          <div class="demo-render">
+            <div class="filter-grid">
+              <div class="filter-box">normal</div>
+              <div class="filter-box f-blur">blur</div>
+              <div class="filter-box f-bright">bright</div>
+              <div class="filter-box f-contrast">contrast</div>
+              <div class="filter-box f-gray">grayscale</div>
+              <div class="filter-box f-hue">hue-rot</div>
+              <div class="filter-box f-invert">invert</div>
+              <div class="filter-box f-saturate">saturate</div>
+              <div class="filter-box f-sepia">sepia</div>
+              <div class="filter-box f-drop">drop-shadow</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- backdrop-filter -->
+        <p class="subsection-title">backdrop-filter</p>
+        <div class="demo-block">
+          <div class="demo-label">backdrop-filter: blur() saturate()</div>
+          <div class="demo-render">
+            <div class="backdrop-wrap">
+              <div class="backdrop-box">backdrop-filter: blur(6px)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- clip-path -->
+        <p class="subsection-title">clip-path</p>
+        <div class="demo-block">
+          <div class="demo-label">circle · polygon · inset · star</div>
+          <div class="demo-render">
+            <div class="clip-grid">
+              <div><div class="clip-box clip-circle">circle</div><p style="text-align:center;font-family:var(--mono);font-size:.68rem;color:var(--gray);margin-top:.3rem;">circle(50%)</p></div>
+              <div><div class="clip-box clip-tri">tri</div><p style="text-align:center;font-family:var(--mono);font-size:.68rem;color:var(--gray);margin-top:.3rem;">polygon</p></div>
+              <div><div class="clip-box clip-hex">hex</div><p style="text-align:center;font-family:var(--mono);font-size:.68rem;color:var(--gray);margin-top:.3rem;">hexágono</p></div>
+              <div><div class="clip-box clip-star">★</div><p style="text-align:center;font-family:var(--mono);font-size:.68rem;color:var(--gray);margin-top:.3rem;">estrella</p></div>
+              <div><div class="clip-box clip-inset">inset</div><p style="text-align:center;font-family:var(--mono);font-size:.68rem;color:var(--gray);margin-top:.3rem;">inset round</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Transformaciones -->
+        <p class="subsection-title">transform (hover para resetear)</p>
+        <div class="demo-block">
+          <div class="demo-label">translate · scale · rotate · skew · matrix · perspective · rotateX/Y · transform-origin</div>
+          <div class="demo-render">
+            <div class="transform-grid">
+              <div><div class="t-box t-translate">translate</div><p style="text-align:center;font-family:var(--mono);font-size:.65rem;color:var(--gray);margin-top:.4rem;">translate(8,-8)</p></div>
+              <div><div class="t-box t-scale">scale</div><p style="text-align:center;font-family:var(--mono);font-size:.65rem;color:var(--gray);margin-top:.4rem;">scale(1.15)</p></div>
+              <div><div class="t-box t-rotate">rotate</div><p style="text-align:center;font-family:var(--mono);font-size:.65rem;color:var(--gray);margin-top:.4rem;">rotate(15deg)</p></div>
+              <div><div class="t-box t-skew">skew</div><p style="text-align:center;font-family:var(--mono);font-size:.65rem;color:var(--gray);margin-top:.4rem;">skew(10,5)</p></div>
+              <div><div class="t-box t-matrix">matrix</div><p style="text-align:center;font-family:var(--mono);font-size:.65rem;color:var(--gray);margin-top:.4rem;">matrix()</p></div>
+              <div><div class="t-box t-perspective">persp</div><p style="text-align:center;font-family:var(--mono);font-size:.65rem;color:var(--gray);margin-top:.4rem;">perspective rotY</p></div>
+              <div><div class="t-box t-3d">3D</div><p style="text-align:center;font-family:var(--mono);font-size:.65rem;color:var(--gray);margin-top:.4rem;">rotX+rotY</p></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- mix-blend-mode -->
+        <p class="subsection-title">mix-blend-mode · isolation</p>
+        <div class="demo-block">
+          <div class="demo-label">mix-blend-mode: multiply · isolation: isolate</div>
+          <div class="demo-render flex-row">
+            <div class="blend-demo"><div class="blend-layer"></div></div>
+            <p style="font-family:var(--mono);font-size:.78rem;color:var(--gray);">Círculo con mix-blend-mode: multiply<br />sobre fondo isolation: isolate</p>
+          </div>
+        </div>
+
+        <!-- text-shadow -->
+        <p class="subsection-title">text-shadow</p>
+        <div class="demo-block">
+          <div class="demo-label">text-shadow múltiple</div>
+          <div class="demo-render flex-row" style="gap:var(--sp-6);">
+            <span class="ts-demo ts-1">Sombra offset</span>
+            <span class="ts-demo ts-2">Glow</span>
+            <span class="ts-demo ts-3">Multi-shadow</span>
+          </div>
+        </div>
+
+        <!-- Bordes -->
+        <p class="subsection-title">Estilos de borde</p>
+        <div class="demo-block">
+          <div class="demo-label">border-style: solid · dashed · dotted · double · groove · ridge · inset · outset</div>
+          <div class="demo-render">
+            <div class="border-styles">
+              <div class="bs bs-solid">border-style: solid</div>
+              <div class="bs bs-dashed">border-style: dashed</div>
+              <div class="bs bs-dotted">border-style: dotted</div>
+              <div class="bs bs-double">border-style: double</div>
+              <div class="bs bs-groove">border-style: groove</div>
+              <div class="bs bs-ridge">border-style: ridge</div>
+              <div class="bs bs-inset">border-style: inset</div>
+              <div class="bs bs-outset">border-style: outset</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- outline -->
+        <p class="subsection-title">outline</p>
+        <div class="demo-block">
+          <div class="demo-label">outline-style · outline-offset · outline-color</div>
+          <div class="demo-render flex-row" style="gap:var(--sp-6);">
+            <span class="outline-demo ol-solid">outline solid</span>
+            <span class="outline-demo ol-dashed">outline dashed</span>
+            <span class="outline-demo ol-dotted">outline dotted</span>
+          </div>
+        </div>
+
+        <!-- Variables CSS demo -->
+        <p class="subsection-title">CSS Custom Properties (variables)</p>
+        <div class="demo-block">
+          <div class="demo-label">--variable-local · var() · fallback · herencia</div>
+          <div class="demo-render">
+            <div class="var-demo">
+              <p>Este bloque usa <code>--local-color: #1a6b5a</code> y <code>--local-size: 1.1rem</code> definidas localmente en el elemento.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Varios -->
+        <p class="subsection-title">Miscelánea visual</p>
+        <div class="demo-block">
+          <div class="demo-label">text-overflow · word-break · user-select · cursor · resize · caret-color · accent-color · appearance</div>
+          <div class="demo-render" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;">
+            <div>
+              <p style="font-family:var(--mono);font-size:.72rem;color:var(--gray);margin-bottom:.4rem;">text-overflow: ellipsis</p>
+              <div class="ellipsis">Este texto es demasiado largo y se corta con puntos suspensivos</div>
+            </div>
+            <div>
+              <p style="font-family:var(--mono);font-size:.72rem;color:var(--gray);margin-bottom:.4rem;">word-break: break-all</p>
+              <div class="word-break">Supercalifragilisticoespialidoso</div>
+            </div>
+            <div>
+              <p style="font-family:var(--mono);font-size:.72rem;color:var(--gray);margin-bottom:.4rem;">user-select</p>
+              <div class="flex-row" style="gap:.4rem;flex-wrap:wrap;">
+                <span class="no-select">no-select</span>
+                <span class="all-select">select-all</span>
+                <span class="txt-select">text</span>
+              </div>
+            </div>
+            <div>
+              <p style="font-family:var(--mono);font-size:.72rem;color:var(--gray);margin-bottom:.4rem;">caret-color · accent-color</p>
+              <input class="caret-demo" placeholder="caret-color: coral" />
+              <div class="accent-demo flex-row" style="gap:.5rem;margin-top:.4rem;">
+                <input type="checkbox" checked /> <input type="radio" checked /> <input type="range" value="70" style="accent-color:var(--teal);" />
+              </div>
+            </div>
+            <div>
+              <p style="font-family:var(--mono);font-size:.72rem;color:var(--gray);margin-bottom:.4rem;">resize: both</p>
+              <div class="resize-demo">Arrastra la esquina ↘</div>
+            </div>
+            <div>
+              <p style="font-family:var(--mono);font-size:.72rem;color:var(--gray);margin-bottom:.4rem;">appearance: none</p>
+              <select class="appearance-none-demo">
+                <option>appearance: none</option>
+                <option>Sin estilos nativos</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cursor -->
+        <p class="subsection-title">cursor</p>
+        <div class="demo-block">
+          <div class="demo-label">Todos los valores de cursor — pasa el mouse para ver</div>
+          <div class="demo-render">
+            <div class="cursor-grid">
+              <span class="cur cur-default">default</span>
+              <span class="cur cur-pointer">pointer</span>
+              <span class="cur cur-text">text</span>
+              <span class="cur cur-move">move</span>
+              <span class="cur cur-grab">grab</span>
+              <span class="cur cur-crosshair">crosshair</span>
+              <span class="cur cur-not-allowed">not-allowed</span>
+              <span class="cur cur-wait">wait</span>
+              <span class="cur cur-zoom-in">zoom-in</span>
+              <span class="cur cur-zoom-out">zoom-out</span>
+              <span class="cur cur-help">help</span>
+              <span class="cur cur-copy">copy</span>
+              <span class="cur cur-ns-resize">ns-resize</span>
+              <span class="cur cur-ew-resize">ew-resize</span>
+              <span class="cur cur-none">none</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- overflow scroll -->
+        <p class="subsection-title">overflow · scrollbar-width · scrollbar-color</p>
+        <div class="demo-block">
+          <div class="demo-label">overflow:auto + scrollbar personalizada</div>
+          <div class="demo-render">
+            <div class="overflow-demo">
+              línea 1 — contenido largo que requiere scroll vertical<br />
+              línea 2 — scrollbar-width: thin<br />
+              línea 3 — scrollbar-color: amber cream<br />
+              línea 4 — overscroll-behavior: contain<br />
+              línea 5 — overflow-y: auto<br />
+              línea 6 — más contenido para forzar el scroll
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <hr class="fancy" />
+
+      <!-- ─────────────────────────────────
+           13. ANIMACIONES CSS
+      ───────────────────────────────── -->
+      <section class="section" id="sec-anim">
+        <h2 class="section-title">13. Animaciones &amp; Transiciones CSS <span class="pill">@keyframes</span></h2>
+
+        <!-- Animaciones -->
+        <div class="demo-block">
+          <div class="demo-label">@keyframes · animation-name · duration · timing-function · delay · iteration-count · direction · fill-mode · play-state</div>
+          <div class="demo-render" style="text-align:center;padding:2rem 1rem;">
+            <div class="anim-box a-spin" title="spin 1.5s linear infinite"></div>
+            <div class="anim-box a-bounce" title="bounce 1s ease-in-out infinite"></div>
+            <div class="anim-box a-pulse" title="pulse 1.5s ease-in-out infinite"></div>
+            <div class="anim-box a-slide" title="slide-in 1s ease forwards"></div>
+            <div class="anim-box a-float" title="float 3s ease-in-out infinite"></div>
+            <div style="margin-top:1.5rem;display:inline-flex;align-items:flex-end;gap:2px;height:48px;vertical-align:middle;">
+              <div class="a-wave"></div>
+              <div class="a-wave"></div>
+              <div class="a-wave"></div>
+              <div class="a-wave"></div>
+            </div>
+            <div class="a-gradient" style="margin:0 var(--sp-4);"></div>
+            <p style="margin-top:1rem;font-family:var(--mono);font-size:.75rem;color:var(--gray);">spin · bounce · pulse · slide · float · wave · gradient-shift</p>
+          </div>
+        </div>
+
+        <div style="overflow-x:auto;margin-bottom:1.5rem;">
+          <table class="css-table">
+            <thead><tr><th>Propiedad</th><th>Valores</th><th>Descripción</th></tr></thead>
+            <tbody>
+              <tr><td class="prop">animation-name</td><td class="val">fadeIn · spin · mi-anim</td><td>Nombre del @keyframes</td></tr>
+              <tr><td class="prop">animation-duration</td><td class="val">0.3s · 1.5s · 2000ms</td><td>Duración de un ciclo</td></tr>
+              <tr><td class="prop">animation-timing-function</td><td class="val">ease · linear · ease-in · ease-out · ease-in-out · cubic-bezier() · steps(4)</td><td>Curva de velocidad</td></tr>
+              <tr><td class="prop">animation-delay</td><td class="val">0s · 0.5s · -1s (retrocede)</td><td>Retardo antes de iniciar</td></tr>
+              <tr><td class="prop">animation-iteration-count</td><td class="val">1 · infinite · 3</td><td>Número de repeticiones</td></tr>
+              <tr><td class="prop">animation-direction</td><td class="val">normal · reverse · alternate · alternate-reverse</td><td>Dirección de la animación</td></tr>
+              <tr><td class="prop">animation-fill-mode</td><td class="val">none · forwards · backwards · both</td><td>Estado antes/después de la animación</td></tr>
+              <tr><td class="prop">animation-play-state</td><td class="val">running · paused</td><td>Controla play/pausa</td></tr>
+              <tr><td class="prop">animation (shorthand)</td><td class="val">spin 1s linear infinite</td><td>name duration timing delay count direction fill-mode</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Transiciones -->
+        <p class="subsection-title">transition</p>
+        <div class="demo-block">
+          <div class="demo-label">transition-property · duration · timing-function · delay</div>
+          <div class="demo-render">
+            <div class="flex-row" style="gap:var(--sp-4);">
+              <div style="width:100px;height:100px;background:var(--amber-lt);border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.72rem;color:var(--amber-dk);font-weight:600;transition:all 0.3s ease;cursor:pointer;" onmouseenter="this.style.background='var(--amber)';this.style.transform='scale(1.1) rotate(5deg)';this.style.color='var(--ink)';" onmouseleave="this.style.background='var(--amber-lt)';this.style.transform='';this.style.color='var(--amber-dk)';">hover me</div>
+              <div style="width:100px;height:100px;background:var(--teal-lt);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.72rem;color:var(--teal);font-weight:600;transition:border-radius 0.4s ease,background 0.3s;cursor:pointer;" onmouseenter="this.style.borderRadius='var(--r-md)';this.style.background='var(--teal)';this.style.color='#fff';" onmouseleave="this.style.borderRadius='50%';this.style.background='var(--teal-lt)';this.style.color='var(--teal)';">morph</div>
+              <div style="padding:.75rem 1.5rem;background:var(--coral-lt);border-radius:var(--r-full);font-family:var(--display);font-weight:700;font-size:.9rem;color:var(--coral);transition:background 0.25s,color 0.25s,box-shadow 0.25s;cursor:pointer;" onmouseenter="this.style.background='var(--coral)';this.style.color='#fff';this.style.boxShadow='0 6px 20px rgba(184,68,51,.35)';" onmouseleave="this.style.background='var(--coral-lt)';this.style.color='var(--coral)';this.style.boxShadow='';">botón</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="overflow-x:auto;margin-bottom:1.5rem;">
+          <table class="css-table">
+            <thead><tr><th>Propiedad</th><th>Valores</th><th>Descripción</th></tr></thead>
+            <tbody>
+              <tr><td class="prop">transition-property</td><td class="val">all · none · background · transform · opacity · color</td><td>Propiedades a animar</td></tr>
+              <tr><td class="prop">transition-duration</td><td class="val">0.3s · 500ms</td><td>Duración de la transición</td></tr>
+              <tr><td class="prop">transition-timing-function</td><td class="val">ease · linear · ease-in-out · cubic-bezier()</td><td>Curva de velocidad</td></tr>
+              <tr><td class="prop">transition-delay</td><td class="val">0s · 0.2s</td><td>Retardo antes de iniciar</td></tr>
+              <tr><td class="prop">transition (shorthand)</td><td class="val">all 0.3s ease · opacity 0.2s linear 0.1s</td><td>Shorthand completo</td></tr>
+              <tr><td class="prop">will-change</td><td class="val">transform · opacity · auto</td><td>Optimización GPU para animación</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- @media completo -->
+        <p class="subsection-title">@rules CSS completas</p>
+        <div style="overflow-x:auto;">
+          <table class="css-table">
+            <thead><tr><th>@rule</th><th>Ejemplo</th><th>Uso</th></tr></thead>
+            <tbody>
+              <tr><td class="prop">@import</td><td class="val">@import url('style.css')</td><td>Importa otra hoja de estilos</td></tr>
+              <tr><td class="prop">@charset</td><td class="val">@charset "UTF-8"</td><td>Declara la codificación de la hoja de estilos</td></tr>
+              <tr><td class="prop">@font-face</td><td class="val">@font-face { font-family:...; src:url() }</td><td>Define una fuente personalizada</td></tr>
+              <tr><td class="prop">@keyframes</td><td class="val">@keyframes spin { to { transform:rotate(360deg) } }</td><td>Define una animación nombrada</td></tr>
+              <tr><td class="prop">@media</td><td class="val">@media (max-width:768px) { ... }</td><td>Aplica estilos según condición del dispositivo</td></tr>
+              <tr><td class="prop">@supports</td><td class="val">@supports (display:grid) { ... }</td><td>Aplica si el browser soporta la propiedad</td></tr>
+              <tr><td class="prop">@layer</td><td class="val">@layer base, components; @layer base { ... }</td><td>Capas de estilos con prioridad explícita</td></tr>
+              <tr><td class="prop">@page</td><td class="val">@page { margin:2cm } @page:first { ... }</td><td>Estilos de página para impresión</td></tr>
+              <tr><td class="prop">@counter-style</td><td class="val">@counter-style thumbs { system:cyclic; symbols:✔ }</td><td>Contador de lista personalizado</td></tr>
+              <tr><td class="prop">@property</td><td class="val">@property --color { syntax:'&lt;color&gt;'; inherits:false; initial-value:red }</td><td>Define propiedades personalizadas tipadas (Houdini)</td></tr>
+              <tr><td class="prop">@container</td><td class="val">@container sidebar (min-width:200px) { ... }</td><td>Container Queries</td></tr>
+              <tr><td class="prop">@color-profile</td><td class="val">@color-profile --fogra { src:url() }</td><td>Define un perfil de color ICC</td></tr>
+              <tr><td class="prop">@namespace</td><td class="val">@namespace url('http://www.w3.org/1999/xhtml')</td><td>Define un namespace XML para selectores</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- CHIPS RESUMEN FINAL -->
+      <aside style="background:var(--cream);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:var(--sp-6) var(--sp-8);margin-bottom:var(--sp-12);" aria-label="Resumen de etiquetas HTML">
+        <h2 style="font-family:var(--display);font-size:1.05rem;margin-bottom:var(--sp-4);color:var(--ink);">Todas las etiquetas HTML en un vistazo</h2>
+        <div class="flex-row" style="gap:.35rem;">
+          <!-- document -->
+          <span class="chip ch-a">&lt;!DOCTYPE&gt;</span><span class="chip ch-a">&lt;html&gt;</span><span class="chip ch-a">&lt;head&gt;</span><span class="chip ch-a">&lt;title&gt;</span><span class="chip ch-a">&lt;meta&gt;</span><span class="chip ch-a">&lt;link&gt;</span><span class="chip ch-a">&lt;style&gt;</span><span class="chip ch-a">&lt;script&gt;</span><span class="chip ch-a">&lt;base&gt;</span><span class="chip ch-a">&lt;noscript&gt;</span><span class="chip ch-a">&lt;template&gt;</span><span class="chip ch-a">&lt;body&gt;</span>
+          <!-- text -->
+          <span class="chip ch-t">&lt;h1-h6&gt;</span><span class="chip ch-t">&lt;p&gt;</span><span class="chip ch-t">&lt;br&gt;</span><span class="chip ch-t">&lt;hr&gt;</span><span class="chip ch-t">&lt;wbr&gt;</span><span class="chip ch-t">&lt;strong&gt;</span><span class="chip ch-t">&lt;em&gt;</span><span class="chip ch-t">&lt;b&gt;</span><span class="chip ch-t">&lt;i&gt;</span><span class="chip ch-t">&lt;u&gt;</span><span class="chip ch-t">&lt;s&gt;</span><span class="chip ch-t">&lt;small&gt;</span><span class="chip ch-t">&lt;sup&gt;</span><span class="chip ch-t">&lt;sub&gt;</span><span class="chip ch-t">&lt;mark&gt;</span><span class="chip ch-t">&lt;del&gt;</span><span class="chip ch-t">&lt;ins&gt;</span><span class="chip ch-t">&lt;abbr&gt;</span><span class="chip ch-t">&lt;cite&gt;</span><span class="chip ch-t">&lt;q&gt;</span><span class="chip ch-t">&lt;dfn&gt;</span><span class="chip ch-t">&lt;time&gt;</span><span class="chip ch-t">&lt;data&gt;</span><span class="chip ch-t">&lt;bdi&gt;</span><span class="chip ch-t">&lt;bdo&gt;</span><span class="chip ch-t">&lt;ruby&gt;</span><span class="chip ch-t">&lt;rt&gt;</span><span class="chip ch-t">&lt;rp&gt;</span><span class="chip ch-t">&lt;kbd&gt;</span><span class="chip ch-t">&lt;samp&gt;</span><span class="chip ch-t">&lt;var&gt;</span><span class="chip ch-t">&lt;code&gt;</span><span class="chip ch-t">&lt;pre&gt;</span><span class="chip ch-t">&lt;blockquote&gt;</span><span class="chip ch-t">&lt;address&gt;</span><span class="chip ch-t">&lt;span&gt;</span><span class="chip ch-t">&lt;div&gt;</span>
+          <!-- lists -->
+          <span class="chip ch-b">&lt;ul&gt;</span><span class="chip ch-b">&lt;ol&gt;</span><span class="chip ch-b">&lt;li&gt;</span><span class="chip ch-b">&lt;dl&gt;</span><span class="chip ch-b">&lt;dt&gt;</span><span class="chip ch-b">&lt;dd&gt;</span><span class="chip ch-b">&lt;menu&gt;</span>
+          <!-- tables -->
+          <span class="chip ch-a">&lt;table&gt;</span><span class="chip ch-a">&lt;caption&gt;</span><span class="chip ch-a">&lt;colgroup&gt;</span><span class="chip ch-a">&lt;col&gt;</span><span class="chip ch-a">&lt;thead&gt;</span><span class="chip ch-a">&lt;tbody&gt;</span><span class="chip ch-a">&lt;tfoot&gt;</span><span class="chip ch-a">&lt;tr&gt;</span><span class="chip ch-a">&lt;th&gt;</span><span class="chip ch-a">&lt;td&gt;</span>
+          <!-- forms -->
+          <span class="chip ch-p">&lt;form&gt;</span><span class="chip ch-p">&lt;fieldset&gt;</span><span class="chip ch-p">&lt;legend&gt;</span><span class="chip ch-p">&lt;label&gt;</span><span class="chip ch-p">&lt;input&gt;</span><span class="chip ch-p">&lt;select&gt;</span><span class="chip ch-p">&lt;optgroup&gt;</span><span class="chip ch-p">&lt;option&gt;</span><span class="chip ch-p">&lt;textarea&gt;</span><span class="chip ch-p">&lt;button&gt;</span><span class="chip ch-p">&lt;datalist&gt;</span><span class="chip ch-p">&lt;output&gt;</span><span class="chip ch-p">&lt;progress&gt;</span><span class="chip ch-p">&lt;meter&gt;</span>
+          <!-- media -->
+          <span class="chip ch-c">&lt;img&gt;</span><span class="chip ch-c">&lt;picture&gt;</span><span class="chip ch-c">&lt;source&gt;</span><span class="chip ch-c">&lt;figure&gt;</span><span class="chip ch-c">&lt;figcaption&gt;</span><span class="chip ch-c">&lt;audio&gt;</span><span class="chip ch-c">&lt;video&gt;</span><span class="chip ch-c">&lt;track&gt;</span><span class="chip ch-c">&lt;canvas&gt;</span><span class="chip ch-c">&lt;svg&gt;</span><span class="chip ch-c">&lt;iframe&gt;</span><span class="chip ch-c">&lt;embed&gt;</span><span class="chip ch-c">&lt;object&gt;</span><span class="chip ch-c">&lt;param&gt;</span><span class="chip ch-c">&lt;map&gt;</span><span class="chip ch-c">&lt;area&gt;</span>
+          <!-- semantic -->
+          <span class="chip ch-t">&lt;header&gt;</span><span class="chip ch-t">&lt;nav&gt;</span><span class="chip ch-t">&lt;main&gt;</span><span class="chip ch-t">&lt;section&gt;</span><span class="chip ch-t">&lt;article&gt;</span><span class="chip ch-t">&lt;aside&gt;</span><span class="chip ch-t">&lt;footer&gt;</span><span class="chip ch-t">&lt;hgroup&gt;</span><span class="chip ch-t">&lt;search&gt;</span>
+          <!-- interactive -->
+          <span class="chip ch-g">&lt;a&gt;</span><span class="chip ch-g">&lt;details&gt;</span><span class="chip ch-g">&lt;summary&gt;</span><span class="chip ch-g">&lt;dialog&gt;</span><span class="chip ch-g">&lt;slot&gt;</span>
+        </div>
+      </aside>
+
+    </div>
+  </main>
+
+  <!-- ╔══════════════════════════════════╗
+       ║            FOOTER               ║
+       ╚══════════════════════════════════╝ -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="inner">
+      <div>
+        <h3>HTML5 Semántico</h3>
+        <ul>
+          <li><a href="https://developer.mozilla.org/es/docs/Web/HTML" target="_blank" rel="noopener">MDN — HTML Reference</a></li>
+          <li><a href="https://html.spec.whatwg.org/" target="_blank" rel="noopener">WHATWG Living Standard</a></li>
+          <li><a href="https://www.w3.org/TR/html52/" target="_blank" rel="noopener">W3C HTML Spec</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>CSS Completo</h3>
+        <ul>
+          <li><a href="https://developer.mozilla.org/es/docs/Web/CSS" target="_blank" rel="noopener">MDN — CSS Reference</a></li>
+          <li><a href="https://www.w3.org/Style/CSS/" target="_blank" rel="noopener">W3C CSS Working Group</a></li>
+          <li><a href="https://caniuse.com/" target="_blank" rel="noopener">Can I Use</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Herramientas</h3>
+        <ul>
+          <li><a href="https://validator.w3.org/" target="_blank" rel="noopener">W3C Validator</a></li>
+          <li><a href="https://jigsaw.w3.org/css-validator/" target="_blank" rel="noopener">CSS Validator</a></li>
+          <li><a href="https://wave.webaim.org/" target="_blank" rel="noopener">WAVE Accesibilidad</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Contacto</h3>
+        <address>
+          Referencia HTML &amp; CSS<br />
+          Palmira, Valle del Cauca, CO<br />
+          <a href="mailto:hola@ejemplo.com">hola@ejemplo.com</a>
+        </address>
+      </div>
+    </div>
+    <div class="copy">
+      <p>Creado con <strong>&lt;HTML5&gt; + CSS3</strong> puro — sin frameworks — todas las etiquetas y propiedades en una página</p>
+      <small style="display:block;margin-top:.4rem;opacity:.5;">&copy; 2024 Dominio Público Educativo</small>
+    </div>
+  </footer>
+
+  <!-- ╔══════════════════════════════════╗
+       ║           SCRIPTS               ║
+       ╚══════════════════════════════════╝ -->
+  <script>
+    /* Canvas 2D demo */
+    const canvas = document.getElementById('demo-canvas');
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      let t = 0;
+      function drawCanvas() {
+        ctx.clearRect(0, 0, 160, 100);
+        // fondo
+        const bg = ctx.createLinearGradient(0,0,160,100);
+        bg.addColorStop(0, '#f0ead6');
+        bg.addColorStop(1, '#faf7f0');
+        ctx.fillStyle = bg;
+        ctx.roundRect(0, 0, 160, 100, 8);
+        ctx.fill();
+        // círculo animado
+        ctx.beginPath();
+        ctx.arc(80 + Math.sin(t) * 30, 50 + Math.cos(t*1.3)*15, 18, 0, Math.PI*2);
+        const g = ctx.createRadialGradient(80,50,2,80,50,18);
+        g.addColorStop(0,'#f5d98b');
+        g.addColorStop(1,'#c8860a');
+        ctx.fillStyle = g;
+        ctx.fill();
+        // texto
+        ctx.fillStyle = '#1a1208';
+        ctx.font = 'bold 11px Syne, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('canvas 2D', 80, 90);
+        t += 0.04;
+        requestAnimationFrame(drawCanvas);
+      }
+      drawCanvas();
+    }
+
+    /* Output cálculo */
+    const calcA = document.getElementById('calc-a');
+    const calcB = document.getElementById('calc-b');
+    const calcResult = document.getElementById('calc-result');
+    if (calcA && calcB && calcResult) {
+      function update() { calcResult.value = +calcA.value + +calcB.value; }
+      calcA.addEventListener('input', update);
+      calcB.addEventListener('input', update);
+    }
+  </script>
+
+</body>
+</html>
