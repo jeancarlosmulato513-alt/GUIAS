@@ -1,0 +1,1880 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Node.js — Referencia Completa</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #0f1525;
+    --surface2: #161d30;
+    --border: #1e2a45;
+    --green: #68d391;
+    --green-dim: #2f6b4a;
+    --cyan: #63b3ed;
+    --yellow: #f6e05e;
+    --red: #fc8181;
+    --purple: #b794f4;
+    --orange: #f6ad55;
+    --text: #e2e8f0;
+    --text-dim: #718096;
+    --text-muted: #4a5568;
+    --accent: #68d391;
+    --glow: 0 0 20px rgba(104,211,145,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* Animated background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(104,211,145,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(104,211,145,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Header */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10,14,26,0.92);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+  }
+
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+    gap: 2rem;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--green), #2ecc71);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 14px;
+    color: #0a0e1a;
+    box-shadow: var(--glow);
+  }
+
+  .logo-text {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+
+  .logo-text span { color: var(--green); }
+
+  .search-bar {
+    flex: 1;
+    max-width: 400px;
+    position: relative;
+  }
+
+  .search-bar input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 16px 8px 40px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .search-bar input:focus {
+    border-color: var(--green-dim);
+    box-shadow: 0 0 0 3px rgba(104,211,145,0.1);
+  }
+
+  .search-bar input::placeholder { color: var(--text-muted); }
+
+  .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+
+  .version-badge {
+    background: var(--green-dim);
+    color: var(--green);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(104,211,145,0.3);
+    white-space: nowrap;
+  }
+
+  /* Layout */
+  .layout {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Sidebar */
+  aside {
+    position: sticky;
+    top: 64px;
+    height: calc(100vh - 64px);
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+    padding: 1.5rem 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  aside::-webkit-scrollbar { width: 4px; }
+  aside::-webkit-scrollbar-track { background: transparent; }
+  aside::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .nav-section {
+    margin-bottom: 0.5rem;
+  }
+
+  .nav-section-title {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    padding: 0.5rem 1.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 1.5rem;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+    cursor: pointer;
+  }
+
+  .nav-link:hover {
+    color: var(--green);
+    background: rgba(104,211,145,0.05);
+    border-left-color: var(--green-dim);
+  }
+
+  .nav-link.active {
+    color: var(--green);
+    background: rgba(104,211,145,0.08);
+    border-left-color: var(--green);
+  }
+
+  .nav-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* Main content */
+  main {
+    padding: 2.5rem 3rem;
+    min-width: 0;
+  }
+
+  /* Hero */
+  .hero {
+    margin-bottom: 3rem;
+    padding: 2.5rem;
+    background: linear-gradient(135deg, var(--surface) 0%, rgba(104,211,145,0.05) 100%);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: 'NODE.JS';
+    position: absolute;
+    right: -20px;
+    top: -10px;
+    font-size: 8rem;
+    font-weight: 800;
+    color: rgba(104,211,145,0.04);
+    letter-spacing: -4px;
+    pointer-events: none;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .hero h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 0.75rem;
+  }
+
+  .hero h1 span { color: var(--green); }
+
+  .hero p {
+    color: var(--text-dim);
+    font-size: 1rem;
+    max-width: 500px;
+  }
+
+  .hero-tags {
+    display: flex;
+    gap: 8px;
+    margin-top: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  .tag-green { background: rgba(104,211,145,0.12); color: var(--green); border: 1px solid rgba(104,211,145,0.25); }
+  .tag-cyan { background: rgba(99,179,237,0.12); color: var(--cyan); border: 1px solid rgba(99,179,237,0.25); }
+  .tag-yellow { background: rgba(246,224,94,0.12); color: var(--yellow); border: 1px solid rgba(246,224,94,0.25); }
+  .tag-purple { background: rgba(183,148,244,0.12); color: var(--purple); border: 1px solid rgba(183,148,244,0.25); }
+  .tag-orange { background: rgba(246,173,85,0.12); color: var(--orange); border: 1px solid rgba(246,173,85,0.25); }
+  .tag-red { background: rgba(252,129,129,0.12); color: var(--red); border: 1px solid rgba(252,129,129,0.25); }
+
+  /* Sections */
+  .section {
+    margin-bottom: 3rem;
+    animation: fadeUp 0.4s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  .section-desc {
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin-top: 2px;
+  }
+
+  /* Code blocks */
+  .code-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .code-block:hover {
+    border-color: rgba(104,211,145,0.2);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .code-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .code-title .dot-row {
+    display: flex;
+    gap: 5px;
+  }
+
+  .code-title .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .copy-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    padding: 3px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .copy-btn:hover {
+    color: var(--green);
+    border-color: var(--green-dim);
+    background: rgba(104,211,145,0.05);
+  }
+
+  .copy-btn.copied {
+    color: var(--green);
+    border-color: var(--green);
+  }
+
+  pre {
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  pre::-webkit-scrollbar { height: 4px; }
+  pre::-webkit-scrollbar-track { background: transparent; }
+  pre::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* Syntax highlighting */
+  .kw { color: var(--purple); font-weight: 600; }
+  .fn { color: var(--cyan); }
+  .str { color: var(--green); }
+  .num { color: var(--orange); }
+  .cmt { color: var(--text-muted); font-style: italic; }
+  .cls { color: var(--yellow); }
+  .var { color: var(--text); }
+  .prop { color: var(--cyan); }
+  .err { color: var(--red); }
+  .mod { color: var(--orange); }
+
+  /* Card grids */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    transition: all 0.2s;
+    cursor: default;
+  }
+
+  .card:hover {
+    border-color: rgba(104,211,145,0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+
+  .card-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--cyan);
+    margin-bottom: 4px;
+  }
+
+  .card-desc {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  .card-meta {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+  }
+
+  /* Method tables */
+  .method-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin-bottom: 1rem;
+  }
+
+  .method-table th {
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--surface2);
+    color: var(--text-muted);
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 700;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .method-table th:first-child { border-radius: 8px 0 0 0; }
+  .method-table th:last-child { border-radius: 0 8px 0 0; }
+
+  .method-table td {
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(30,42,69,0.5);
+    vertical-align: top;
+  }
+
+  .method-table tr:last-child td { border-bottom: none; }
+
+  .method-table tr:hover td { background: rgba(104,211,145,0.03); }
+
+  .method-table .method-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--cyan);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .method-table .method-desc { color: var(--text-dim); }
+
+  .method-table .method-return {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--purple);
+  }
+
+  /* Two-column layout for code + desc */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  @media (max-width: 900px) {
+    .two-col { grid-template-columns: 1fr; }
+    .layout { grid-template-columns: 1fr; }
+    aside { position: static; height: auto; }
+    main { padding: 1.5rem; }
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 2rem 0;
+  }
+
+  /* Info box */
+  .info-box {
+    background: rgba(99,179,237,0.06);
+    border: 1px solid rgba(99,179,237,0.2);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 10px;
+  }
+
+  .info-box .icon { color: var(--cyan); flex-shrink: 0; }
+
+  .warn-box {
+    background: rgba(246,173,85,0.06);
+    border: 1px solid rgba(246,173,85,0.2);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 10px;
+  }
+
+  .warn-box .icon { color: var(--orange); flex-shrink: 0; }
+
+  /* Hidden sections for search */
+  .hidden { display: none !important; }
+
+  /* Jump top */
+  #jump-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 40px;
+    height: 40px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-dim);
+    transition: all 0.2s;
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #jump-top.visible {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  #jump-top:hover {
+    color: var(--green);
+    border-color: var(--green-dim);
+  }
+
+  /* Section scroll animation */
+  .section { opacity: 0; animation: none; }
+  .section.visible { animation: fadeUp 0.5s ease forwards; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <div class="logo-icon">Njs</div>
+      <span class="logo-text"><span>Node</span>.js Ref</span>
+    </a>
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Buscar módulo, método o etiqueta..." />
+    </div>
+    <span class="version-badge">v20 LTS</span>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <aside>
+    <div class="nav-section">
+      <div class="nav-section-title">Fundamentos</div>
+      <a class="nav-link active" onclick="scrollTo('introduccion')"><span class="nav-dot" style="background:#68d391"></span>Introducción</a>
+      <a class="nav-link" onclick="scrollTo('instalacion')"><span class="nav-dot" style="background:#68d391"></span>Instalación</a>
+      <a class="nav-link" onclick="scrollTo('modulos-core')"><span class="nav-dot" style="background:#68d391"></span>Módulos Core</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Módulos Integrados</div>
+      <a class="nav-link" onclick="scrollTo('fs')"><span class="nav-dot" style="background:#63b3ed"></span>fs — File System</a>
+      <a class="nav-link" onclick="scrollTo('path')"><span class="nav-dot" style="background:#63b3ed"></span>path</a>
+      <a class="nav-link" onclick="scrollTo('http')"><span class="nav-dot" style="background:#63b3ed"></span>http / https</a>
+      <a class="nav-link" onclick="scrollTo('os')"><span class="nav-dot" style="background:#63b3ed"></span>os</a>
+      <a class="nav-link" onclick="scrollTo('events')"><span class="nav-dot" style="background:#63b3ed"></span>events</a>
+      <a class="nav-link" onclick="scrollTo('stream')"><span class="nav-dot" style="background:#63b3ed"></span>stream</a>
+      <a class="nav-link" onclick="scrollTo('child_process')"><span class="nav-dot" style="background:#63b3ed"></span>child_process</a>
+      <a class="nav-link" onclick="scrollTo('crypto')"><span class="nav-dot" style="background:#63b3ed"></span>crypto</a>
+      <a class="nav-link" onclick="scrollTo('buffer')"><span class="nav-dot" style="background:#63b3ed"></span>Buffer</a>
+      <a class="nav-link" onclick="scrollTo('url')"><span class="nav-dot" style="background:#63b3ed"></span>url / querystring</a>
+      <a class="nav-link" onclick="scrollTo('timer')"><span class="nav-dot" style="background:#63b3ed"></span>Timers</a>
+      <a class="nav-link" onclick="scrollTo('process')"><span class="nav-dot" style="background:#63b3ed"></span>process</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Programación Async</div>
+      <a class="nav-link" onclick="scrollTo('callbacks')"><span class="nav-dot" style="background:#b794f4"></span>Callbacks</a>
+      <a class="nav-link" onclick="scrollTo('promises')"><span class="nav-dot" style="background:#b794f4"></span>Promises</a>
+      <a class="nav-link" onclick="scrollTo('asyncawait')"><span class="nav-dot" style="background:#b794f4"></span>Async / Await</a>
+      <a class="nav-link" onclick="scrollTo('eventemitter')"><span class="nav-dot" style="background:#b794f4"></span>EventEmitter</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">NPM & Paquetes</div>
+      <a class="nav-link" onclick="scrollTo('npm')"><span class="nav-dot" style="background:#f6e05e"></span>npm comandos</a>
+      <a class="nav-link" onclick="scrollTo('packagejson')"><span class="nav-dot" style="background:#f6e05e"></span>package.json</a>
+      <a class="nav-link" onclick="scrollTo('express')"><span class="nav-dot" style="background:#f6e05e"></span>Express.js</a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-section-title">Avanzado</div>
+      <a class="nav-link" onclick="scrollTo('cluster')"><span class="nav-dot" style="background:#f6ad55"></span>cluster / worker</a>
+      <a class="nav-link" onclick="scrollTo('debugging')"><span class="nav-dot" style="background:#f6ad55"></span>Debugging</a>
+      <a class="nav-link" onclick="scrollTo('errores')"><span class="nav-dot" style="background:#fc8181"></span>Manejo de Errores</a>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main id="main-content">
+
+    <!-- Hero -->
+    <div class="hero">
+      <h1>Referencia Completa<br>de <span>Node.js</span></h1>
+      <p>Todos los módulos integrados, métodos, patrones y etiquetas esenciales en un solo lugar.</p>
+      <div class="hero-tags">
+        <span class="tag tag-green">Runtime JS</span>
+        <span class="tag tag-cyan">Asíncrono</span>
+        <span class="tag tag-yellow">NPM</span>
+        <span class="tag tag-purple">Event Loop</span>
+        <span class="tag tag-orange">Streams</span>
+        <span class="tag tag-red">V8 Engine</span>
+      </div>
+    </div>
+
+    <!-- ======================== INTRODUCCIÓN ======================== -->
+    <div class="section visible" id="introduccion">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(104,211,145,0.1)">🟢</div>
+        <div>
+          <div class="section-title">Introducción</div>
+          <div class="section-desc">Conceptos fundamentales y estructura básica</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> hello.js</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          </div>
+          <pre><span class="cmt">// Primer programa Node.js</span>
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="str">'Hola, Node.js!'</span>);
+
+<span class="cmt">// Variables de entorno</span>
+<span class="fn">console</span>.<span class="fn">log</span>(process.<span class="prop">env</span>.<span class="prop">NODE_ENV</span>);
+
+<span class="cmt">// Versión de Node</span>
+<span class="fn">console</span>.<span class="fn">log</span>(process.<span class="prop">version</span>);</pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> modules.js</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          </div>
+          <pre><span class="cmt">// CommonJS (require)</span>
+<span class="kw">const</span> fs = <span class="fn">require</span>(<span class="str">'fs'</span>);
+<span class="kw">const</span> path = <span class="fn">require</span>(<span class="str">'path'</span>);
+
+<span class="cmt">// ES Modules (import)</span>
+<span class="kw">import</span> fs <span class="kw">from</span> <span class="str">'node:fs'</span>;
+<span class="kw">import</span> { readFile } <span class="kw">from</span> <span class="str">'node:fs/promises'</span>;
+
+<span class="cmt">// Exportar módulo</span>
+module.<span class="prop">exports</span> = { miFuncion };
+<span class="kw">export default</span> miFuncion;</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== INSTALACIÓN ======================== -->
+    <div class="section" id="instalacion">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(104,211,145,0.1)">⚙️</div>
+        <div>
+          <div class="section-title">Instalación y Comandos Base</div>
+          <div class="section-desc">Terminal y configuración inicial</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> terminal</div>
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+        </div>
+        <pre><span class="cmt"># Verificar versión</span>
+node --version
+npm --version
+
+<span class="cmt"># Ejecutar archivo</span>
+node app.js
+node --watch app.js   <span class="cmt"># modo watch (v18+)</span>
+
+<span class="cmt"># REPL interactivo</span>
+node
+
+<span class="cmt"># Inicializar proyecto</span>
+npm init
+npm init -y           <span class="cmt"># con defaults</span>
+
+<span class="cmt"># Instalar paquetes</span>
+npm install express
+npm i express         <span class="cmt"># alias</span>
+npm i -D nodemon      <span class="cmt"># dev dependency</span>
+npm i -g pm2          <span class="cmt"># global</span></pre>
+      </div>
+    </div>
+
+    <!-- ======================== MÓDULOS CORE ======================== -->
+    <div class="section" id="modulos-core">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(104,211,145,0.1)">📦</div>
+        <div>
+          <div class="section-title">Módulos Core Integrados</div>
+          <div class="section-desc">Módulos disponibles sin instalación</div>
+        </div>
+      </div>
+      <div class="card-grid">
+        <div class="card"><div class="card-name">fs</div><div class="card-desc">Sistema de archivos — leer, escribir, eliminar, copiar archivos y directorios</div><div class="card-meta"><span class="tag tag-cyan">I/O</span></div></div>
+        <div class="card"><div class="card-name">path</div><div class="card-desc">Manipulación de rutas de archivos de forma cross-platform</div><div class="card-meta"><span class="tag tag-cyan">Utilidad</span></div></div>
+        <div class="card"><div class="card-name">http / https</div><div class="card-desc">Crear servidores HTTP y realizar peticiones de red</div><div class="card-meta"><span class="tag tag-green">Red</span></div></div>
+        <div class="card"><div class="card-name">os</div><div class="card-desc">Información del sistema operativo (CPU, memoria, plataforma)</div><div class="card-meta"><span class="tag tag-yellow">Sistema</span></div></div>
+        <div class="card"><div class="card-name">events</div><div class="card-desc">EventEmitter — patrón publicador/suscriptor para eventos personalizados</div><div class="card-meta"><span class="tag tag-purple">Async</span></div></div>
+        <div class="card"><div class="card-name">stream</div><div class="card-desc">Streams legibles, escribibles, transform y duplex para datos en flujo</div><div class="card-meta"><span class="tag tag-orange">I/O</span></div></div>
+        <div class="card"><div class="card-name">crypto</div><div class="card-desc">Funciones criptográficas: hash, HMAC, cifrado, generación de claves</div><div class="card-meta"><span class="tag tag-red">Seguridad</span></div></div>
+        <div class="card"><div class="card-name">child_process</div><div class="card-desc">Ejecutar comandos del sistema y procesos hijo (exec, spawn, fork)</div><div class="card-meta"><span class="tag tag-yellow">Proceso</span></div></div>
+        <div class="card"><div class="card-name">url / querystring</div><div class="card-desc">Parsear y construir URLs y query strings</div><div class="card-meta"><span class="tag tag-cyan">Red</span></div></div>
+        <div class="card"><div class="card-name">buffer</div><div class="card-desc">Manejo de datos binarios en memoria (bytes, hex, base64)</div><div class="card-meta"><span class="tag tag-orange">Binario</span></div></div>
+        <div class="card"><div class="card-name">cluster</div><div class="card-desc">Bifurcar procesos para aprovechar múltiples núcleos de CPU</div><div class="card-meta"><span class="tag tag-green">Performance</span></div></div>
+        <div class="card"><div class="card-name">worker_threads</div><div class="card-desc">Hilos de trabajo para tareas intensivas en CPU sin bloquear el event loop</div><div class="card-meta"><span class="tag tag-purple">Concurrencia</span></div></div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ======================== FS ======================== -->
+    <div class="section" id="fs">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(99,179,237,0.1)">📁</div>
+        <div>
+          <div class="section-title">fs — File System</div>
+          <div class="section-desc">Módulo para trabajar con el sistema de archivos</div>
+        </div>
+      </div>
+
+      <table class="method-table">
+        <thead><tr><th>Método</th><th>Descripción</th><th>Retorna</th></tr></thead>
+        <tbody>
+          <tr><td class="method-name">fs.readFile(path, opts, cb)</td><td class="method-desc">Lee un archivo de forma asíncrona</td><td class="method-return">void</td></tr>
+          <tr><td class="method-name">fs.writeFile(path, data, cb)</td><td class="method-desc">Escribe datos en un archivo</td><td class="method-return">void</td></tr>
+          <tr><td class="method-name">fs.appendFile(path, data, cb)</td><td class="method-desc">Agrega datos al final de un archivo</td><td class="method-return">void</td></tr>
+          <tr><td class="method-name">fs.unlink(path, cb)</td><td class="method-desc">Elimina un archivo</td><td class="method-return">void</td></tr>
+          <tr><td class="method-name">fs.mkdir(path, opts, cb)</td><td class="method-desc">Crea un directorio</td><td class="method-return">void</td></tr>
+          <tr><td class="method-name">fs.readdir(path, cb)</td><td class="method-desc">Lista contenido de un directorio</td><td class="method-return">string[]</td></tr>
+          <tr><td class="method-name">fs.stat(path, cb)</td><td class="method-desc">Obtiene información de un archivo/directorio</td><td class="method-return">Stats</td></tr>
+          <tr><td class="method-name">fs.rename(old, new, cb)</td><td class="method-desc">Renombra o mueve un archivo</td><td class="method-return">void</td></tr>
+          <tr><td class="method-name">fs.copyFile(src, dest, cb)</td><td class="method-desc">Copia un archivo</td><td class="method-return">void</td></tr>
+          <tr><td class="method-name">fs.watch(path, cb)</td><td class="method-desc">Observa cambios en archivos/directorios</td><td class="method-return">FSWatcher</td></tr>
+          <tr><td class="method-name">fs.createReadStream(path)</td><td class="method-desc">Crea un stream de lectura</td><td class="method-return">ReadStream</td></tr>
+          <tr><td class="method-name">fs.createWriteStream(path)</td><td class="method-desc">Crea un stream de escritura</td><td class="method-return">WriteStream</td></tr>
+          <tr><td class="method-name">fs.promises.readFile()</td><td class="method-desc">Versión basada en Promises</td><td class="method-return">Promise</td></tr>
+          <tr><td class="method-name">fs.existsSync(path)</td><td class="method-desc">Verifica si existe un archivo (síncrono)</td><td class="method-return">boolean</td></tr>
+        </tbody>
+      </table>
+
+      <div class="two-col">
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> fs-async.js</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          </div>
+          <pre><span class="kw">const</span> fs = <span class="fn">require</span>(<span class="str">'fs'</span>);
+
+<span class="cmt">// Leer archivo</span>
+fs.<span class="fn">readFile</span>(<span class="str">'archivo.txt'</span>, <span class="str">'utf8'</span>, (err, data) => {
+  <span class="kw">if</span> (err) <span class="kw">throw</span> err;
+  <span class="fn">console</span>.<span class="fn">log</span>(data);
+});
+
+<span class="cmt">// Escribir archivo</span>
+fs.<span class="fn">writeFile</span>(<span class="str">'salida.txt'</span>, <span class="str">'Hola mundo'</span>, err => {
+  <span class="kw">if</span> (err) <span class="kw">throw</span> err;
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">'Guardado!'</span>);
+});
+
+<span class="cmt">// Crear directorio recursivo</span>
+fs.<span class="fn">mkdir</span>(<span class="str">'./carpeta/sub'</span>, { recursive: <span class="num">true</span> }, err => {
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">'Directorio creado'</span>);
+});</pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> fs-promises.js</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          </div>
+          <pre><span class="kw">const</span> { promises: fs } = <span class="fn">require</span>(<span class="str">'fs'</span>);
+<span class="cmt">// o: import fs from 'node:fs/promises'</span>
+
+<span class="kw">async function</span> <span class="fn">trabajarArchivos</span>() {
+  <span class="cmt">// Leer</span>
+  <span class="kw">const</span> data = <span class="kw">await</span> fs.<span class="fn">readFile</span>(<span class="str">'data.json'</span>, <span class="str">'utf8'</span>);
+  <span class="kw">const</span> json = <span class="cls">JSON</span>.<span class="fn">parse</span>(data);
+
+  <span class="cmt">// Escribir</span>
+  <span class="kw">await</span> fs.<span class="fn">writeFile</span>(<span class="str">'out.json'</span>, <span class="cls">JSON</span>.<span class="fn">stringify</span>(json, <span class="num">null</span>, <span class="num">2</span>));
+
+  <span class="cmt">// Listar directorio</span>
+  <span class="kw">const</span> archivos = <span class="kw">await</span> fs.<span class="fn">readdir</span>(<span class="str">'.'</span>);
+  <span class="fn">console</span>.<span class="fn">log</span>(archivos);
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== PATH ======================== -->
+    <div class="section" id="path">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(99,179,237,0.1)">🗂️</div>
+        <div>
+          <div class="section-title">path</div>
+          <div class="section-desc">Manipulación de rutas del sistema de archivos</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> path.js</div>
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+        </div>
+        <pre><span class="kw">const</span> path = <span class="fn">require</span>(<span class="str">'path'</span>);
+
+path.<span class="fn">join</span>(<span class="str">'/user'</span>, <span class="str">'docs'</span>, <span class="str">'file.txt'</span>);   <span class="cmt">// /user/docs/file.txt</span>
+path.<span class="fn">resolve</span>(<span class="str">'./carpeta'</span>, <span class="str">'archivo.js'</span>);    <span class="cmt">// ruta absoluta</span>
+path.<span class="fn">dirname</span>(<span class="str">'/user/docs/file.txt'</span>);          <span class="cmt">// /user/docs</span>
+path.<span class="fn">basename</span>(<span class="str">'/user/docs/file.txt'</span>);         <span class="cmt">// file.txt</span>
+path.<span class="fn">basename</span>(<span class="str">'/user/docs/file.txt'</span>, <span class="str">'.txt'</span>); <span class="cmt">// file</span>
+path.<span class="fn">extname</span>(<span class="str">'archivo.min.js'</span>);              <span class="cmt">// .js</span>
+path.<span class="fn">parse</span>(<span class="str">'/user/docs/file.txt'</span>);            <span class="cmt">// { root, dir, base, ext, name }</span>
+path.<span class="fn">format</span>({ dir: <span class="str">'/user'</span>, base: <span class="str">'f.txt'</span> }); <span class="cmt">// /user/f.txt</span>
+path.<span class="fn">isAbsolute</span>(<span class="str">'/user/docs'</span>);               <span class="cmt">// true</span>
+path.<span class="fn">relative</span>(<span class="str">'/a/b'</span>, <span class="str">'/a/b/c/d'</span>);           <span class="cmt">// c/d</span>
+path.<span class="fn">normalize</span>(<span class="str">'/user//docs/../file'</span>);        <span class="cmt">// /user/file</span>
+path.<span class="prop">sep</span>;   <span class="cmt">// '/' en Unix, '\' en Windows</span>
+path.<span class="prop">delimiter</span>; <span class="cmt">// ':' en Unix, ';' en Windows</span>
+__dirname;   <span class="cmt">// directorio actual del módulo</span>
+__filename;  <span class="cmt">// ruta completa del archivo actual</span></pre>
+      </div>
+    </div>
+
+    <!-- ======================== HTTP ======================== -->
+    <div class="section" id="http">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(104,211,145,0.1)">🌐</div>
+        <div>
+          <div class="section-title">http / https</div>
+          <div class="section-desc">Servidor web y peticiones HTTP nativas</div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> server.js</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          </div>
+          <pre><span class="kw">const</span> http = <span class="fn">require</span>(<span class="str">'http'</span>);
+
+<span class="kw">const</span> server = http.<span class="fn">createServer</span>((req, res) => {
+  <span class="cmt">// Headers de respuesta</span>
+  res.<span class="fn">writeHead</span>(<span class="num">200</span>, {
+    <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span>,
+    <span class="str">'Access-Control-Allow-Origin'</span>: <span class="str">'*'</span>
+  });
+
+  <span class="cmt">// Método y URL</span>
+  <span class="fn">console</span>.<span class="fn">log</span>(req.<span class="prop">method</span>, req.<span class="prop">url</span>);
+
+  <span class="cmt">// Enviar respuesta</span>
+  res.<span class="fn">end</span>(<span class="cls">JSON</span>.<span class="fn">stringify</span>({ ok: <span class="num">true</span> }));
+});
+
+server.<span class="fn">listen</span>(<span class="num">3000</span>, () => {
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">'Servidor en puerto 3000'</span>);
+});</pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> request.js</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          </div>
+          <pre><span class="kw">const</span> https = <span class="fn">require</span>(<span class="str">'https'</span>);
+
+<span class="cmt">// GET request</span>
+https.<span class="fn">get</span>(<span class="str">'https://api.example.com/data'</span>, res => {
+  <span class="kw">let</span> data = <span class="str">''</span>;
+  res.<span class="fn">on</span>(<span class="str">'data'</span>, chunk => data += chunk);
+  res.<span class="fn">on</span>(<span class="str">'end'</span>, () => {
+    <span class="fn">console</span>.<span class="fn">log</span>(<span class="cls">JSON</span>.<span class="fn">parse</span>(data));
+  });
+});
+
+<span class="cmt">// Usando fetch nativo (v18+)</span>
+<span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">'https://api.example.com'</span>);
+<span class="kw">const</span> json = <span class="kw">await</span> res.<span class="fn">json</span>();</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== OS ======================== -->
+    <div class="section" id="os">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(246,224,94,0.1)">💻</div>
+        <div>
+          <div class="section-title">os — Sistema Operativo</div>
+          <div class="section-desc">Información sobre el sistema operativo y hardware</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> os.js</div>
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+        </div>
+        <pre><span class="kw">const</span> os = <span class="fn">require</span>(<span class="str">'os'</span>);
+
+os.<span class="fn">platform</span>();      <span class="cmt">// 'linux', 'darwin', 'win32'</span>
+os.<span class="fn">arch</span>();          <span class="cmt">// 'x64', 'arm64'</span>
+os.<span class="fn">type</span>();          <span class="cmt">// 'Linux', 'Darwin', 'Windows_NT'</span>
+os.<span class="fn">release</span>();       <span class="cmt">// versión del kernel</span>
+os.<span class="fn">hostname</span>();      <span class="cmt">// nombre del host</span>
+os.<span class="fn">homedir</span>();       <span class="cmt">// directorio home del usuario</span>
+os.<span class="fn">tmpdir</span>();        <span class="cmt">// directorio temporal del sistema</span>
+os.<span class="fn">cpus</span>();          <span class="cmt">// array con info de CPUs</span>
+os.<span class="fn">totalmem</span>();      <span class="cmt">// memoria total en bytes</span>
+os.<span class="fn">freemem</span>();       <span class="cmt">// memoria libre en bytes</span>
+os.<span class="fn">loadavg</span>();       <span class="cmt">// promedio de carga [1, 5, 15 min]</span>
+os.<span class="fn">networkInterfaces</span>(); <span class="cmt">// interfaces de red</span>
+os.<span class="fn">userInfo</span>();      <span class="cmt">// info del usuario actual</span>
+os.<span class="prop">EOL</span>;             <span class="cmt">// '\n' (Unix) o '\r\n' (Windows)</span>
+os.<span class="fn">uptime</span>();        <span class="cmt">// tiempo activo del sistema en segundos</span></pre>
+      </div>
+    </div>
+
+    <!-- ======================== EVENTS ======================== -->
+    <div class="section" id="events">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(183,148,244,0.1)">📡</div>
+        <div>
+          <div class="section-title">events — EventEmitter</div>
+          <div class="section-desc">Patrón de eventos y emisores personalizados</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> events.js</div>
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+        </div>
+        <pre><span class="kw">const</span> { <span class="cls">EventEmitter</span> } = <span class="fn">require</span>(<span class="str">'events'</span>);
+
+<span class="kw">class</span> <span class="cls">MiEmitter</span> <span class="kw">extends</span> <span class="cls">EventEmitter</span> {}
+
+<span class="kw">const</span> emitter = <span class="kw">new</span> <span class="cls">MiEmitter</span>();
+
+<span class="cmt">// Suscribirse a evento</span>
+emitter.<span class="fn">on</span>(<span class="str">'datos'</span>, (payload) => {
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">'Evento recibido:'</span>, payload);
+});
+
+<span class="cmt">// Solo una vez</span>
+emitter.<span class="fn">once</span>(<span class="str">'conectado'</span>, () => <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">'Conectado!'</span>));
+
+<span class="cmt">// Emitir evento</span>
+emitter.<span class="fn">emit</span>(<span class="str">'datos'</span>, { id: <span class="num">1</span>, valor: <span class="str">'hola'</span> });
+emitter.<span class="fn">emit</span>(<span class="str">'conectado'</span>);
+
+<span class="cmt">// Eliminar listener</span>
+<span class="kw">const</span> handler = (d) => <span class="fn">console</span>.<span class="fn">log</span>(d);
+emitter.<span class="fn">on</span>(<span class="str">'msg'</span>, handler);
+emitter.<span class="fn">off</span>(<span class="str">'msg'</span>, handler);     <span class="cmt">// o removeListener</span>
+emitter.<span class="fn">removeAllListeners</span>(<span class="str">'msg'</span>);
+
+<span class="cmt">// Listar listeners</span>
+emitter.<span class="fn">listenerCount</span>(<span class="str">'datos'</span>);  <span class="cmt">// número de listeners</span>
+emitter.<span class="fn">eventNames</span>();           <span class="cmt">// ['datos', 'conectado']</span>
+emitter.<span class="fn">setMaxListeners</span>(<span class="num">20</span>);   <span class="cmt">// default: 10</span></pre>
+      </div>
+    </div>
+
+    <!-- ======================== STREAM ======================== -->
+    <div class="section" id="stream">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(246,173,85,0.1)">🌊</div>
+        <div>
+          <div class="section-title">stream</div>
+          <div class="section-desc">Flujos de datos para procesamiento eficiente</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> streams.js</div>
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+        </div>
+        <pre><span class="kw">const</span> fs = <span class="fn">require</span>(<span class="str">'fs'</span>);
+<span class="kw">const</span> { Transform } = <span class="fn">require</span>(<span class="str">'stream'</span>);
+<span class="kw">const</span> { pipeline } = <span class="fn">require</span>(<span class="str">'stream/promises'</span>);
+<span class="kw">const</span> zlib = <span class="fn">require</span>(<span class="str">'zlib'</span>);
+
+<span class="cmt">// Pipe básico (copiar archivo)</span>
+fs.<span class="fn">createReadStream</span>(<span class="str">'entrada.txt'</span>)
+  .<span class="fn">pipe</span>(fs.<span class="fn">createWriteStream</span>(<span class="str">'salida.txt'</span>));
+
+<span class="cmt">// Pipeline con promesas (recomendado)</span>
+<span class="kw">await</span> <span class="fn">pipeline</span>(
+  fs.<span class="fn">createReadStream</span>(<span class="str">'archivo.txt'</span>),
+  zlib.<span class="fn">createGzip</span>(),
+  fs.<span class="fn">createWriteStream</span>(<span class="str">'archivo.txt.gz'</span>)
+);
+
+<span class="cmt">// Transform stream personalizado</span>
+<span class="kw">const</span> mayusculas = <span class="kw">new</span> <span class="cls">Transform</span>({
+  <span class="fn">transform</span>(chunk, encoding, callback) {
+    <span class="kw">this</span>.<span class="fn">push</span>(chunk.<span class="fn">toString</span>().<span class="fn">toUpperCase</span>());
+    <span class="fn">callback</span>();
+  }
+});
+
+<span class="cmt">// Eventos de stream</span>
+stream.<span class="fn">on</span>(<span class="str">'data'</span>, chunk => { <span class="cmt">/* procesar chunk */</span> });
+stream.<span class="fn">on</span>(<span class="str">'end'</span>, () => { <span class="cmt">/* stream terminó */</span> });
+stream.<span class="fn">on</span>(<span class="str">'error'</span>, err => { <span class="cmt">/* manejar error */</span> });
+stream.<span class="fn">on</span>(<span class="str">'finish'</span>, () => { <span class="cmt">/* escritura completada */</span> });</pre>
+      </div>
+    </div>
+
+    <!-- ======================== CHILD_PROCESS ======================== -->
+    <div class="section" id="child_process">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(246,224,94,0.1)">⚡</div>
+        <div>
+          <div class="section-title">child_process</div>
+          <div class="section-desc">Ejecutar comandos del sistema y procesos hijos</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> child_process.js</div>
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+        </div>
+        <pre><span class="kw">const</span> { exec, execSync, spawn, fork } = <span class="fn">require</span>(<span class="str">'child_process'</span>);
+
+<span class="cmt">// exec — comando simple con callback</span>
+<span class="fn">exec</span>(<span class="str">'ls -la'</span>, (error, stdout, stderr) => {
+  <span class="kw">if</span> (error) <span class="kw">return</span> <span class="fn">console</span>.<span class="fn">error</span>(error);
+  <span class="fn">console</span>.<span class="fn">log</span>(stdout);
+});
+
+<span class="cmt">// execSync — síncrono, bloquea hasta completar</span>
+<span class="kw">const</span> resultado = <span class="fn">execSync</span>(<span class="str">'git status'</span>).<span class="fn">toString</span>();
+
+<span class="cmt">// spawn — para procesos con mucha salida</span>
+<span class="kw">const</span> proceso = <span class="fn">spawn</span>(<span class="str">'node'</span>, [<span class="str">'script.js'</span>], {
+  stdio: <span class="str">'inherit'</span>  <span class="cmt">// hereda stdin/stdout/stderr</span>
+});
+proceso.<span class="fn">on</span>(<span class="str">'exit'</span>, code => <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">'Código:'</span>, code));
+
+<span class="cmt">// fork — crear proceso Node.js hijo</span>
+<span class="kw">const</span> hijo = <span class="fn">fork</span>(<span class="str">'worker.js'</span>);
+hijo.<span class="fn">send</span>({ tarea: <span class="str">'procesar'</span> });
+hijo.<span class="fn">on</span>(<span class="str">'message'</span>, msg => <span class="fn">console</span>.<span class="fn">log</span>(msg));</pre>
+      </div>
+    </div>
+
+    <!-- ======================== CRYPTO ======================== -->
+    <div class="section" id="crypto">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(252,129,129,0.1)">🔐</div>
+        <div>
+          <div class="section-title">crypto</div>
+          <div class="section-desc">Funciones criptográficas y de seguridad</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> crypto.js</div>
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+        </div>
+        <pre><span class="kw">const</span> crypto = <span class="fn">require</span>(<span class="str">'crypto'</span>);
+
+<span class="cmt">// Hash</span>
+<span class="kw">const</span> hash = crypto.<span class="fn">createHash</span>(<span class="str">'sha256'</span>)
+  .<span class="fn">update</span>(<span class="str">'mi texto'</span>)
+  .<span class="fn">digest</span>(<span class="str">'hex'</span>);
+
+<span class="cmt">// HMAC</span>
+<span class="kw">const</span> hmac = crypto.<span class="fn">createHmac</span>(<span class="str">'sha256'</span>, <span class="str">'secreto'</span>)
+  .<span class="fn">update</span>(<span class="str">'datos'</span>)
+  .<span class="fn">digest</span>(<span class="str">'hex'</span>);
+
+<span class="cmt">// Bytes aleatorios</span>
+<span class="kw">const</span> bytes = crypto.<span class="fn">randomBytes</span>(<span class="num">32</span>).<span class="fn">toString</span>(<span class="str">'hex'</span>);
+<span class="kw">const</span> uuid = crypto.<span class="fn">randomUUID</span>(); <span class="cmt">// v4 UUID</span>
+
+<span class="cmt">// Cifrado AES-256-GCM</span>
+<span class="kw">const</span> key = crypto.<span class="fn">randomBytes</span>(<span class="num">32</span>);
+<span class="kw">const</span> iv  = crypto.<span class="fn">randomBytes</span>(<span class="num">16</span>);
+<span class="kw">const</span> cipher = crypto.<span class="fn">createCipheriv</span>(<span class="str">'aes-256-gcm'</span>, key, iv);
+<span class="kw">let</span> cifrado = cipher.<span class="fn">update</span>(<span class="str">'secreto'</span>, <span class="str">'utf8'</span>, <span class="str">'hex'</span>);
+cifrado += cipher.<span class="fn">final</span>(<span class="str">'hex'</span>);
+
+<span class="cmt">// Comparar de forma segura</span>
+crypto.<span class="fn">timingSafeEqual</span>(bufA, bufB);</pre>
+      </div>
+    </div>
+
+    <!-- ======================== BUFFER ======================== -->
+    <div class="section" id="buffer">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(246,173,85,0.1)">💾</div>
+        <div>
+          <div class="section-title">Buffer</div>
+          <div class="section-desc">Manejo de datos binarios en memoria</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> buffer.js</div>
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+        </div>
+        <pre><span class="cmt">// Crear buffers</span>
+<span class="cls">Buffer</span>.<span class="fn">from</span>(<span class="str">'Hola mundo'</span>);              <span class="cmt">// de string</span>
+<span class="cls">Buffer</span>.<span class="fn">from</span>([<span class="num">0x48</span>, <span class="num">0x6f</span>, <span class="num">0x6c</span>, <span class="num">0x61</span>]);   <span class="cmt">// de array de bytes</span>
+<span class="cls">Buffer</span>.<span class="fn">alloc</span>(<span class="num">10</span>);                        <span class="cmt">// 10 bytes inicializados a 0</span>
+<span class="cls">Buffer</span>.<span class="fn">allocUnsafe</span>(<span class="num">10</span>);                 <span class="cmt">// 10 bytes sin inicializar (más rápido)</span>
+
+<span class="cmt">// Conversiones</span>
+<span class="kw">const</span> buf = <span class="cls">Buffer</span>.<span class="fn">from</span>(<span class="str">'Hola'</span>);
+buf.<span class="fn">toString</span>();         <span class="cmt">// 'Hola' (utf8 por defecto)</span>
+buf.<span class="fn">toString</span>(<span class="str">'hex'</span>);    <span class="cmt">// hex</span>
+buf.<span class="fn">toString</span>(<span class="str">'base64'</span>); <span class="cmt">// base64</span>
+
+<span class="cmt">// Base64 encode/decode</span>
+<span class="kw">const</span> encoded = <span class="cls">Buffer</span>.<span class="fn">from</span>(<span class="str">'texto'</span>).<span class="fn">toString</span>(<span class="str">'base64'</span>);
+<span class="kw">const</span> decoded = <span class="cls">Buffer</span>.<span class="fn">from</span>(encoded, <span class="str">'base64'</span>).<span class="fn">toString</span>();
+
+<span class="cmt">// Operaciones</span>
+buf.<span class="prop">length</span>;             <span class="cmt">// tamaño en bytes</span>
+<span class="cls">Buffer</span>.<span class="fn">concat</span>([buf1, buf2]); <span class="cmt">// concatenar buffers</span>
+<span class="cls">Buffer</span>.<span class="fn">compare</span>(buf1, buf2); <span class="cmt">// comparar</span>
+buf.<span class="fn">copy</span>(target, targetStart);</pre>
+      </div>
+    </div>
+
+    <!-- ======================== URL ======================== -->
+    <div class="section" id="url">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(99,179,237,0.1)">🔗</div>
+        <div>
+          <div class="section-title">url / querystring</div>
+          <div class="section-desc">Parseo y construcción de URLs</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> url.js</div>
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+        </div>
+        <pre><span class="cmt">// URL API moderna (WHATWG)</span>
+<span class="kw">const</span> url = <span class="kw">new</span> <span class="cls">URL</span>(<span class="str">'https://user:pass@ejemplo.com:8080/ruta?q=hola#hash'</span>);
+
+url.<span class="prop">protocol</span>  <span class="cmt">// 'https:'</span>
+url.<span class="prop">username</span>  <span class="cmt">// 'user'</span>
+url.<span class="prop">password</span>  <span class="cmt">// 'pass'</span>
+url.<span class="prop">hostname</span>  <span class="cmt">// 'ejemplo.com'</span>
+url.<span class="prop">port</span>      <span class="cmt">// '8080'</span>
+url.<span class="prop">pathname</span>  <span class="cmt">// '/ruta'</span>
+url.<span class="prop">search</span>    <span class="cmt">// '?q=hola'</span>
+url.<span class="prop">hash</span>      <span class="cmt">// '#hash'</span>
+
+<span class="cmt">// URLSearchParams</span>
+<span class="kw">const</span> params = <span class="kw">new</span> <span class="cls">URLSearchParams</span>(<span class="str">'q=hola&page=2'</span>);
+params.<span class="fn">get</span>(<span class="str">'q'</span>);         <span class="cmt">// 'hola'</span>
+params.<span class="fn">set</span>(<span class="str">'page'</span>, <span class="str">'3'</span>);
+params.<span class="fn">append</span>(<span class="str">'lang'</span>, <span class="str">'es'</span>);
+params.<span class="fn">delete</span>(<span class="str">'page'</span>);
+params.<span class="fn">has</span>(<span class="str">'q'</span>);         <span class="cmt">// true</span>
+params.<span class="fn">toString</span>();      <span class="cmt">// 'q=hola&lang=es'</span>
+[...params.<span class="fn">entries</span>()];  <span class="cmt">// [['q','hola'],...]</span></pre>
+      </div>
+    </div>
+
+    <!-- ======================== TIMERS ======================== -->
+    <div class="section" id="timer">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(183,148,244,0.1)">⏱️</div>
+        <div>
+          <div class="section-title">Timers</div>
+          <div class="section-desc">Funciones de tiempo y el event loop</div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> timers.js</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          </div>
+          <pre><span class="cmt">// setTimeout — ejecutar una vez</span>
+<span class="kw">const</span> t = <span class="fn">setTimeout</span>(() => {
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">'Después de 1s'</span>);
+}, <span class="num">1000</span>);
+<span class="fn">clearTimeout</span>(t); <span class="cmt">// cancelar</span>
+
+<span class="cmt">// setInterval — repetir</span>
+<span class="kw">const</span> i = <span class="fn">setInterval</span>(() => {
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">'Cada 500ms'</span>);
+}, <span class="num">500</span>);
+<span class="fn">clearInterval</span>(i); <span class="cmt">// cancelar</span>
+
+<span class="cmt">// setImmediate — tras I/O callbacks</span>
+<span class="fn">setImmediate</span>(() => <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">'Inmediato'</span>));
+
+<span class="cmt">// process.nextTick — ANTES que I/O</span>
+process.<span class="fn">nextTick</span>(() => <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">'Next tick'</span>));</pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> timers-promises.js</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          </div>
+          <pre><span class="kw">const</span> { setTimeout: sleep, setInterval } 
+  = <span class="fn">require</span>(<span class="str">'timers/promises'</span>);
+
+<span class="cmt">// sleep async (v15+)</span>
+<span class="kw">await</span> <span class="fn">sleep</span>(<span class="num">1000</span>);  <span class="cmt">// espera 1 segundo</span>
+
+<span class="cmt">// Intervalo async iterable</span>
+<span class="kw">for await</span> (<span class="kw">const</span> t <span class="kw">of</span> <span class="fn">setInterval</span>(<span class="num">100</span>, <span class="cls">Date</span>.<span class="fn">now</span>())) {
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">'tick'</span>, t);
+  <span class="kw">break</span>; <span class="cmt">// para detenerse</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== PROCESS ======================== -->
+    <div class="section" id="process">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(104,211,145,0.1)">🔧</div>
+        <div>
+          <div class="section-title">process</div>
+          <div class="section-desc">Objeto global con información y control del proceso</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> process.js</div>
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+        </div>
+        <pre>process.<span class="prop">version</span>         <span class="cmt">// versión de Node: 'v20.0.0'</span>
+process.<span class="prop">platform</span>        <span class="cmt">// 'linux', 'darwin', 'win32'</span>
+process.<span class="prop">arch</span>            <span class="cmt">// 'x64', 'arm64'</span>
+process.<span class="prop">pid</span>             <span class="cmt">// ID del proceso</span>
+process.<span class="prop">ppid</span>            <span class="cmt">// ID del proceso padre</span>
+process.<span class="prop">cwd</span>()           <span class="cmt">// directorio de trabajo actual</span>
+process.<span class="prop">chdir</span>(<span class="str">'/ruta'</span>)  <span class="cmt">// cambiar directorio</span>
+process.<span class="prop">env</span>             <span class="cmt">// variables de entorno</span>
+process.<span class="prop">argv</span>            <span class="cmt">// ['node', 'app.js', ...args]</span>
+process.<span class="prop">exit</span>(<span class="num">0</span>)         <span class="cmt">// salir (0=ok, 1=error)</span>
+process.<span class="prop">hrtime</span>.<span class="fn">bigint</span>() <span class="cmt">// tiempo de alta resolución (ns)</span>
+process.<span class="prop">memoryUsage</span>()  <span class="cmt">// { rss, heapTotal, heapUsed, external }</span>
+process.<span class="prop">uptime</span>()       <span class="cmt">// segundos activo</span>
+process.<span class="prop">stdin</span>          <span class="cmt">// stream de entrada</span>
+process.<span class="prop">stdout</span>         <span class="cmt">// stream de salida</span>
+process.<span class="prop">stderr</span>         <span class="cmt">// stream de errores</span>
+
+<span class="cmt">// Señales del proceso</span>
+process.<span class="fn">on</span>(<span class="str">'exit'</span>, code => { <span class="cmt">/* cleanup */</span> });
+process.<span class="fn">on</span>(<span class="str">'uncaughtException'</span>, err => { <span class="cmt">/* error no capturado */</span> });
+process.<span class="fn">on</span>(<span class="str">'unhandledRejection'</span>, (reason, promise) => {});
+process.<span class="fn">on</span>(<span class="str">'SIGTERM'</span>, () => { <span class="cmt">/* apagado graceful */</span> });
+process.<span class="fn">on</span>(<span class="str">'SIGINT'</span>, () => { <span class="cmt">/* Ctrl+C */</span> });</pre>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ======================== CALLBACKS ======================== -->
+    <div class="section" id="callbacks">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(183,148,244,0.1)">🔄</div>
+        <div>
+          <div class="section-title">Callbacks</div>
+          <div class="section-desc">Patrón asíncrono clásico de Node.js</div>
+        </div>
+      </div>
+      <div class="info-box">
+        <span class="icon">ℹ️</span>
+        <div>La convención Node.js usa <strong>error-first callbacks</strong>: el primer argumento es siempre el error, el segundo el resultado.</div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> callbacks.js</div>
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+        </div>
+        <pre><span class="cmt">// Patrón error-first</span>
+<span class="kw">function</span> <span class="fn">leerDatos</span>(id, <span class="fn">callback</span>) {
+  db.<span class="fn">find</span>(id, (err, resultado) => {
+    <span class="kw">if</span> (err) <span class="kw">return</span> <span class="fn">callback</span>(err);
+    <span class="fn">callback</span>(<span class="num">null</span>, resultado);
+  });
+}
+
+<span class="fn">leerDatos</span>(<span class="num">1</span>, (err, data) => {
+  <span class="kw">if</span> (err) {
+    <span class="fn">console</span>.<span class="fn">error</span>(<span class="str">'Error:'</span>, err.<span class="prop">message</span>);
+    <span class="kw">return</span>;
+  }
+  <span class="fn">console</span>.<span class="fn">log</span>(data);
+});
+
+<span class="cmt">// Convertir callback a Promise</span>
+<span class="kw">const</span> { promisify } = <span class="fn">require</span>(<span class="str">'util'</span>);
+<span class="kw">const</span> readFileAsync = <span class="fn">promisify</span>(fs.<span class="prop">readFile</span>);
+<span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">readFileAsync</span>(<span class="str">'file.txt'</span>, <span class="str">'utf8'</span>);</pre>
+      </div>
+    </div>
+
+    <!-- ======================== PROMISES ======================== -->
+    <div class="section" id="promises">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(183,148,244,0.1)">🔮</div>
+        <div>
+          <div class="section-title">Promises</div>
+          <div class="section-desc">Manejo moderno de asincronía</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> promises.js</div>
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+        </div>
+        <pre><span class="cmt">// Crear Promise</span>
+<span class="kw">const</span> promesa = <span class="kw">new</span> <span class="cls">Promise</span>((resolve, reject) => {
+  <span class="kw">if</span> (condicion) <span class="fn">resolve</span>(<span class="str">'éxito'</span>);
+  <span class="kw">else</span> <span class="fn">reject</span>(<span class="kw">new</span> <span class="cls">Error</span>(<span class="str">'falló'</span>));
+});
+
+<span class="cmt">// Métodos estáticos de Promise</span>
+<span class="cls">Promise</span>.<span class="fn">resolve</span>(<span class="str">'valor'</span>);      <span class="cmt">// siempre resuelve</span>
+<span class="cls">Promise</span>.<span class="fn">reject</span>(<span class="kw">new</span> <span class="cls">Error</span>());  <span class="cmt">// siempre rechaza</span>
+
+<span class="cmt">// Esperar todas (falla si una falla)</span>
+<span class="kw">const</span> [a, b, c] = <span class="kw">await</span> <span class="cls">Promise</span>.<span class="fn">all</span>([p1, p2, p3]);
+
+<span class="cmt">// Esperar todas sin importar fallos</span>
+<span class="kw">const</span> resultados = <span class="kw">await</span> <span class="cls">Promise</span>.<span class="fn">allSettled</span>([p1, p2, p3]);
+resultados.<span class="fn">forEach</span>(r => {
+  <span class="kw">if</span> (r.<span class="prop">status</span> === <span class="str">'fulfilled'</span>) <span class="fn">console</span>.<span class="fn">log</span>(r.<span class="prop">value</span>);
+  <span class="kw">else</span> <span class="fn">console</span>.<span class="fn">error</span>(r.<span class="prop">reason</span>);
+});
+
+<span class="cmt">// La primera que resuelva</span>
+<span class="kw">const</span> primera = <span class="kw">await</span> <span class="cls">Promise</span>.<span class="fn">race</span>([p1, p2, p3]);
+
+<span class="cmt">// Primera que resuelva con éxito</span>
+<span class="kw">const</span> cualquiera = <span class="kw">await</span> <span class="cls">Promise</span>.<span class="fn">any</span>([p1, p2, p3]);</pre>
+      </div>
+    </div>
+
+    <!-- ======================== ASYNC/AWAIT ======================== -->
+    <div class="section" id="asyncawait">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(183,148,244,0.1)">✨</div>
+        <div>
+          <div class="section-title">Async / Await</div>
+          <div class="section-desc">Sintaxis moderna para código asíncrono</div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> async.js</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          </div>
+          <pre><span class="cmt">// Función async</span>
+<span class="kw">async function</span> <span class="fn">obtenerUsuario</span>(id) {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">`/api/users/<span class="kw">${id}</span>`</span>);
+    <span class="kw">if</span> (!res.<span class="prop">ok</span>) <span class="kw">throw new</span> <span class="cls">Error</span>(<span class="str">'No encontrado'</span>);
+    <span class="kw">return</span> <span class="kw">await</span> res.<span class="fn">json</span>();
+  } <span class="kw">catch</span> (err) {
+    <span class="fn">console</span>.<span class="fn">error</span>(err);
+    <span class="kw">throw</span> err;
+  }
+}
+
+<span class="cmt">// Await paralelo</span>
+<span class="kw">const</span> [user, posts] = <span class="kw">await</span> <span class="cls">Promise</span>.<span class="fn">all</span>([
+  <span class="fn">fetchUser</span>(<span class="num">1</span>),
+  <span class="fn">fetchPosts</span>(<span class="num">1</span>)
+]);</pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> async-patterns.js</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          </div>
+          <pre><span class="cmt">// Top-level await (ESM)</span>
+<span class="kw">const</span> config = <span class="kw">await</span> <span class="fn">loadConfig</span>();
+
+<span class="cmt">// Async arrow function</span>
+<span class="kw">const</span> <span class="fn">getData</span> = <span class="kw">async</span> (url) => {
+  <span class="kw">const</span> res = <span class="kw">await</span> <span class="fn">fetch</span>(url);
+  <span class="kw">return</span> res.<span class="fn">json</span>();
+};
+
+<span class="cmt">// For-of async</span>
+<span class="kw">for await</span> (<span class="kw">const</span> item <span class="kw">of</span> asyncIterable) {
+  <span class="fn">console</span>.<span class="fn">log</span>(item);
+}
+
+<span class="cmt">// Async con timeout</span>
+<span class="kw">const</span> <span class="fn">withTimeout</span> = (promise, ms) =>
+  <span class="cls">Promise</span>.<span class="fn">race</span>([promise,
+    <span class="kw">new</span> <span class="cls">Promise</span>((_, reject) =>
+      <span class="fn">setTimeout</span>(() => <span class="fn">reject</span>(<span class="kw">new</span> <span class="cls">Error</span>(<span class="str">'Timeout'</span>)), ms)
+    )
+  ]);</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ======================== NPM ======================== -->
+    <div class="section" id="npm">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(246,224,94,0.1)">📦</div>
+        <div>
+          <div class="section-title">npm — Comandos Esenciales</div>
+          <div class="section-desc">Gestor de paquetes de Node.js</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> npm-commands</div>
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+        </div>
+        <pre><span class="cmt"># Instalación</span>
+npm install / npm i                    <span class="cmt"># instalar según package.json</span>
+npm i express                          <span class="cmt"># instalar paquete</span>
+npm i express@4.18.0                   <span class="cmt"># versión específica</span>
+npm i -D jest eslint                   <span class="cmt"># dependencias de desarrollo</span>
+npm i -g typescript                    <span class="cmt"># global</span>
+npm i --save-exact react               <span class="cmt"># versión exacta</span>
+
+<span class="cmt"># Eliminar</span>
+npm uninstall express
+npm un express              <span class="cmt"># alias</span>
+
+<span class="cmt"># Actualizar</span>
+npm update                  <span class="cmt"># actualizar todos</span>
+npm update express          <span class="cmt"># uno específico</span>
+npm outdated                <span class="cmt"># ver desactualizados</span>
+
+<span class="cmt"># Información</span>
+npm list                    <span class="cmt"># árbol de dependencias</span>
+npm list --depth=0          <span class="cmt"># solo nivel raíz</span>
+npm info express            <span class="cmt"># info del paquete</span>
+
+<span class="cmt"># Scripts</span>
+npm run dev
+npm test                    <span class="cmt"># alias de npm run test</span>
+npm start                   <span class="cmt"># alias de npm run start</span>
+
+<span class="cmt"># Auditoría y seguridad</span>
+npm audit
+npm audit fix
+
+<span class="cmt"># Cache</span>
+npm cache clean --force</pre>
+      </div>
+    </div>
+
+    <!-- ======================== PACKAGE.JSON ======================== -->
+    <div class="section" id="packagejson">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(246,224,94,0.1)">📄</div>
+        <div>
+          <div class="section-title">package.json</div>
+          <div class="section-desc">Configuración del proyecto y dependencias</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> package.json</div>
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+        </div>
+        <pre>{
+  <span class="str">"name"</span>: <span class="str">"mi-proyecto"</span>,
+  <span class="str">"version"</span>: <span class="str">"1.0.0"</span>,
+  <span class="str">"description"</span>: <span class="str">"Descripción del proyecto"</span>,
+  <span class="str">"main"</span>: <span class="str">"index.js"</span>,          <span class="cmt">// CJS entry point</span>
+  <span class="str">"module"</span>: <span class="str">"index.mjs"</span>,       <span class="cmt">// ESM entry point</span>
+  <span class="str">"type"</span>: <span class="str">"module"</span>,            <span class="cmt">// 'module' o 'commonjs'</span>
+  <span class="str">"engines"</span>: { <span class="str">"node"</span>: <span class="str">">=18.0.0"</span> },
+  <span class="str">"scripts"</span>: {
+    <span class="str">"start"</span>: <span class="str">"node index.js"</span>,
+    <span class="str">"dev"</span>: <span class="str">"nodemon index.js"</span>,
+    <span class="str">"test"</span>: <span class="str">"jest --coverage"</span>,
+    <span class="str">"build"</span>: <span class="str">"tsc"</span>,
+    <span class="str">"lint"</span>: <span class="str">"eslint ."</span>
+  },
+  <span class="str">"dependencies"</span>: {
+    <span class="str">"express"</span>: <span class="str">"^4.18.0"</span>,     <span class="cmt">// ^ = compatible</span>
+    <span class="str">"dotenv"</span>: <span class="str">"~16.0.0"</span>       <span class="cmt">// ~ = patch only</span>
+  },
+  <span class="str">"devDependencies"</span>: {
+    <span class="str">"nodemon"</span>: <span class="str">"^3.0.0"</span>,
+    <span class="str">"jest"</span>: <span class="str">"^29.0.0"</span>
+  },
+  <span class="str">"exports"</span>: {
+    <span class="str">"."</span>: {
+      <span class="str">"import"</span>: <span class="str">"./index.mjs"</span>,
+      <span class="str">"require"</span>: <span class="str">"./index.cjs"</span>
+    }
+  }
+}</pre>
+      </div>
+    </div>
+
+    <!-- ======================== EXPRESS ======================== -->
+    <div class="section" id="express">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(104,211,145,0.1)">🚀</div>
+        <div>
+          <div class="section-title">Express.js</div>
+          <div class="section-desc">Framework web más popular para Node.js</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> app.js — Express completo</div>
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+        </div>
+        <pre><span class="kw">const</span> express = <span class="fn">require</span>(<span class="str">'express'</span>);
+<span class="kw">const</span> app = <span class="fn">express</span>();
+
+<span class="cmt">// ── Middleware global ──────────────────</span>
+app.<span class="fn">use</span>(express.<span class="fn">json</span>());
+app.<span class="fn">use</span>(express.<span class="fn">urlencoded</span>({ extended: <span class="num">true</span> }));
+app.<span class="fn">use</span>(express.<span class="fn">static</span>(<span class="str">'public'</span>));
+
+<span class="cmt">// ── Rutas ─────────────────────────────</span>
+app.<span class="fn">get</span>(<span class="str">'/'</span>, (req, res) => {
+  res.<span class="fn">json</span>({ mensaje: <span class="str">'Hola mundo'</span> });
+});
+
+app.<span class="fn">post</span>(<span class="str">'/usuarios'</span>, <span class="kw">async</span> (req, res) => {
+  <span class="kw">const</span> { nombre, email } = req.<span class="prop">body</span>;
+  <span class="kw">try</span> {
+    <span class="kw">const</span> user = <span class="kw">await</span> <span class="cls">User</span>.<span class="fn">create</span>({ nombre, email });
+    res.<span class="fn">status</span>(<span class="num">201</span>).<span class="fn">json</span>(user);
+  } <span class="kw">catch</span> (err) {
+    res.<span class="fn">status</span>(<span class="num">400</span>).<span class="fn">json</span>({ error: err.<span class="prop">message</span> });
+  }
+});
+
+app.<span class="fn">get</span>(<span class="str">'/usuarios/:id'</span>, (req, res) => {
+  <span class="kw">const</span> { id } = req.<span class="prop">params</span>;   <span class="cmt">// parámetros de ruta</span>
+  <span class="kw">const</span> page = req.<span class="prop">query</span>.<span class="prop">page</span>; <span class="cmt">// query string</span>
+  res.<span class="fn">json</span>({ id, page });
+});
+
+app.<span class="fn">put</span>(<span class="str">'/usuarios/:id'</span>, (req, res) => { <span class="cmt">/* actualizar */</span> });
+app.<span class="fn">delete</span>(<span class="str">'/usuarios/:id'</span>, (req, res) => { <span class="cmt">/* eliminar */</span> });
+app.<span class="fn">patch</span>(<span class="str">'/usuarios/:id'</span>, (req, res) => { <span class="cmt">/* actualización parcial */</span> });
+
+<span class="cmt">// ── Router ────────────────────────────</span>
+<span class="kw">const</span> router = express.<span class="fn">Router</span>();
+router.<span class="fn">get</span>(<span class="str">'/'</span>, listarUsuarios);
+router.<span class="fn">post</span>(<span class="str">'/'</span>, crearUsuario);
+app.<span class="fn">use</span>(<span class="str">'/api/v1/usuarios'</span>, router);
+
+<span class="cmt">// ── Middleware de error ────────────────</span>
+app.<span class="fn">use</span>((err, req, res, next) => {
+  <span class="fn">console</span>.<span class="fn">error</span>(err.<span class="prop">stack</span>);
+  res.<span class="fn">status</span>(<span class="num">500</span>).<span class="fn">json</span>({ error: err.<span class="prop">message</span> });
+});
+
+app.<span class="fn">listen</span>(<span class="num">3000</span>, () => <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">'Puerto 3000'</span>));</pre>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ======================== CLUSTER ======================== -->
+    <div class="section" id="cluster">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(246,173,85,0.1)">⚡</div>
+        <div>
+          <div class="section-title">cluster / worker_threads</div>
+          <div class="section-desc">Concurrencia y paralelismo en Node.js</div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> cluster.js</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          </div>
+          <pre><span class="kw">const</span> cluster = <span class="fn">require</span>(<span class="str">'cluster'</span>);
+<span class="kw">const</span> os = <span class="fn">require</span>(<span class="str">'os'</span>);
+
+<span class="kw">if</span> (cluster.<span class="prop">isPrimary</span>) {
+  <span class="kw">const</span> numCPUs = os.<span class="fn">cpus</span>().<span class="prop">length</span>;
+  
+  <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i < numCPUs; i++) {
+    cluster.<span class="fn">fork</span>();
+  }
+  
+  cluster.<span class="fn">on</span>(<span class="str">'exit'</span>, (worker, code) => {
+    <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">`Worker ${worker.process.pid} murió`</span>);
+    cluster.<span class="fn">fork</span>(); <span class="cmt">// reiniciar</span>
+  });
+} <span class="kw">else</span> {
+  <span class="cmt">// Cada worker ejecuta el servidor</span>
+  <span class="fn">require</span>(<span class="str">'./server'</span>);
+}</pre>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> worker.js</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          </div>
+          <pre><span class="kw">const</span> { <span class="cls">Worker</span>, isMainThread,
+        parentPort, workerData } = <span class="fn">require</span>(<span class="str">'worker_threads'</span>);
+
+<span class="kw">if</span> (isMainThread) {
+  <span class="kw">const</span> worker = <span class="kw">new</span> <span class="cls">Worker</span>(__filename, {
+    workerData: { datos: [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>] }
+  });
+  worker.<span class="fn">on</span>(<span class="str">'message'</span>, msg => <span class="fn">console</span>.<span class="fn">log</span>(msg));
+  worker.<span class="fn">on</span>(<span class="str">'error'</span>, err => <span class="fn">console</span>.<span class="fn">error</span>(err));
+  worker.<span class="fn">on</span>(<span class="str">'exit'</span>, code => <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">'Exit:'</span>, code));
+} <span class="kw">else</span> {
+  <span class="cmt">// Tarea intensiva en CPU</span>
+  <span class="kw">const</span> result = workerData.<span class="prop">datos</span>.<span class="fn">reduce</span>((a, b) => a + b);
+  parentPort.<span class="fn">postMessage</span>({ resultado: result });
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ======================== DEBUGGING ======================== -->
+    <div class="section" id="debugging">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(246,173,85,0.1)">🔍</div>
+        <div>
+          <div class="section-title">Debugging</div>
+          <div class="section-desc">Herramientas para depurar aplicaciones Node.js</div>
+        </div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> debugging</div>
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+        </div>
+        <pre><span class="cmt"># Modo inspect (DevTools)</span>
+node --inspect app.js
+node --inspect-brk app.js    <span class="cmt"># break en primera línea</span>
+
+<span class="cmt"># Console methods</span>
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="str">'info'</span>);
+<span class="fn">console</span>.<span class="fn">error</span>(<span class="str">'error'</span>);
+<span class="fn">console</span>.<span class="fn">warn</span>(<span class="str">'advertencia'</span>);
+<span class="fn">console</span>.<span class="fn">table</span>([{ nombre: <span class="str">'Ana'</span>, edad: <span class="num">25</span> }]);
+<span class="fn">console</span>.<span class="fn">dir</span>(objeto, { depth: <span class="num">null</span>, colors: <span class="num">true</span> });
+<span class="fn">console</span>.<span class="fn">time</span>(<span class="str">'operacion'</span>);
+<span class="fn">console</span>.<span class="fn">timeEnd</span>(<span class="str">'operacion'</span>);   <span class="cmt">// mide tiempo</span>
+<span class="fn">console</span>.<span class="fn">count</span>(<span class="str">'llamadas'</span>);
+<span class="fn">console</span>.<span class="fn">countReset</span>(<span class="str">'llamadas'</span>);
+<span class="fn">console</span>.<span class="fn">group</span>(<span class="str">'Grupo'</span>);
+<span class="fn">console</span>.<span class="fn">groupEnd</span>();
+<span class="fn">console</span>.<span class="fn">assert</span>(condition, <span class="str">'Mensaje si falla'</span>);
+<span class="fn">console</span>.<span class="fn">trace</span>(<span class="str">'Stack trace aquí'</span>);
+
+<span class="cmt"># DEBUG env variable (módulo debug)</span>
+<span class="cmt">DEBUG=app:* node server.js</span>
+<span class="kw">const</span> debug = <span class="fn">require</span>(<span class="str">'debug'</span>)(<span class="str">'app:server'</span>);
+<span class="fn">debug</span>(<span class="str">'Servidor iniciado en %d'</span>, port);</pre>
+      </div>
+    </div>
+
+    <!-- ======================== ERRORES ======================== -->
+    <div class="section" id="errores">
+      <div class="section-header">
+        <div class="section-icon" style="background:rgba(252,129,129,0.1)">🛡️</div>
+        <div>
+          <div class="section-title">Manejo de Errores</div>
+          <div class="section-desc">Patrones y mejores prácticas para errores</div>
+        </div>
+      </div>
+      <div class="warn-box">
+        <span class="icon">⚠️</span>
+        <div>Nunca dejes un <code>unhandledRejection</code> o <code>uncaughtException</code> sin manejar en producción — puede derribar el proceso.</div>
+      </div>
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-title"><div class="dot-row"><div class="dot" style="background:#ff5f57"></div><div class="dot" style="background:#ffbd2e"></div><div class="dot" style="background:#28c840"></div></div> error-handling.js</div>
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+        </div>
+        <pre><span class="cmt">// Error personalizado</span>
+<span class="kw">class</span> <span class="cls">AppError</span> <span class="kw">extends</span> <span class="cls">Error</span> {
+  <span class="fn">constructor</span>(message, statusCode = <span class="num">500</span>) {
+    <span class="fn">super</span>(message);
+    <span class="kw">this</span>.<span class="prop">name</span> = <span class="kw">this</span>.<span class="prop">constructor</span>.<span class="prop">name</span>;
+    <span class="kw">this</span>.<span class="prop">statusCode</span> = statusCode;
+    <span class="cls">Error</span>.<span class="fn">captureStackTrace</span>(<span class="kw">this</span>, <span class="kw">this</span>.<span class="prop">constructor</span>);
+  }
+}
+
+<span class="kw">throw new</span> <span class="cls">AppError</span>(<span class="str">'No encontrado'</span>, <span class="num">404</span>);
+
+<span class="cmt">// Try/catch en async</span>
+<span class="kw">async function</span> <span class="fn">handler</span>(req, res, next) {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">buscarDatos</span>(req.<span class="prop">params</span>.<span class="prop">id</span>);
+    res.<span class="fn">json</span>(data);
+  } <span class="kw">catch</span> (err) {
+    <span class="fn">next</span>(err); <span class="cmt">// pasar a middleware de error</span>
+  }
+}
+
+<span class="cmt">// Wrapper para rutas async (evitar repetir try/catch)</span>
+<span class="kw">const</span> <span class="fn">asyncHandler</span> = fn => (req, res, next) =>
+  <span class="cls">Promise</span>.<span class="fn">resolve</span>(<span class="fn">fn</span>(req, res, next)).<span class="fn">catch</span>(next);
+
+app.<span class="fn">get</span>(<span class="str">'/ruta'</span>, <span class="fn">asyncHandler</span>(<span class="kw">async</span> (req, res) => {
+  <span class="kw">const</span> data = <span class="kw">await</span> <span class="fn">obtenerData</span>();
+  res.<span class="fn">json</span>(data);
+}));
+
+<span class="cmt">// Errores no capturados</span>
+process.<span class="fn">on</span>(<span class="str">'uncaughtException'</span>, (err) => {
+  <span class="fn">console</span>.<span class="fn">error</span>(<span class="str">'Error no capturado:'</span>, err);
+  process.<span class="fn">exit</span>(<span class="num">1</span>);
+});
+
+process.<span class="fn">on</span>(<span class="str">'unhandledRejection'</span>, (reason, promise) => {
+  <span class="fn">console</span>.<span class="fn">error</span>(<span class="str">'Promise rechazada:'</span>, reason);
+  process.<span class="fn">exit</span>(<span class="num">1</span>);
+});</pre>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="margin-top:3rem; padding:1.5rem; text-align:center; color:var(--text-muted); font-size:0.8rem; border-top:1px solid var(--border);">
+      Node.js Reference · Versión 20 LTS · Generado con Claude
+    </div>
+
+  </main>
+</div>
+
+<!-- Jump to top -->
+<div id="jump-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+<script>
+  // Scroll animation
+  const sections = document.querySelectorAll('.section');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) e.target.classList.add('visible');
+    });
+  }, { threshold: 0.1 });
+  sections.forEach(s => observer.observe(s));
+
+  // Nav active state
+  function scrollTo(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  // Copy button
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    const text = pre.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✓ Copiado';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'Copiar';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
+
+  // Search
+  const searchInput = document.getElementById('search-input');
+  searchInput.addEventListener('input', () => {
+    const q = searchInput.value.toLowerCase();
+    sections.forEach(section => {
+      const text = section.innerText.toLowerCase();
+      section.style.display = (!q || text.includes(q)) ? '' : 'none';
+    });
+  });
+
+  // Jump to top visibility
+  window.addEventListener('scroll', () => {
+    const btn = document.getElementById('jump-top');
+    btn.classList.toggle('visible', window.scrollY > 400);
+  });
+</script>
+
+</body>
+</html>

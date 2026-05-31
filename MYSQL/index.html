@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Referencia MySQL — Comandos Esenciales</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f1117;
+    --bg2: #181c27;
+    --bg3: #1e2336;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.15);
+    --text: #e8eaf0;
+    --text2: #8b90a0;
+    --text3: #555b6e;
+    --blue: #4d9de0;
+    --green: #6bbf7a;
+    --amber: #e8a84c;
+    --purple: #9b7fe8;
+    --teal: #4ecdc4;
+    --coral: #e07070;
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    --font-sans: 'Inter', system-ui, sans-serif;
+    --radius: 8px;
+    --radius-lg: 12px;
+  }
+
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: linear-gradient(135deg, #0f1117 0%, #1a1f35 100%);
+    border-bottom: 0.5px solid var(--border2);
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%;
+    transform: translateX(-50%);
+    width: 400px; height: 200px;
+    background: radial-gradient(ellipse, rgba(77,157,224,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header h1 {
+    font-size: 2.2rem;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.5rem;
+  }
+  .header h1 span { color: var(--blue); }
+  .header p { color: var(--text2); font-size: 1rem; }
+  .badge-row {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 8px; margin-top: 1.25rem;
+  }
+  .badge {
+    font-size: 11px; font-weight: 500;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 0.5px solid var(--border2);
+    color: var(--text2);
+  }
+
+  /* ── Layout ── */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  /* ── Controls ── */
+  .controls {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+  }
+  .search-wrap svg {
+    position: absolute;
+    left: 12px; top: 50%;
+    transform: translateY(-50%);
+    width: 16px; height: 16px;
+    stroke: var(--text3);
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  #search {
+    width: 100%;
+    padding: 10px 14px 10px 38px;
+    background: var(--bg2);
+    border: 0.5px solid var(--border2);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  #search::placeholder { color: var(--text3); }
+  #search:focus { border-color: var(--blue); }
+
+  .stat { font-size: 12px; color: var(--text3); white-space: nowrap; }
+
+  /* ── Category pills ── */
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 2rem;
+  }
+  .pill {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 14px;
+    border-radius: 999px;
+    border: 0.5px solid var(--border);
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .pill:hover { border-color: var(--border2); color: var(--text); }
+  .pill.active {
+    background: var(--bg3);
+    border-color: var(--border2);
+    color: var(--text);
+  }
+
+  /* ── Section ── */
+  .section { margin-bottom: 3rem; }
+  .section-title {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--text3);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .section-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  /* ── Command grid ── */
+  .cmd-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 10px;
+  }
+
+  .cmd-card {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    position: relative;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .cmd-card:hover {
+    border-color: var(--border2);
+    background: var(--bg3);
+  }
+  .cmd-name {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--blue);
+    margin-bottom: 4px;
+  }
+  .cmd-desc {
+    font-size: 12px;
+    color: var(--text2);
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
+  .cmd-syntax {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    background: var(--bg);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    line-height: 1.7;
+    overflow-x: auto;
+    white-space: pre;
+    color: var(--text);
+  }
+  .kw { color: var(--blue); font-weight: 500; }
+  .val { color: var(--green); }
+  .cmt { color: var(--text3); font-style: italic; }
+  .str { color: var(--amber); }
+
+  .copy-btn {
+    position: absolute;
+    top: 12px; right: 12px;
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 500;
+    padding: 3px 9px;
+    border-radius: var(--radius);
+    border: 0.5px solid var(--border2);
+    background: var(--bg3);
+    color: var(--text2);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.15s, background 0.15s;
+  }
+  .cmd-card:hover .copy-btn { opacity: 1; }
+  .copy-btn:hover { background: var(--bg); }
+  .copy-btn.copied { color: var(--green); border-color: var(--green); }
+
+  .no-results {
+    text-align: center;
+    padding: 4rem;
+    color: var(--text3);
+    font-size: 14px;
+  }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 12px;
+    color: var(--text3);
+    border-top: 0.5px solid var(--border);
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border2); }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <h1>Referencia <span>MySQL</span></h1>
+  <p>Todos los comandos esenciales con sintaxis y ejemplos listos para usar</p>
+  <div class="badge-row">
+    <span class="badge">Base de datos</span>
+    <span class="badge">Tablas</span>
+    <span class="badge">Consultas DQL</span>
+    <span class="badge">JOINs</span>
+    <span class="badge">DML</span>
+    <span class="badge">Funciones</span>
+    <span class="badge">Índices</span>
+    <span class="badge">Transacciones</span>
+    <span class="badge">Vistas & Procedimientos</span>
+    <span class="badge">Usuarios & Permisos</span>
+  </div>
+</header>
+
+<div class="container">
+  <div class="controls">
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="search" placeholder="Buscar comando... ej: SELECT, JOIN, INDEX" oninput="renderAll()" />
+    </div>
+    <span class="stat" id="stat"></span>
+  </div>
+
+  <div class="pills" id="pills"></div>
+  <div id="content"></div>
+</div>
+
+<footer>
+  Referencia MySQL · Generada con Claude · <span id="year"></span>
+</footer>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+
+const data = [
+  {
+    cat: "Base de datos",
+    color: "#4d9de0",
+    cmds: [
+      { name: "CREATE DATABASE", desc: "Crea una nueva base de datos", syntax: `<kw>CREATE DATABASE</kw> nombre_db;
+<kw>CREATE DATABASE IF NOT EXISTS</kw> nombre_db
+  <kw>CHARACTER SET</kw> utf8mb4 <kw>COLLATE</kw> utf8mb4_unicode_ci;` },
+      { name: "DROP DATABASE", desc: "Elimina una base de datos completamente", syntax: `<kw>DROP DATABASE</kw> nombre_db;
+<kw>DROP DATABASE IF EXISTS</kw> nombre_db;` },
+      { name: "USE", desc: "Selecciona la base de datos activa", syntax: `<kw>USE</kw> nombre_db;` },
+      { name: "SHOW DATABASES", desc: "Lista todas las bases de datos disponibles", syntax: `<kw>SHOW DATABASES</kw>;
+<kw>SHOW DATABASES LIKE</kw> <val>'mi_%'</val>;` },
+      { name: "ALTER DATABASE", desc: "Modifica propiedades de la base de datos", syntax: `<kw>ALTER DATABASE</kw> nombre_db
+  <kw>CHARACTER SET</kw> utf8mb4
+  <kw>COLLATE</kw> utf8mb4_unicode_ci;` },
+      { name: "SELECT DATABASE()", desc: "Muestra la base de datos actualmente activa", syntax: `<kw>SELECT DATABASE</kw>();` },
+    ]
+  },
+  {
+    cat: "Tablas",
+    color: "#6bbf7a",
+    cmds: [
+      { name: "CREATE TABLE", desc: "Crea una nueva tabla con columnas y tipos de datos", syntax: `<kw>CREATE TABLE</kw> usuarios (
+  id         <kw>INT PRIMARY KEY AUTO_INCREMENT</kw>,
+  nombre     <kw>VARCHAR</kw>(<val>100</val>) <kw>NOT NULL</kw>,
+  email      <kw>VARCHAR</kw>(<val>255</val>) <kw>UNIQUE NOT NULL</kw>,
+  edad       <kw>INT</kw> <kw>DEFAULT</kw> <val>0</val>,
+  activo     <kw>TINYINT</kw>(<val>1</val>) <kw>DEFAULT</kw> <val>1</val>,
+  creado_en  <kw>TIMESTAMP DEFAULT</kw> <val>CURRENT_TIMESTAMP</val>,
+  actualizado <kw>TIMESTAMP DEFAULT</kw> <val>CURRENT_TIMESTAMP</val>
+               <kw>ON UPDATE</kw> <val>CURRENT_TIMESTAMP</val>
+);` },
+      { name: "CREATE TABLE LIKE", desc: "Crea una tabla con la misma estructura de otra", syntax: `<kw>CREATE TABLE</kw> usuarios_backup <kw>LIKE</kw> usuarios;` },
+      { name: "CREATE TABLE AS SELECT", desc: "Crea una tabla a partir de un SELECT", syntax: `<kw>CREATE TABLE</kw> usuarios_activos <kw>AS</kw>
+  <kw>SELECT</kw> * <kw>FROM</kw> usuarios <kw>WHERE</kw> activo = <val>1</val>;` },
+      { name: "DROP TABLE", desc: "Elimina una tabla y todos sus datos", syntax: `<kw>DROP TABLE</kw> nombre_tabla;
+<kw>DROP TABLE IF EXISTS</kw> nombre_tabla;` },
+      { name: "ALTER TABLE — ADD COLUMN", desc: "Agrega una nueva columna a una tabla existente", syntax: `<kw>ALTER TABLE</kw> usuarios
+  <kw>ADD COLUMN</kw> telefono <kw>VARCHAR</kw>(<val>20</val>);
+
+<kw>ALTER TABLE</kw> usuarios
+  <kw>ADD COLUMN</kw> ciudad <kw>VARCHAR</kw>(<val>100</val>) <kw>AFTER</kw> email;` },
+      { name: "ALTER TABLE — MODIFY / CHANGE", desc: "Modifica o renombra una columna existente", syntax: `<kw>ALTER TABLE</kw> usuarios
+  <kw>MODIFY COLUMN</kw> nombre <kw>VARCHAR</kw>(<val>200</val>) <kw>NOT NULL</kw>;
+
+<kw>ALTER TABLE</kw> usuarios
+  <kw>CHANGE</kw> nombre nombre_completo <kw>VARCHAR</kw>(<val>200</val>);` },
+      { name: "ALTER TABLE — DROP COLUMN", desc: "Elimina una columna de la tabla", syntax: `<kw>ALTER TABLE</kw> usuarios
+  <kw>DROP COLUMN</kw> telefono;` },
+      { name: "TRUNCATE TABLE", desc: "Vacía la tabla conservando su estructura", syntax: `<kw>TRUNCATE TABLE</kw> nombre_tabla;` },
+      { name: "RENAME TABLE", desc: "Cambia el nombre de una o varias tablas", syntax: `<kw>RENAME TABLE</kw> viejo_nombre <kw>TO</kw> nuevo_nombre;
+<kw>RENAME TABLE</kw> t1 <kw>TO</kw> t1_bak, t2 <kw>TO</kw> t2_bak;` },
+      { name: "SHOW TABLES", desc: "Lista las tablas de la base de datos activa", syntax: `<kw>SHOW TABLES</kw>;
+<kw>SHOW TABLES LIKE</kw> <val>'user%'</val>;` },
+      { name: "DESCRIBE / SHOW COLUMNS", desc: "Muestra la estructura de una tabla", syntax: `<kw>DESCRIBE</kw> nombre_tabla;
+<kw>SHOW COLUMNS FROM</kw> nombre_tabla;
+<kw>SHOW CREATE TABLE</kw> nombre_tabla;` },
+    ]
+  },
+  {
+    cat: "Consultas (DQL)",
+    color: "#9b7fe8",
+    cmds: [
+      { name: "SELECT básico", desc: "Recupera columnas de una tabla", syntax: `<kw>SELECT</kw> * <kw>FROM</kw> usuarios;
+<kw>SELECT</kw> nombre, email <kw>FROM</kw> usuarios;
+<kw>SELECT</kw> nombre <kw>AS</kw> nombre_cliente <kw>FROM</kw> usuarios;` },
+      { name: "WHERE", desc: "Filtra filas con condiciones lógicas", syntax: `<kw>SELECT</kw> * <kw>FROM</kw> usuarios
+<kw>WHERE</kw> edad > <val>18</val>
+  <kw>AND</kw> activo = <val>1</val>
+  <kw>OR</kw>  ciudad = <val>'Bogotá'</val>;` },
+      { name: "ORDER BY", desc: "Ordena el resultado de forma ascendente o descendente", syntax: `<kw>SELECT</kw> * <kw>FROM</kw> usuarios
+<kw>ORDER BY</kw> nombre <kw>ASC</kw>;
+
+<kw>ORDER BY</kw> creado_en <kw>DESC</kw>, nombre <kw>ASC</kw>;` },
+      { name: "LIMIT / OFFSET", desc: "Controla cuántas filas devuelve la consulta", syntax: `<kw>SELECT</kw> * <kw>FROM</kw> usuarios <kw>LIMIT</kw> <val>10</val>;
+
+<cmt>-- Paginación: página 3, 10 por página</cmt>
+<kw>SELECT</kw> * <kw>FROM</kw> usuarios
+<kw>LIMIT</kw> <val>10</val> <kw>OFFSET</kw> <val>20</val>;` },
+      { name: "DISTINCT", desc: "Elimina filas duplicadas del resultado", syntax: `<kw>SELECT DISTINCT</kw> ciudad <kw>FROM</kw> usuarios;
+<kw>SELECT DISTINCT</kw> ciudad, pais <kw>FROM</kw> usuarios;` },
+      { name: "GROUP BY", desc: "Agrupa filas y aplica funciones de agregación", syntax: `<kw>SELECT</kw> ciudad, <kw>COUNT</kw>(*) <kw>AS</kw> total
+<kw>FROM</kw> usuarios
+<kw>GROUP BY</kw> ciudad;
+
+<kw>SELECT</kw> ciudad, <kw>AVG</kw>(edad) <kw>AS</kw> edad_promedio
+<kw>FROM</kw> usuarios
+<kw>GROUP BY</kw> ciudad;` },
+      { name: "HAVING", desc: "Filtra grupos resultantes del GROUP BY", syntax: `<kw>SELECT</kw> ciudad, <kw>COUNT</kw>(*) <kw>AS</kw> total
+<kw>FROM</kw> usuarios
+<kw>GROUP BY</kw> ciudad
+<kw>HAVING</kw> total > <val>5</val>;` },
+      { name: "LIKE / NOT LIKE", desc: "Busca patrones en cadenas de texto", syntax: `<kw>SELECT</kw> * <kw>FROM</kw> usuarios
+<kw>WHERE</kw> nombre <kw>LIKE</kw> <val>'Jua%'</val>;    <cmt>-- empieza con Jua</cmt>
+<kw>WHERE</kw> nombre <kw>LIKE</kw> <val>'%ría'</val>;    <cmt>-- termina en ría</cmt>
+<kw>WHERE</kw> nombre <kw>LIKE</kw> <val>'J_an'</val>;    <cmt>-- _ = un carácter</cmt>
+<kw>WHERE</kw> nombre <kw>NOT LIKE</kw> <val>'A%'</val>;` },
+      { name: "IN / NOT IN", desc: "Compara con una lista de valores permitidos", syntax: `<kw>SELECT</kw> * <kw>FROM</kw> usuarios
+<kw>WHERE</kw> ciudad <kw>IN</kw> (<val>'Bogotá'</val>, <val>'Cali'</val>, <val>'Medellín'</val>);
+
+<kw>WHERE</kw> id <kw>NOT IN</kw> (<kw>SELECT</kw> usuario_id <kw>FROM</kw> bloqueados);` },
+      { name: "BETWEEN / NOT BETWEEN", desc: "Filtra valores dentro de un rango inclusivo", syntax: `<kw>SELECT</kw> * <kw>FROM</kw> pedidos
+<kw>WHERE</kw> total <kw>BETWEEN</kw> <val>100</val> <kw>AND</kw> <val>500</val>;
+
+<kw>WHERE</kw> fecha <kw>BETWEEN</kw> <val>'2024-01-01'</val> <kw>AND</kw> <val>'2024-12-31'</val>;` },
+      { name: "IS NULL / IS NOT NULL", desc: "Comprueba si un campo contiene valor nulo", syntax: `<kw>SELECT</kw> * <kw>FROM</kw> usuarios
+<kw>WHERE</kw> telefono <kw>IS NULL</kw>;
+
+<kw>WHERE</kw> email <kw>IS NOT NULL</kw>;` },
+      { name: "SUBQUERY", desc: "Consulta anidada dentro de otra consulta", syntax: `<kw>SELECT</kw> * <kw>FROM</kw> usuarios
+<kw>WHERE</kw> id <kw>IN</kw> (
+  <kw>SELECT</kw> usuario_id <kw>FROM</kw> pedidos
+  <kw>WHERE</kw> total > <val>500</val>
+);` },
+      { name: "EXISTS / NOT EXISTS", desc: "Verifica si una subconsulta devuelve resultados", syntax: `<kw>SELECT</kw> * <kw>FROM</kw> usuarios u
+<kw>WHERE EXISTS</kw> (
+  <kw>SELECT</kw> <val>1</val> <kw>FROM</kw> pedidos p
+  <kw>WHERE</kw> p.usuario_id = u.id
+);` },
+      { name: "UNION / UNION ALL", desc: "Combina resultados de dos o más consultas SELECT", syntax: `<kw>SELECT</kw> nombre <kw>FROM</kw> clientes
+<kw>UNION</kw>
+<kw>SELECT</kw> nombre <kw>FROM</kw> proveedores;
+
+<cmt>-- UNION ALL incluye duplicados</cmt>
+<kw>SELECT</kw> nombre <kw>FROM</kw> clientes
+<kw>UNION ALL</kw>
+<kw>SELECT</kw> nombre <kw>FROM</kw> proveedores;` },
+      { name: "WITH (CTE)", desc: "Expresión de tabla común para consultas legibles", syntax: `<kw>WITH</kw> pedidos_grandes <kw>AS</kw> (
+  <kw>SELECT</kw> * <kw>FROM</kw> pedidos <kw>WHERE</kw> total > <val>500</val>
+)
+<kw>SELECT</kw> u.nombre, p.total
+<kw>FROM</kw> usuarios u
+<kw>JOIN</kw> pedidos_grandes p <kw>ON</kw> u.id = p.usuario_id;` },
+    ]
+  },
+  {
+    cat: "JOINs",
+    color: "#e07070",
+    cmds: [
+      { name: "INNER JOIN", desc: "Devuelve solo las filas con coincidencia en ambas tablas", syntax: `<kw>SELECT</kw> u.nombre, p.monto, p.fecha
+<kw>FROM</kw> usuarios u
+<kw>INNER JOIN</kw> pedidos p <kw>ON</kw> u.id = p.usuario_id;` },
+      { name: "LEFT JOIN", desc: "Todas las filas de la izquierda más las coincidencias", syntax: `<kw>SELECT</kw> u.nombre, p.monto
+<kw>FROM</kw> usuarios u
+<kw>LEFT JOIN</kw> pedidos p <kw>ON</kw> u.id = p.usuario_id;
+<cmt>-- usuarios sin pedidos tendrán monto = NULL</cmt>` },
+      { name: "RIGHT JOIN", desc: "Todas las filas de la derecha más las coincidencias", syntax: `<kw>SELECT</kw> u.nombre, p.monto
+<kw>FROM</kw> usuarios u
+<kw>RIGHT JOIN</kw> pedidos p <kw>ON</kw> u.id = p.usuario_id;` },
+      { name: "FULL OUTER JOIN", desc: "Todas las filas de ambas tablas (simulado en MySQL)", syntax: `<kw>SELECT</kw> * <kw>FROM</kw> A <kw>LEFT JOIN</kw> B <kw>ON</kw> A.id = B.id
+<kw>UNION</kw>
+<kw>SELECT</kw> * <kw>FROM</kw> A <kw>RIGHT JOIN</kw> B <kw>ON</kw> A.id = B.id;` },
+      { name: "CROSS JOIN", desc: "Producto cartesiano: combina cada fila con todas las demás", syntax: `<kw>SELECT</kw> c.nombre, t.talla
+<kw>FROM</kw> colores c
+<kw>CROSS JOIN</kw> tallas t;` },
+      { name: "SELF JOIN", desc: "Unión de una tabla consigo misma", syntax: `<kw>SELECT</kw> a.nombre <kw>AS</kw> empleado,
+       b.nombre <kw>AS</kw> jefe
+<kw>FROM</kw> empleados a
+<kw>JOIN</kw> empleados b <kw>ON</kw> a.jefe_id = b.id;` },
+      { name: "JOIN múltiple", desc: "Encadena varios JOINs en una sola consulta", syntax: `<kw>SELECT</kw> u.nombre, p.monto, c.descripcion
+<kw>FROM</kw> usuarios u
+<kw>JOIN</kw> pedidos p    <kw>ON</kw> u.id = p.usuario_id
+<kw>JOIN</kw> categorias c <kw>ON</kw> p.cat_id = c.id
+<kw>WHERE</kw> p.monto > <val>100</val>;` },
+    ]
+  },
+  {
+    cat: "Insertar / Actualizar / Eliminar (DML)",
+    color: "#e8a84c",
+    cmds: [
+      { name: "INSERT INTO", desc: "Inserta una o varias filas en una tabla", syntax: `<kw>INSERT INTO</kw> usuarios (nombre, email, edad)
+<kw>VALUES</kw> (<val>'Ana García'</val>, <val>'ana@mail.com'</val>, <val>28</val>);
+
+<cmt>-- Múltiples filas a la vez</cmt>
+<kw>INSERT INTO</kw> usuarios (nombre, email) <kw>VALUES</kw>
+  (<val>'Luis'</val>, <val>'luis@mail.com'</val>),
+  (<val>'María'</val>, <val>'maria@mail.com'</val>),
+  (<val>'Pedro'</val>, <val>'pedro@mail.com'</val>);` },
+      { name: "INSERT INTO ... SELECT", desc: "Inserta filas obtenidas de otra consulta", syntax: `<kw>INSERT INTO</kw> usuarios_backup (nombre, email)
+<kw>SELECT</kw> nombre, email <kw>FROM</kw> usuarios
+<kw>WHERE</kw> activo = <val>0</val>;` },
+      { name: "UPDATE", desc: "Modifica filas existentes en una tabla", syntax: `<kw>UPDATE</kw> usuarios
+<kw>SET</kw> nombre = <val>'Juan Pérez'</val>,
+    activo = <val>1</val>
+<kw>WHERE</kw> id = <val>5</val>;
+
+<cmt>-- Actualizar con cálculo</cmt>
+<kw>UPDATE</kw> productos
+<kw>SET</kw> precio = precio * <val>1.10</val>
+<kw>WHERE</kw> categoria = <val>'electrónica'</val>;` },
+      { name: "DELETE", desc: "Elimina filas específicas de una tabla", syntax: `<kw>DELETE FROM</kw> usuarios
+<kw>WHERE</kw> id = <val>5</val>;
+
+<cmt>-- Eliminar con subconsulta</cmt>
+<kw>DELETE FROM</kw> pedidos
+<kw>WHERE</kw> usuario_id <kw>NOT IN</kw> (
+  <kw>SELECT</kw> id <kw>FROM</kw> usuarios
+);` },
+      { name: "INSERT ... ON DUPLICATE KEY UPDATE", desc: "Inserta o actualiza si hay llave duplicada (upsert)", syntax: `<kw>INSERT INTO</kw> productos (id, nombre, stock)
+<kw>VALUES</kw> (<val>1</val>, <val>'Laptop'</val>, <val>50</val>)
+<kw>ON DUPLICATE KEY UPDATE</kw>
+  stock = stock + <val>50</val>,
+  nombre = <kw>VALUES</kw>(nombre);` },
+      { name: "REPLACE INTO", desc: "Elimina e inserta si hay duplicado de clave primaria", syntax: `<kw>REPLACE INTO</kw> config (clave, valor)
+<kw>VALUES</kw> (<val>'tema'</val>, <val>'oscuro'</val>);` },
+    ]
+  },
+  {
+    cat: "Funciones",
+    color: "#4ecdc4",
+    cmds: [
+      { name: "Funciones de texto", desc: "Manipulación y transformación de cadenas", syntax: `<kw>CONCAT</kw>(nombre, <val>' '</val>, apellido)
+<kw>CONCAT_WS</kw>(<val>', '</val>, apellido, nombre)
+<kw>LENGTH</kw>(texto)        <cmt>-- bytes</cmt>
+<kw>CHAR_LENGTH</kw>(texto)   <cmt>-- caracteres</cmt>
+<kw>UPPER</kw>(texto) / <kw>LOWER</kw>(texto)
+<kw>TRIM</kw>(texto) / <kw>LTRIM</kw>(texto) / <kw>RTRIM</kw>(texto)
+<kw>SUBSTRING</kw>(texto, inicio, longitud)
+<kw>REPLACE</kw>(texto, buscar, reemplazar)
+<kw>LEFT</kw>(texto, n) / <kw>RIGHT</kw>(texto, n)
+<kw>LPAD</kw>(texto, largo, relleno)
+<kw>INSTR</kw>(texto, subcadena)
+<kw>REVERSE</kw>(texto)` },
+      { name: "Funciones numéricas", desc: "Operaciones matemáticas sobre números", syntax: `<kw>ROUND</kw>(precio, <val>2</val>)
+<kw>CEIL</kw>(valor) / <kw>FLOOR</kw>(valor)
+<kw>ABS</kw>(numero)
+<kw>MOD</kw>(dividendo, divisor)
+<kw>POWER</kw>(base, exponente)
+<kw>SQRT</kw>(numero)
+<kw>RAND</kw>()                <cmt>-- número aleatorio 0-1</cmt>
+<kw>TRUNCATE</kw>(valor, decimales)
+<kw>SIGN</kw>(numero)          <cmt>-- -1, 0 o 1</cmt>` },
+      { name: "Funciones de fecha y hora", desc: "Manejo y formateo de fechas y tiempos", syntax: `<kw>NOW</kw>()               <cmt>-- fecha y hora actual</cmt>
+<kw>CURDATE</kw>()          <cmt>-- solo fecha</cmt>
+<kw>CURTIME</kw>()          <cmt>-- solo hora</cmt>
+<kw>DATE_FORMAT</kw>(fecha, <val>'%d/%m/%Y %H:%i'</val>)
+<kw>DATEDIFF</kw>(fecha1, fecha2)
+<kw>TIMESTAMPDIFF</kw>(<kw>YEAR</kw>, fecha1, fecha2)
+<kw>DATE_ADD</kw>(fecha, <kw>INTERVAL</kw> <val>7</val> DAY)
+<kw>DATE_SUB</kw>(fecha, <kw>INTERVAL</kw> <val>1</val> MONTH)
+<kw>YEAR</kw>(fecha) / <kw>MONTH</kw>(fecha) / <kw>DAY</kw>(fecha)
+<kw>HOUR</kw>(hora) / <kw>MINUTE</kw>(hora)
+<kw>DAYNAME</kw>(fecha) / <kw>MONTHNAME</kw>(fecha)
+<kw>WEEK</kw>(fecha) / <kw>QUARTER</kw>(fecha)
+<kw>UNIX_TIMESTAMP</kw>(fecha)
+<kw>FROM_UNIXTIME</kw>(timestamp)` },
+      { name: "Funciones de agregación", desc: "Resumen estadístico de grupos de filas", syntax: `<kw>COUNT</kw>(*)              <cmt>-- total de filas</cmt>
+<kw>COUNT</kw>(columna)       <cmt>-- excluye NULL</cmt>
+<kw>COUNT</kw>(<kw>DISTINCT</kw> col)   <cmt>-- valores únicos</cmt>
+<kw>SUM</kw>(precio)
+<kw>AVG</kw>(precio)
+<kw>MAX</kw>(precio) / <kw>MIN</kw>(precio)
+<kw>GROUP_CONCAT</kw>(nombre <kw>SEPARATOR</kw> <val>', '</val>)
+<kw>STD</kw>(columna) / <kw>VARIANCE</kw>(columna)` },
+      { name: "Funciones condicionales", desc: "Lógica condicional dentro de una consulta", syntax: `<kw>IF</kw>(activo = <val>1</val>, <val>'activo'</val>, <val>'inactivo'</val>)
+<kw>IFNULL</kw>(telefono, <val>'Sin teléfono'</val>)
+<kw>NULLIF</kw>(valor, <val>0</val>)
+<kw>COALESCE</kw>(col1, col2, col3, <val>'default'</val>)
+
+<kw>CASE</kw>
+  <kw>WHEN</kw> edad < <val>18</val>  <kw>THEN</kw> <val>'menor'</val>
+  <kw>WHEN</kw> edad < <val>65</val>  <kw>THEN</kw> <val>'adulto'</val>
+  <kw>ELSE</kw> <val>'senior'</val>
+<kw>END AS</kw> grupo_edad` },
+      { name: "Funciones de cifrado y hash", desc: "Seguridad y transformación de datos", syntax: `<kw>MD5</kw>(texto)
+<kw>SHA1</kw>(texto) / <kw>SHA2</kw>(texto, <val>256</val>)
+<kw>AES_ENCRYPT</kw>(texto, clave)
+<kw>AES_DECRYPT</kw>(datos, clave)
+<kw>UUID</kw>()                <cmt>-- identificador único</cmt>` },
+    ]
+  },
+  {
+    cat: "Índices y claves",
+    color: "#9b7fe8",
+    cmds: [
+      { name: "CREATE INDEX", desc: "Crea un índice para acelerar búsquedas", syntax: `<kw>CREATE INDEX</kw> idx_nombre <kw>ON</kw> usuarios(nombre);
+<kw>CREATE UNIQUE INDEX</kw> idx_email <kw>ON</kw> usuarios(email);
+<kw>CREATE INDEX</kw> idx_compuesto <kw>ON</kw> t(col1, col2);
+<kw>CREATE FULLTEXT INDEX</kw> idx_ft <kw>ON</kw> articulos(contenido);` },
+      { name: "DROP INDEX", desc: "Elimina un índice de una tabla", syntax: `<kw>DROP INDEX</kw> idx_nombre <kw>ON</kw> usuarios;
+<kw>ALTER TABLE</kw> usuarios <kw>DROP INDEX</kw> idx_nombre;` },
+      { name: "PRIMARY KEY", desc: "Define o agrega la clave primaria de una tabla", syntax: `<cmt>-- Al crear la tabla</cmt>
+id <kw>INT PRIMARY KEY AUTO_INCREMENT</kw>
+
+<cmt>-- Alter</cmt>
+<kw>ALTER TABLE</kw> usuarios <kw>ADD PRIMARY KEY</kw> (id);
+<kw>ALTER TABLE</kw> usuarios <kw>DROP PRIMARY KEY</kw>;` },
+      { name: "FOREIGN KEY", desc: "Define una llave foránea entre tablas", syntax: `<kw>ALTER TABLE</kw> pedidos
+  <kw>ADD CONSTRAINT</kw> fk_usuario
+  <kw>FOREIGN KEY</kw> (usuario_id)
+  <kw>REFERENCES</kw> usuarios(id)
+  <kw>ON DELETE CASCADE</kw>
+  <kw>ON UPDATE CASCADE</kw>;` },
+      { name: "SHOW INDEX", desc: "Lista los índices de una tabla", syntax: `<kw>SHOW INDEX FROM</kw> nombre_tabla;
+<kw>SHOW INDEX FROM</kw> nombre_tabla <kw>WHERE</kw> Non_unique = <val>0</val>;` },
+      { name: "FULLTEXT SEARCH", desc: "Búsqueda de texto completo con índice FULLTEXT", syntax: `<kw>SELECT</kw> * <kw>FROM</kw> articulos
+<kw>WHERE MATCH</kw>(titulo, contenido)
+      <kw>AGAINST</kw> (<val>'mysql base de datos'</val> <kw>IN NATURAL LANGUAGE MODE</kw>);` },
+    ]
+  },
+  {
+    cat: "Transacciones",
+    color: "#e07070",
+    cmds: [
+      { name: "START TRANSACTION / BEGIN", desc: "Inicia un bloque transaccional", syntax: `<kw>START TRANSACTION</kw>;
+<cmt>-- o equivalentemente:</cmt>
+<kw>BEGIN</kw>;
+
+<kw>UPDATE</kw> cuentas <kw>SET</kw> saldo = saldo - <val>100</val> <kw>WHERE</kw> id = <val>1</val>;
+<kw>UPDATE</kw> cuentas <kw>SET</kw> saldo = saldo + <val>100</val> <kw>WHERE</kw> id = <val>2</val>;
+
+<kw>COMMIT</kw>;` },
+      { name: "COMMIT", desc: "Confirma y persiste los cambios de la transacción", syntax: `<kw>COMMIT</kw>;` },
+      { name: "ROLLBACK", desc: "Deshace todos los cambios de la transacción activa", syntax: `<kw>ROLLBACK</kw>;
+<kw>ROLLBACK TO SAVEPOINT</kw> punto1;` },
+      { name: "SAVEPOINT", desc: "Crea un punto intermedio de guardado dentro de una transacción", syntax: `<kw>START TRANSACTION</kw>;
+
+<kw>INSERT INTO</kw> pedidos (...) <kw>VALUES</kw> (...);
+<kw>SAVEPOINT</kw> sp_pedido;
+
+<kw>INSERT INTO</kw> detalles (...) <kw>VALUES</kw> (...);
+
+<cmt>-- Si falla el detalle, solo revertimos hasta sp_pedido</cmt>
+<kw>ROLLBACK TO SAVEPOINT</kw> sp_pedido;
+<kw>COMMIT</kw>;` },
+      { name: "AUTOCOMMIT", desc: "Activa o desactiva la confirmación automática", syntax: `<kw>SET</kw> autocommit = <val>0</val>;  <cmt>-- desactiva</cmt>
+<kw>SET</kw> autocommit = <val>1</val>;  <cmt>-- activa (por defecto)</cmt>` },
+      { name: "ISOLATION LEVEL", desc: "Configura el nivel de aislamiento de la transacción", syntax: `<kw>SET TRANSACTION ISOLATION LEVEL</kw> READ COMMITTED;
+<cmt>-- Niveles: READ UNCOMMITTED, READ COMMITTED,</cmt>
+<cmt>--          REPEATABLE READ (default), SERIALIZABLE</cmt>` },
+    ]
+  },
+  {
+    cat: "Vistas y procedimientos",
+    color: "#6bbf7a",
+    cmds: [
+      { name: "CREATE VIEW", desc: "Crea una vista: una consulta guardada reutilizable", syntax: `<kw>CREATE VIEW</kw> vista_activos <kw>AS</kw>
+  <kw>SELECT</kw> id, nombre, email
+  <kw>FROM</kw> usuarios
+  <kw>WHERE</kw> activo = <val>1</val>;
+
+<cmt>-- Usar la vista como una tabla</cmt>
+<kw>SELECT</kw> * <kw>FROM</kw> vista_activos;` },
+      { name: "CREATE OR REPLACE VIEW", desc: "Crea o actualiza una vista existente", syntax: `<kw>CREATE OR REPLACE VIEW</kw> vista_activos <kw>AS</kw>
+  <kw>SELECT</kw> id, nombre, email, ciudad
+  <kw>FROM</kw> usuarios
+  <kw>WHERE</kw> activo = <val>1</val>;` },
+      { name: "DROP VIEW", desc: "Elimina una vista existente", syntax: `<kw>DROP VIEW IF EXISTS</kw> vista_activos;` },
+      { name: "CREATE PROCEDURE", desc: "Crea un procedimiento almacenado", syntax: `<kw>DELIMITER</kw> //
+<kw>CREATE PROCEDURE</kw> obtener_usuario(
+  <kw>IN</kw>  uid     <kw>INT</kw>,
+  <kw>OUT</kw> nombre_ <kw>VARCHAR</kw>(<val>100</val>)
+)
+<kw>BEGIN</kw>
+  <kw>SELECT</kw> nombre <kw>INTO</kw> nombre_
+  <kw>FROM</kw> usuarios <kw>WHERE</kw> id = uid;
+<kw>END</kw> //
+<kw>DELIMITER</kw> ;
+
+<cmt>-- Llamar el procedimiento</cmt>
+<kw>CALL</kw> obtener_usuario(<val>1</val>, @nombre);
+<kw>SELECT</kw> @nombre;` },
+      { name: "CREATE FUNCTION", desc: "Crea una función definida por el usuario", syntax: `<kw>DELIMITER</kw> //
+<kw>CREATE FUNCTION</kw> con_iva(precio <kw>DECIMAL</kw>(<val>10,2</val>))
+<kw>RETURNS DECIMAL</kw>(<val>10,2</val>)
+<kw>DETERMINISTIC</kw>
+<kw>BEGIN</kw>
+  <kw>RETURN</kw> precio * <val>1.19</val>;
+<kw>END</kw> //
+<kw>DELIMITER</kw> ;
+
+<kw>SELECT</kw> con_iva(precio) <kw>FROM</kw> productos;` },
+      { name: "CREATE TRIGGER", desc: "Ejecuta acciones automáticas ante eventos en una tabla", syntax: `<kw>DELIMITER</kw> //
+<kw>CREATE TRIGGER</kw> after_insert_pedido
+<kw>AFTER INSERT ON</kw> pedidos
+<kw>FOR EACH ROW</kw>
+<kw>BEGIN</kw>
+  <kw>UPDATE</kw> usuarios
+  <kw>SET</kw> total_pedidos = total_pedidos + <val>1</val>
+  <kw>WHERE</kw> id = NEW.usuario_id;
+<kw>END</kw> //
+<kw>DELIMITER</kw> ;` },
+      { name: "CREATE EVENT", desc: "Programa tareas programadas (cron) en MySQL", syntax: `<kw>CREATE EVENT</kw> limpiar_logs
+<kw>ON SCHEDULE EVERY</kw> <val>1</val> <kw>WEEK</kw>
+<kw>DO</kw>
+  <kw>DELETE FROM</kw> logs
+  <kw>WHERE</kw> creado_en < DATE_SUB(<kw>NOW</kw>(), <kw>INTERVAL</kw> <val>30</val> DAY);` },
+    ]
+  },
+  {
+    cat: "Usuarios y permisos",
+    color: "#4d9de0",
+    cmds: [
+      { name: "CREATE USER", desc: "Crea un nuevo usuario de base de datos", syntax: `<kw>CREATE USER</kw> <val>'juan'</val>@<val>'localhost'</val>
+  <kw>IDENTIFIED BY</kw> <val>'contraseña_segura'</val>;
+
+<cmt>-- Usuario desde cualquier host</cmt>
+<kw>CREATE USER</kw> <val>'app_user'</val>@<val>'%'</val>
+  <kw>IDENTIFIED BY</kw> <val>'pass123'</val>;` },
+      { name: "GRANT", desc: "Otorga privilegios a un usuario", syntax: `<cmt>-- Privilegios específicos</cmt>
+<kw>GRANT SELECT</kw>, <kw>INSERT</kw>, <kw>UPDATE</kw> <kw>ON</kw> mi_db.*
+  <kw>TO</kw> <val>'juan'</val>@<val>'localhost'</val>;
+
+<cmt>-- Solo una tabla</cmt>
+<kw>GRANT SELECT ON</kw> mi_db.usuarios <kw>TO</kw> <val>'juan'</val>@<val>'localhost'</val>;
+
+<cmt>-- Todos los privilegios</cmt>
+<kw>GRANT ALL PRIVILEGES ON</kw> *.* <kw>TO</kw> <val>'admin'</val>@<val>'%'</val>
+  <kw>WITH GRANT OPTION</kw>;` },
+      { name: "REVOKE", desc: "Elimina privilegios específicos de un usuario", syntax: `<kw>REVOKE INSERT</kw>, <kw>UPDATE ON</kw> mi_db.*
+  <kw>FROM</kw> <val>'juan'</val>@<val>'localhost'</val>;
+
+<kw>REVOKE ALL PRIVILEGES ON</kw> *.*
+  <kw>FROM</kw> <val>'juan'</val>@<val>'localhost'</val>;` },
+      { name: "SHOW GRANTS", desc: "Muestra los privilegios de un usuario", syntax: `<kw>SHOW GRANTS FOR</kw> <val>'juan'</val>@<val>'localhost'</val>;
+<kw>SHOW GRANTS FOR CURRENT_USER</kw>();` },
+      { name: "ALTER USER", desc: "Modifica la contraseña u opciones de un usuario", syntax: `<kw>ALTER USER</kw> <val>'juan'</val>@<val>'localhost'</val>
+  <kw>IDENTIFIED BY</kw> <val>'nueva_contraseña'</val>;
+
+<cmt>-- Cambiar contraseña propia</cmt>
+<kw>ALTER USER USER</kw>() <kw>IDENTIFIED BY</kw> <val>'nueva_pass'</val>;` },
+      { name: "DROP USER", desc: "Elimina un usuario de MySQL", syntax: `<kw>DROP USER</kw> <val>'juan'</val>@<val>'localhost'</val>;
+<kw>DROP USER IF EXISTS</kw> <val>'juan'</val>@<val>'localhost'</val>;` },
+      { name: "FLUSH PRIVILEGES", desc: "Recarga los privilegios del sistema desde las tablas grant", syntax: `<kw>FLUSH PRIVILEGES</kw>;` },
+    ]
+  },
+];
+
+let activeCategory = "Todas";
+
+function renderPills() {
+  const cats = ["Todas", ...data.map(d => d.cat)];
+  document.getElementById("pills").innerHTML = cats.map(c =>
+    `<button class="pill ${c === activeCategory ? 'active' : ''}" onclick="setCategory('${c.replace(/'/g, "\\'")}')">${c}</button>`
+  ).join("");
+}
+
+function setCategory(cat) {
+  activeCategory = cat;
+  renderAll();
+}
+
+function renderAll() {
+  renderPills();
+  const q = document.getElementById("search").value.toLowerCase();
+  const sections = activeCategory === "Todas" ? data : data.filter(s => s.cat === activeCategory);
+  let total = 0;
+
+  const html = sections.map(section => {
+    const cmds = section.cmds.filter(c =>
+      !q || c.name.toLowerCase().includes(q) || c.desc.toLowerCase().includes(q)
+    );
+    if (!cmds.length) return "";
+    total += cmds.length;
+    return `<div class="section">
+      <div class="section-title">
+        <span class="section-dot" style="background:${section.color}"></span>
+        ${section.cat}
+      </div>
+      <div class="cmd-grid">
+        ${cmds.map((c, i) => `
+          <div class="cmd-card">
+            <button class="copy-btn" onclick="copyCmd(event, this, ${JSON.stringify(c.syntax)})">copiar</button>
+            <div class="cmd-name">${c.name}</div>
+            <div class="cmd-desc">${c.desc}</div>
+            <div class="cmd-syntax">${c.syntax}</div>
+          </div>
+        `).join("")}
+      </div>
+    </div>`;
+  }).join("");
+
+  document.getElementById("content").innerHTML = html ||
+    `<div class="no-results">No se encontraron comandos para "<strong>${q}</strong>"</div>`;
+  document.getElementById("stat").textContent = `${total} comandos`;
+}
+
+function copyCmd(e, btn, syntax) {
+  e.stopPropagation();
+  const plain = syntax.replace(/<[^>]+>/g, "");
+  navigator.clipboard.writeText(plain).then(() => {
+    btn.textContent = "✓ copiado";
+    btn.classList.add("copied");
+    setTimeout(() => {
+      btn.textContent = "copiar";
+      btn.classList.remove("copied");
+    }, 1800);
+  });
+}
+
+renderAll();
+</script>
+</body>
+</html>

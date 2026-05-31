@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Git Commands — Referencia Completa</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --surface: #111318;
+    --border: #1e2230;
+    --accent: #00ff88;
+    --accent2: #00cfff;
+    --accent3: #ff5f87;
+    --text: #c9d1d9;
+    --muted: #586069;
+    --heading: #e6edf3;
+    --tag-bg: #161b22;
+    --highlight: rgba(0,255,136,0.07);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* SCANLINES overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* HEADER */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 2rem 4rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    background: linear-gradient(180deg, #0d111a 0%, transparent 100%);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .logo-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--accent);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #000;
+    box-shadow: 0 0 20px rgba(0,255,136,0.4);
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--heading);
+    letter-spacing: -0.02em;
+  }
+
+  .logo-text span { color: var(--accent); }
+
+  .search-wrap {
+    flex: 1;
+    max-width: 480px;
+    position: relative;
+  }
+
+  .search-wrap::before {
+    content: '⌕';
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 1.1rem;
+  }
+
+  #search {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.65rem 1rem 0.65rem 2.6rem;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  #search:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,255,136,0.12);
+  }
+
+  #search::placeholder { color: var(--muted); }
+
+  .stats {
+    color: var(--muted);
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
+  .stats span { color: var(--accent); font-weight: 600; }
+
+  /* HERO */
+  .hero {
+    padding: 3rem 4rem 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 700;
+    color: var(--heading);
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    margin-bottom: 0.6rem;
+  }
+
+  .hero h1 .git { color: var(--accent); }
+  .hero h1 .cmd { color: var(--accent2); }
+
+  .hero p {
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  /* CATEGORY TABS */
+  .tabs {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1.5rem 4rem;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--border);
+    scrollbar-width: none;
+  }
+
+  .tabs::-webkit-scrollbar { display: none; }
+
+  .tab {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.4rem 1rem;
+    color: var(--muted);
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    transition: all 0.2s;
+    user-select: none;
+  }
+
+  .tab:hover { color: var(--text); border-color: var(--accent2); }
+  .tab.active {
+    background: rgba(0,255,136,0.12);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* MAIN */
+  main {
+    padding: 2rem 4rem 4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  /* SECTION */
+  .section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--heading);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .section-count {
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 20px;
+    padding: 0.1rem 0.6rem;
+    font-size: 0.7rem;
+  }
+
+  /* GRID */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    padding: 1.2rem 1.4rem;
+    transition: background 0.15s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::after {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: transparent;
+    transition: background 0.2s;
+  }
+
+  .card:hover { background: var(--highlight); }
+  .card:hover::after { background: var(--accent); }
+
+  .cmd-line {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .prompt {
+    color: var(--accent);
+    font-size: 0.75rem;
+    padding-top: 0.15rem;
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  .cmd-name {
+    color: var(--accent2);
+    font-size: 0.88rem;
+    font-weight: 600;
+    word-break: break-all;
+    line-height: 1.4;
+  }
+
+  .cmd-desc {
+    color: var(--muted);
+    font-size: 0.75rem;
+    line-height: 1.6;
+    padding-left: 1.3rem;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  .cmd-flags {
+    margin-top: 0.6rem;
+    padding-left: 1.3rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .flag {
+    background: rgba(0,207,255,0.08);
+    border: 1px solid rgba(0,207,255,0.2);
+    border-radius: 4px;
+    padding: 0.15rem 0.5rem;
+    font-size: 0.68rem;
+    color: var(--accent2);
+  }
+
+  /* NO RESULTS */
+  .no-results {
+    display: none;
+    text-align: center;
+    padding: 4rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  .no-results .big { font-size: 3rem; margin-bottom: 1rem; }
+
+  /* HIDDEN */
+  .hidden { display: none !important; }
+
+  /* COPY button */
+  .card:hover .copy-btn { opacity: 1; }
+  .copy-btn {
+    position: absolute;
+    top: 0.8rem;
+    right: 0.8rem;
+    background: rgba(0,255,136,0.1);
+    border: 1px solid rgba(0,255,136,0.25);
+    border-radius: 4px;
+    color: var(--accent);
+    font-size: 0.65rem;
+    padding: 0.2rem 0.5rem;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s, background 0.2s;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .copy-btn:hover { background: rgba(0,255,136,0.2); }
+  .copy-btn.copied { background: rgba(0,255,136,0.3); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 1.5rem 4rem;
+    color: var(--muted);
+    font-size: 0.72rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  footer a { color: var(--accent); text-decoration: none; }
+
+  @media (max-width: 700px) {
+    header { padding: 1rem; flex-wrap: wrap; gap: 1rem; }
+    .hero, .tabs, main, footer { padding-left: 1rem; padding-right: 1rem; }
+    .hero { padding-top: 1.5rem; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">G</div>
+    <div class="logo-text"><span>git</span> commands</div>
+  </div>
+  <div class="search-wrap">
+    <input type="text" id="search" placeholder="Buscar comando..." autocomplete="off" spellcheck="false">
+  </div>
+  <div class="stats">Total: <span id="total-count">0</span> comandos</div>
+</header>
+
+<div class="hero">
+  <h1><span class="git">Git</span> — <span class="cmd">Referencia Completa</span></h1>
+  <p>Todos los comandos de Git organizados por categoría. Haz clic en una tarjeta para copiar.</p>
+</div>
+
+<div class="tabs" id="tabs">
+  <div class="tab active" data-cat="all">Todos</div>
+</div>
+
+<main id="main"></main>
+<div class="no-results" id="no-results">
+  <div class="big">⌀</div>
+  No se encontraron comandos para "<span id="q"></span>"
+</div>
+
+<footer>
+  <span>Git Reference — <a href="https://git-scm.com/docs" target="_blank">Documentación oficial</a></span>
+  <span>Haz clic en cualquier tarjeta para copiar el comando</span>
+</footer>
+
+<script>
+const DATA = [
+  {
+    cat: "Configuración",
+    color: "#00ff88",
+    commands: [
+      { cmd: "git config --global user.name \"Nombre\"", desc: "Establece el nombre de usuario global para todos los repositorios.", flags: ["--global", "--local", "--system"] },
+      { cmd: "git config --global user.email \"email@ejemplo.com\"", desc: "Establece el email global del usuario.", flags: ["--global"] },
+      { cmd: "git config --list", desc: "Muestra todas las configuraciones activas de Git.", flags: ["--global", "--local"] },
+      { cmd: "git config --global core.editor \"code\"", desc: "Define el editor de texto predeterminado (VS Code en este caso)." },
+      { cmd: "git config --global alias.st status", desc: "Crea un alias 'st' para el comando status." },
+      { cmd: "git config --global color.ui auto", desc: "Activa la colorización automática en la terminal." },
+      { cmd: "git config --global init.defaultBranch main", desc: "Define 'main' como nombre de rama inicial por defecto." },
+    ]
+  },
+  {
+    cat: "Inicialización",
+    color: "#00cfff",
+    commands: [
+      { cmd: "git init", desc: "Inicializa un nuevo repositorio Git en el directorio actual." },
+      { cmd: "git init <directorio>", desc: "Crea un nuevo repositorio en el directorio especificado." },
+      { cmd: "git clone <url>", desc: "Clona un repositorio remoto en el directorio local.", flags: ["--depth 1", "--branch"] },
+      { cmd: "git clone <url> <directorio>", desc: "Clona el repositorio en una carpeta con nombre específico." },
+      { cmd: "git clone --bare <url>", desc: "Clona el repositorio sin directorio de trabajo (solo metadatos)." },
+    ]
+  },
+  {
+    cat: "Estado y Diferencias",
+    color: "#ff5f87",
+    commands: [
+      { cmd: "git status", desc: "Muestra el estado del área de trabajo y el staging.", flags: ["-s", "--short", "-b"] },
+      { cmd: "git diff", desc: "Muestra cambios entre el área de trabajo y el staging.", flags: ["--staged", "--stat", "--name-only"] },
+      { cmd: "git diff --staged", desc: "Muestra cambios entre staging y el último commit." },
+      { cmd: "git diff <rama1>..<rama2>", desc: "Compara diferencias entre dos ramas." },
+      { cmd: "git diff <commit1> <commit2>", desc: "Compara diferencias entre dos commits." },
+      { cmd: "git show <commit>", desc: "Muestra los cambios introducidos por un commit específico.", flags: ["--stat", "--name-only"] },
+      { cmd: "git show HEAD", desc: "Muestra los detalles del commit más reciente." },
+    ]
+  },
+  {
+    cat: "Staging y Commits",
+    color: "#f0a500",
+    commands: [
+      { cmd: "git add <archivo>", desc: "Agrega un archivo específico al área de staging." },
+      { cmd: "git add .", desc: "Agrega todos los cambios del directorio actual al staging." },
+      { cmd: "git add -A", desc: "Agrega todos los archivos modificados, nuevos y eliminados." },
+      { cmd: "git add -p", desc: "Agrega cambios de forma interactiva (por hunks).", flags: ["-p", "--patch"] },
+      { cmd: "git commit -m \"mensaje\"", desc: "Crea un commit con el mensaje especificado.", flags: ["-m", "--amend", "--no-edit"] },
+      { cmd: "git commit -am \"mensaje\"", desc: "Agrega archivos rastreados al staging y hace commit en un paso." },
+      { cmd: "git commit --amend", desc: "Modifica el último commit (mensaje o contenido)." },
+      { cmd: "git commit --amend --no-edit", desc: "Modifica el último commit conservando el mismo mensaje." },
+      { cmd: "git commit --allow-empty -m \"msg\"", desc: "Crea un commit vacío (sin cambios)." },
+    ]
+  },
+  {
+    cat: "Historial",
+    color: "#b388ff",
+    commands: [
+      { cmd: "git log", desc: "Muestra el historial de commits del repositorio.", flags: ["--oneline", "--graph", "--all", "-n"] },
+      { cmd: "git log --oneline", desc: "Muestra el historial en formato compacto (una línea por commit)." },
+      { cmd: "git log --oneline --graph --all", desc: "Visualiza el historial con gráfico de ramas." },
+      { cmd: "git log -p", desc: "Muestra el historial con los cambios de cada commit." },
+      { cmd: "git log --author=\"Nombre\"", desc: "Filtra el historial por autor." },
+      { cmd: "git log --since=\"2024-01-01\"", desc: "Muestra commits desde una fecha específica." },
+      { cmd: "git log --until=\"2024-12-31\"", desc: "Muestra commits hasta una fecha específica." },
+      { cmd: "git log -- <archivo>", desc: "Muestra el historial de un archivo específico." },
+      { cmd: "git log --stat", desc: "Muestra estadísticas de archivos modificados en cada commit." },
+      { cmd: "git log --grep=\"texto\"", desc: "Filtra commits cuyo mensaje contiene el texto especificado." },
+      { cmd: "git shortlog", desc: "Muestra el historial agrupado por autor.", flags: ["-s", "-n"] },
+      { cmd: "git reflog", desc: "Muestra el historial completo de movimientos del HEAD." },
+    ]
+  },
+  {
+    cat: "Ramas",
+    color: "#00e5ff",
+    commands: [
+      { cmd: "git branch", desc: "Lista todas las ramas locales del repositorio.", flags: ["-a", "-r", "-v"] },
+      { cmd: "git branch <nombre>", desc: "Crea una nueva rama con el nombre especificado." },
+      { cmd: "git branch -d <nombre>", desc: "Elimina una rama (solo si ya fue fusionada).", flags: ["-d", "-D"] },
+      { cmd: "git branch -D <nombre>", desc: "Fuerza la eliminación de una rama sin importar su estado." },
+      { cmd: "git branch -m <viejo> <nuevo>", desc: "Renombra una rama local." },
+      { cmd: "git branch -a", desc: "Lista todas las ramas (locales y remotas)." },
+      { cmd: "git branch -r", desc: "Lista solo las ramas remotas." },
+      { cmd: "git branch --merged", desc: "Lista ramas que ya han sido fusionadas con la rama actual." },
+      { cmd: "git branch --no-merged", desc: "Lista ramas que aún no han sido fusionadas." },
+      { cmd: "git switch <rama>", desc: "Cambia a la rama especificada (comando moderno)." },
+      { cmd: "git switch -c <rama>", desc: "Crea y cambia a una nueva rama." },
+      { cmd: "git checkout <rama>", desc: "Cambia a la rama especificada (forma clásica)." },
+      { cmd: "git checkout -b <rama>", desc: "Crea y cambia a una nueva rama." },
+      { cmd: "git checkout -b <rama> <remota>", desc: "Crea una rama local rastreando una rama remota." },
+    ]
+  },
+  {
+    cat: "Fusión y Rebase",
+    color: "#ff9800",
+    commands: [
+      { cmd: "git merge <rama>", desc: "Fusiona la rama especificada con la rama actual.", flags: ["--no-ff", "--squash", "--abort"] },
+      { cmd: "git merge --no-ff <rama>", desc: "Fusiona creando siempre un commit de merge." },
+      { cmd: "git merge --squash <rama>", desc: "Aplana todos los commits de la rama en uno solo antes de fusionar." },
+      { cmd: "git merge --abort", desc: "Cancela una fusión en curso con conflictos." },
+      { cmd: "git rebase <rama>", desc: "Mueve los commits actuales encima de otra rama.", flags: ["-i", "--onto", "--abort", "--continue"] },
+      { cmd: "git rebase -i HEAD~3", desc: "Inicia un rebase interactivo para los últimos 3 commits." },
+      { cmd: "git rebase --continue", desc: "Continúa el rebase tras resolver conflictos." },
+      { cmd: "git rebase --abort", desc: "Cancela el rebase y vuelve al estado anterior." },
+      { cmd: "git rebase --skip", desc: "Omite el commit actual durante un rebase." },
+      { cmd: "git cherry-pick <commit>", desc: "Aplica los cambios de un commit específico en la rama actual.", flags: ["--no-commit", "-x"] },
+      { cmd: "git cherry-pick <c1>..<c2>", desc: "Aplica un rango de commits a la rama actual." },
+    ]
+  },
+  {
+    cat: "Remotos",
+    color: "#69f0ae",
+    commands: [
+      { cmd: "git remote", desc: "Lista los repositorios remotos configurados.", flags: ["-v"] },
+      { cmd: "git remote -v", desc: "Muestra URLs de fetch y push para cada remoto." },
+      { cmd: "git remote add <nombre> <url>", desc: "Agrega un nuevo repositorio remoto." },
+      { cmd: "git remote remove <nombre>", desc: "Elimina un remoto del repositorio." },
+      { cmd: "git remote rename <viejo> <nuevo>", desc: "Renombra un repositorio remoto." },
+      { cmd: "git remote set-url <nombre> <url>", desc: "Cambia la URL de un remoto existente." },
+      { cmd: "git fetch", desc: "Descarga los cambios del remoto sin fusionarlos.", flags: ["--all", "--prune"] },
+      { cmd: "git fetch --all", desc: "Descarga cambios de todos los remotos configurados." },
+      { cmd: "git fetch --prune", desc: "Elimina referencias locales de ramas remotas eliminadas." },
+      { cmd: "git pull", desc: "Descarga y fusiona los cambios del remoto.", flags: ["--rebase", "--no-ff"] },
+      { cmd: "git pull --rebase", desc: "Descarga y aplica cambios con rebase en lugar de merge." },
+      { cmd: "git push <remoto> <rama>", desc: "Envía los commits locales al repositorio remoto." },
+      { cmd: "git push -u origin <rama>", desc: "Envía y establece el tracking con la rama remota.", flags: ["-u", "--set-upstream"] },
+      { cmd: "git push --force-with-lease", desc: "Fuerza el push de forma segura, verificando que el remoto no cambió." },
+      { cmd: "git push origin --delete <rama>", desc: "Elimina una rama del repositorio remoto." },
+      { cmd: "git push --tags", desc: "Envía todos los tags locales al repositorio remoto." },
+    ]
+  },
+  {
+    cat: "Stash",
+    color: "#e040fb",
+    commands: [
+      { cmd: "git stash", desc: "Guarda temporalmente los cambios no commiteados.", flags: ["push", "pop", "apply", "list"] },
+      { cmd: "git stash push -m \"descripción\"", desc: "Guarda el stash con un mensaje descriptivo." },
+      { cmd: "git stash list", desc: "Lista todos los stashes guardados." },
+      { cmd: "git stash pop", desc: "Restaura el stash más reciente y lo elimina de la lista." },
+      { cmd: "git stash apply stash@{n}", desc: "Aplica un stash específico sin eliminarlo." },
+      { cmd: "git stash drop stash@{n}", desc: "Elimina un stash específico de la lista." },
+      { cmd: "git stash clear", desc: "Elimina todos los stashes guardados." },
+      { cmd: "git stash show -p", desc: "Muestra los cambios almacenados en el stash más reciente." },
+      { cmd: "git stash branch <rama>", desc: "Crea una nueva rama a partir de un stash." },
+    ]
+  },
+  {
+    cat: "Tags y Versiones",
+    color: "#ffca28",
+    commands: [
+      { cmd: "git tag", desc: "Lista todos los tags del repositorio." },
+      { cmd: "git tag <nombre>", desc: "Crea un tag ligero en el commit actual." },
+      { cmd: "git tag -a <nombre> -m \"msg\"", desc: "Crea un tag anotado con mensaje.", flags: ["-a", "-m", "-s"] },
+      { cmd: "git tag -a <nombre> <commit>", desc: "Crea un tag en un commit específico." },
+      { cmd: "git tag -d <nombre>", desc: "Elimina un tag local." },
+      { cmd: "git push origin <tag>", desc: "Envía un tag específico al repositorio remoto." },
+      { cmd: "git push origin --tags", desc: "Envía todos los tags al repositorio remoto." },
+      { cmd: "git push origin --delete <tag>", desc: "Elimina un tag del repositorio remoto." },
+      { cmd: "git describe --tags", desc: "Describe el commit actual usando el tag más cercano." },
+    ]
+  },
+  {
+    cat: "Deshacer y Restaurar",
+    color: "#ff6b6b",
+    commands: [
+      { cmd: "git restore <archivo>", desc: "Descarta los cambios en el área de trabajo.", flags: ["--staged", "--source"] },
+      { cmd: "git restore --staged <archivo>", desc: "Quita un archivo del staging sin descartar cambios." },
+      { cmd: "git reset HEAD <archivo>", desc: "Quita un archivo del staging (forma clásica)." },
+      { cmd: "git reset --soft HEAD~1", desc: "Deshace el último commit manteniendo los cambios en staging.", flags: ["--soft", "--mixed", "--hard"] },
+      { cmd: "git reset --mixed HEAD~1", desc: "Deshace el último commit y quita los cambios del staging." },
+      { cmd: "git reset --hard HEAD~1", desc: "Deshace el último commit y descarta todos los cambios." },
+      { cmd: "git reset --hard <commit>", desc: "Vuelve a un commit específico descartando todo lo posterior." },
+      { cmd: "git revert <commit>", desc: "Crea un nuevo commit que revierte los cambios del commit especificado.", flags: ["--no-commit"] },
+      { cmd: "git revert HEAD", desc: "Revierte el último commit creando uno nuevo de reversión." },
+      { cmd: "git clean -fd", desc: "Elimina archivos y directorios no rastreados.", flags: ["-f", "-d", "-n", "-x"] },
+      { cmd: "git clean -n", desc: "Muestra qué archivos serían eliminados con git clean." },
+    ]
+  },
+  {
+    cat: "Búsqueda y Depuración",
+    color: "#26c6da",
+    commands: [
+      { cmd: "git grep \"texto\"", desc: "Busca texto en todos los archivos del repositorio.", flags: ["-n", "-l", "--count"] },
+      { cmd: "git grep -n \"texto\"", desc: "Busca texto mostrando el número de línea." },
+      { cmd: "git bisect start", desc: "Inicia la búsqueda binaria para encontrar un commit con error." },
+      { cmd: "git bisect good <commit>", desc: "Marca un commit como bueno durante la bisección." },
+      { cmd: "git bisect bad <commit>", desc: "Marca un commit como malo durante la bisección." },
+      { cmd: "git bisect reset", desc: "Finaliza la bisección y vuelve al HEAD original." },
+      { cmd: "git blame <archivo>", desc: "Muestra quién y cuándo modificó cada línea de un archivo.", flags: ["-L", "-e", "-w"] },
+      { cmd: "git blame -L 10,20 <archivo>", desc: "Muestra la autoría solo de las líneas 10 a 20." },
+    ]
+  },
+  {
+    cat: "Submódulos",
+    color: "#aed581",
+    commands: [
+      { cmd: "git submodule add <url>", desc: "Agrega un submódulo al repositorio." },
+      { cmd: "git submodule init", desc: "Inicializa los submódulos después de clonar." },
+      { cmd: "git submodule update", desc: "Actualiza los submódulos al commit registrado.", flags: ["--init", "--recursive"] },
+      { cmd: "git submodule update --init --recursive", desc: "Inicializa y actualiza todos los submódulos recursivamente." },
+      { cmd: "git submodule foreach git pull", desc: "Ejecuta git pull en todos los submódulos." },
+      { cmd: "git submodule status", desc: "Muestra el estado de todos los submódulos." },
+    ]
+  },
+  {
+    cat: "Worktree y Archivos",
+    color: "#ff8a65",
+    commands: [
+      { cmd: "git worktree add <path> <rama>", desc: "Crea un worktree adicional para trabajar en varias ramas a la vez." },
+      { cmd: "git worktree list", desc: "Lista todos los worktrees del repositorio." },
+      { cmd: "git worktree remove <path>", desc: "Elimina un worktree adicional." },
+      { cmd: "git ls-files", desc: "Lista los archivos rastreados por Git.", flags: ["--others", "--ignored", "-m"] },
+      { cmd: "git ls-files --others --exclude-standard", desc: "Muestra archivos no rastreados (ignorando los del .gitignore)." },
+      { cmd: "git mv <origen> <destino>", desc: "Renombra o mueve un archivo rastreado por Git." },
+      { cmd: "git rm <archivo>", desc: "Elimina un archivo del repositorio y del disco.", flags: ["--cached", "-r"] },
+      { cmd: "git rm --cached <archivo>", desc: "Deja de rastrear un archivo sin eliminarlo del disco." },
+    ]
+  },
+  {
+    cat: "Información del Repositorio",
+    color: "#80cbc4",
+    commands: [
+      { cmd: "git rev-parse HEAD", desc: "Muestra el hash completo del commit actual (HEAD)." },
+      { cmd: "git rev-parse --short HEAD", desc: "Muestra el hash corto del commit actual." },
+      { cmd: "git rev-list --count HEAD", desc: "Muestra la cantidad total de commits en la rama actual." },
+      { cmd: "git count-objects -vH", desc: "Muestra estadísticas del tamaño del repositorio." },
+      { cmd: "git cat-file -t <hash>", desc: "Muestra el tipo de objeto Git (blob, tree, commit, tag)." },
+      { cmd: "git cat-file -p <hash>", desc: "Muestra el contenido de un objeto Git." },
+      { cmd: "git archive --format=zip HEAD > archivo.zip", desc: "Exporta el repositorio como archivo ZIP." },
+      { cmd: "git gc", desc: "Ejecuta mantenimiento y compresión del repositorio.", flags: ["--aggressive", "--prune"] },
+      { cmd: "git fsck", desc: "Verifica la integridad del repositorio.", flags: ["--full"] },
+    ]
+  },
+];
+
+// BUILD TABS
+const tabsEl = document.getElementById('tabs');
+DATA.forEach(sec => {
+  const t = document.createElement('div');
+  t.className = 'tab';
+  t.dataset.cat = sec.cat;
+  t.textContent = sec.cat;
+  tabsEl.appendChild(t);
+});
+
+// COUNT
+let totalCommands = DATA.reduce((a, s) => a + s.commands.length, 0);
+document.getElementById('total-count').textContent = totalCommands;
+
+// BUILD CARDS
+const mainEl = document.getElementById('main');
+
+function buildSections(filter = '', cat = 'all') {
+  mainEl.innerHTML = '';
+  let found = 0;
+
+  DATA.forEach(sec => {
+    if (cat !== 'all' && cat !== sec.cat) return;
+    const cmds = sec.commands.filter(c =>
+      c.cmd.toLowerCase().includes(filter.toLowerCase()) ||
+      c.desc.toLowerCase().includes(filter.toLowerCase())
+    );
+    if (!cmds.length) return;
+    found += cmds.length;
+
+    const section = document.createElement('div');
+    section.className = 'section';
+
+    section.innerHTML = `
+      <div class="section-header">
+        <div class="section-dot" style="background:${sec.color};box-shadow:0 0 8px ${sec.color}"></div>
+        <div class="section-title">${sec.cat}</div>
+        <div class="section-count">${cmds.length}</div>
+      </div>
+    `;
+
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+
+    cmds.forEach(c => {
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      const flags = c.flags ? c.flags.map(f => `<span class="flag">${f}</span>`).join('') : '';
+
+      card.innerHTML = `
+        <button class="copy-btn" title="Copiar">copy</button>
+        <div class="cmd-line">
+          <span class="prompt">$</span>
+          <span class="cmd-name">${highlight(c.cmd, filter)}</span>
+        </div>
+        <div class="cmd-desc">${highlight(c.desc, filter)}</div>
+        ${flags ? `<div class="cmd-flags">${flags}</div>` : ''}
+      `;
+
+      card.querySelector('.copy-btn').addEventListener('click', (e) => {
+        e.stopPropagation();
+        navigator.clipboard.writeText(c.cmd).then(() => {
+          const btn = card.querySelector('.copy-btn');
+          btn.textContent = 'copied!';
+          btn.classList.add('copied');
+          setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1500);
+        });
+      });
+
+      card.addEventListener('click', () => {
+        navigator.clipboard.writeText(c.cmd);
+        const btn = card.querySelector('.copy-btn');
+        btn.textContent = 'copied!';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'copy'; btn.classList.remove('copied'); }, 1500);
+      });
+
+      grid.appendChild(card);
+    });
+
+    section.appendChild(grid);
+    mainEl.appendChild(section);
+  });
+
+  const noRes = document.getElementById('no-results');
+  document.getElementById('q').textContent = filter;
+  noRes.style.display = found === 0 ? 'block' : 'none';
+}
+
+function highlight(text, q) {
+  if (!q) return text;
+  const re = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  return text.replace(re, '<mark style="background:rgba(0,255,136,0.25);color:#00ff88;border-radius:2px;">$1</mark>');
+}
+
+let currentCat = 'all';
+let currentSearch = '';
+
+document.getElementById('search').addEventListener('input', e => {
+  currentSearch = e.target.value;
+  buildSections(currentSearch, currentCat);
+});
+
+tabsEl.addEventListener('click', e => {
+  if (!e.target.classList.contains('tab')) return;
+  tabsEl.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  e.target.classList.add('active');
+  currentCat = e.target.dataset.cat;
+  buildSections(currentSearch, currentCat);
+});
+
+buildSections();
+</script>
+</body>
+</html>
